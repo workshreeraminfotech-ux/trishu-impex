@@ -28,8 +28,8 @@ export default function AboutUs() {
               color: '#FFFFFF',
               padding: '14px 22px',
               borderRadius: '18px',
-              boxShadow: '0 16px 36px rgba(200, 148, 10, 0.25)',
-              border: '2px solid #F5C542',
+              boxShadow: '0 16px 36px rgba(237, 108, 27, 0.25)',
+              border: '2px solid #ED6C1B',
               zIndex: 10,
               display: 'flex',
               alignItems: 'center',
@@ -37,7 +37,7 @@ export default function AboutUs() {
               backdropFilter: 'blur(8px)',
               maxWidth: 'calc(100% - 36px)'
             }}>
-              <span style={{ fontSize: '32px', fontWeight: 900, fontFamily: 'var(--font-h, Outfit, sans-serif)', color: '#F5C542', lineHeight: 1 }}>
+              <span style={{ fontSize: '32px', fontWeight: 900, fontFamily: 'var(--font-h, Outfit, sans-serif)', color: '#ED6C1B', lineHeight: 1 }}>
                 <AnimatedCounter end={10} suffix="+" />
               </span>
               <span style={{ fontSize: '12.5px', fontWeight: 800, lineHeight: 1.3, color: '#FFF8E7', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -51,7 +51,7 @@ export default function AboutUs() {
               borderRadius: '26px',
               overflow: 'hidden',
               border: '2px solid var(--border)',
-              boxShadow: '0 18px 40px rgba(200, 148, 10, 0.1)',
+              boxShadow: '0 18px 40px rgba(237, 108, 27, 0.1)',
               backgroundColor: '#FFFDF7',
               marginTop: '16px',
               display: 'flex',
@@ -62,7 +62,7 @@ export default function AboutUs() {
             }}>
               <img
                 src={aboutUsImg}
-                alt="About Priya Impex Corporate & Facility"
+                alt="About Trishu Impex Corporate & Facility"
                 style={{
                   width: '100%',
                   height: 'auto',
@@ -87,7 +87,7 @@ export default function AboutUs() {
             {/* Intro Lead Block */}
             <div className="about-intro-lead-block">
               <span className="eyebrow" style={{ marginBottom: '14px' }}>
-                PRIYA IMPEX • PREMIER INDIAN AGRO EXPORTS
+                TRISHU IMPEX • PREMIER INDIAN AGRO EXPORTS
               </span>
 
               <h2 style={{ fontSize: 'clamp(28px, 3.8vw, 38px)', fontWeight: 900, color: 'var(--navy)', lineHeight: 1.2, margin: '12px 0 16px', fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
@@ -95,7 +95,7 @@ export default function AboutUs() {
               </h2>
 
               <p style={{ fontSize: '16px', color: '#475569', lineHeight: 1.65, marginBottom: '20px', fontWeight: 500 }}>
-                <strong>Priya Impex</strong> is a premier Indian merchant exporter based in <strong>Gujarat, India</strong>. We specialize in end-to-end sourcing, quality testing, lab certification, and international container freight logistics.
+                <strong>Trishu Impex</strong> is a premier Indian merchant exporter based in <strong>Gujarat, India</strong>. We specialize in end-to-end sourcing, quality testing, lab certification, and international container freight logistics.
               </p>
             </div>
 
@@ -103,13 +103,13 @@ export default function AboutUs() {
             <div className="about-mobile-photo-placement" />
 
             {/* Malaysia Shipment Milestone Highlight Card */}
-            <div style={{ background: 'linear-gradient(135deg, #2A1D08 0%, #4D3508 100%)', padding: '20px 22px', borderRadius: '18px', borderLeft: '5px solid #F5C542', borderTop: '1px solid rgba(245, 197, 66, 0.3)', marginBottom: '20px', color: '#fff', boxShadow: '0 8px 25px rgba(200, 148, 10, 0.15)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '15px', fontWeight: 800, color: '#F5C542', marginBottom: '6px' }}>
-                <Truck size={22} color="#F5C542" />
+            <div style={{ background: 'linear-gradient(135deg, #2A1D08 0%, #4D3508 100%)', padding: '20px 22px', borderRadius: '18px', borderLeft: '5px solid #ED6C1B', borderTop: '1px solid rgba(245, 197, 66, 0.3)', marginBottom: '20px', color: '#fff', boxShadow: '0 8px 25px rgba(237, 108, 27, 0.15)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '15px', fontWeight: 800, color: '#ED6C1B', marginBottom: '6px' }}>
+                <Truck size={22} color="#ED6C1B" />
                 <span>Recent Milestone: Successful Malaysia Container Export 🚢🇲🇾</span>
               </div>
               <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.92)', margin: 0, lineHeight: 1.55 }}>
-                Priya Impex has recently completed and dispatched a full container shipment of premium agricultural commodities straight to <strong>Malaysia</strong> with 100% custom compliance, zero inspection delays, and guaranteed quality.
+                Trishu Impex has recently completed and dispatched a full container shipment of premium agricultural commodities straight to <strong>Malaysia</strong> with 100% custom compliance, zero inspection delays, and guaranteed quality.
               </p>
             </div>
 

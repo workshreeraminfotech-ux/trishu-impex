@@ -9,10 +9,10 @@ export default function Footer() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '40px', marginBottom: '40px' }}>
           <div className="footer-brand">
             <div style={{ marginBottom: '20px' }}>
-              <img src={logoImg} alt="Priya Impex Logo" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
+              <img src={logoImg} alt="Trishu Impex Logo" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
             </div>
             <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.75)', margin: '16px 0 20px', lineHeight: 1.6 }}>
-              Priya Impex is a premier Indian exporter of high-grade agro commodities, spices, seeds, and food products. Delivering trust, exporting excellence globally.
+              Trishu Impex is a premier Indian exporter of high-grade agro commodities, spices, seeds, and food products. Delivering trust, exporting excellence globally.
             </p>
             <div className="social-links">
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-icon" title="Instagram">
@@ -24,7 +24,7 @@ export default function Footer() {
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-icon" title="Facebook">
                 <Facebook size={15} />
               </a>
-              <a href="https://api.whatsapp.com/send?phone=919328602931&text=Hi%20Priya%20Impex!" target="_blank" rel="noopener noreferrer" className="social-icon" title="Business WhatsApp">
+              <a href="https://api.whatsapp.com/send?phone=919898522905&text=Hi%20Trishu%20Impex!" target="_blank" rel="noopener noreferrer" className="social-icon" title="Business WhatsApp">
                 <MessageCircle size={14} />
               </a>
             </div>
@@ -54,26 +54,26 @@ export default function Footer() {
           <div>
             <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, color: '#fff', marginBottom: '20px' }}>Connect Desk</h4>
             <div className="footer-contact">
-              <strong>Phone / WhatsApp:</strong> +91 9328602931
+              <strong>Phone / WhatsApp:</strong> +91 98985 22905
             </div>
             <div className="footer-contact">
-              <strong>Email:</strong> sales@priyaimpexs.com
+              <strong>Email:</strong> sales@trishuimpex.com
             </div>
             <p style={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.75)' }}>
-              <strong>Location:</strong> Rajkot, Gujarat (India)
+              <strong>Location:</strong> Sayla, Gujarat (India)
             </p>
           </div>
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} Priya Impex. All Rights Reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Trishu Impex. All Rights Reserved.</p>
           <p>
             Developed by{' '}
             <a 
               href="https://www.matrixtechx.com" 
               target="_blank" 
               rel="noopener noreferrer" 
-              style={{ color: '#F5C542', fontWeight: 800, textDecoration: 'none' }}
+              style={{ color: '#ED6C1B', fontWeight: 800, textDecoration: 'none' }}
               onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
               onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
             >

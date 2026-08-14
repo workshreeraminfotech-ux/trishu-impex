@@ -11,15 +11,15 @@ export default function Blog({ onNavigate }) {
         <div className="section-title text-center">
           <span className="eyebrow">Latest Insights & Market Reports</span>
           <h2>Agro & Spice Export <span style={{ color: 'var(--gold)' }}>Blog</span></h2>
-          <p className="section-desc">Stay updated with crop updates, quality benchmarks, and product sourcing guides from Priya Impex experts.</p>
+          <p className="section-desc">Stay updated with crop updates, quality benchmarks, and product sourcing guides from Trishu Impex experts.</p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
           {posts.map((post, idx) => (
-            <div key={idx} style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1.5px solid var(--border)', overflow: 'hidden', boxShadow: '0 8px 24px rgba(200, 148, 10, 0.05)', display: 'flex', flexDirection: 'column' }}>
+            <div key={idx} style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1.5px solid var(--border)', overflow: 'hidden', boxShadow: '0 8px 24px rgba(237, 108, 27, 0.05)', display: 'flex', flexDirection: 'column' }}>
               <div style={{ position: 'relative', height: '200px', backgroundColor: '#FFFFFF', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <img src={post.image} alt={post.title} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
-                <span style={{ position: 'absolute', bottom: 12, right: 12, backgroundColor: 'linear-gradient(135deg, #C8940A 0%, #D4AF37 100%)', background: 'var(--gold)', color: '#1C1917', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '100px' }}>
+                <span style={{ position: 'absolute', bottom: 12, right: 12, backgroundColor: 'linear-gradient(135deg, #ED6C1B 0%, #FF8238 100%)', background: 'var(--gold)', color: '#1C1917', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '100px' }}>
                   {post.date}
                 </span>
               </div>

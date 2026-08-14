@@ -28,7 +28,7 @@ export default function BlogPage() {
         {/* Background Image */}
         <img 
           src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1920&q=80" 
-          alt="Priya Impex Agro Blog Background" 
+          alt="Trishu Impex Agro Blog Background" 
           style={{
             position: 'absolute',
             inset: 0,
@@ -65,7 +65,7 @@ export default function BlogPage() {
               marginBottom: '20px',
               backdropFilter: 'blur(6px)'
             }}>
-              <Sparkles size={14} style={{ color: '#F5C542' }} />
+              <Sparkles size={14} style={{ color: '#ED6C1B' }} />
               Knowledge Hub & Export Insights
             </span>
 
@@ -78,7 +78,7 @@ export default function BlogPage() {
               color: '#FFFFFF'
             }}>
               Spice Product Guides & <br />
-              <span style={{ color: '#F5C542' }}>Market Insights</span>
+              <span style={{ color: '#ED6C1B' }}>Market Insights</span>
             </h1>
 
             <p style={{ fontSize: '17px', color: 'rgba(255, 255, 255, 0.9)', lineHeight: 1.6, maxWidth: '680px', margin: '0 auto', fontWeight: 500 }}>
@@ -130,7 +130,7 @@ export default function BlogPage() {
                 borderRadius: '24px',
                 border: '1.5px solid var(--border)',
                 overflow: 'hidden',
-                boxShadow: '0 12px 35px rgba(200, 148, 10, 0.08)',
+                boxShadow: '0 12px 35px rgba(237, 108, 27, 0.08)',
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
                 marginBottom: '40px',
@@ -216,13 +216,13 @@ export default function BlogPage() {
                   borderRadius: '20px',
                   border: '1.5px solid var(--border)',
                   overflow: 'hidden',
-                  boxShadow: '0 8px 30px rgba(200, 148, 10, 0.05)',
+                  boxShadow: '0 8px 30px rgba(237, 108, 27, 0.05)',
                   display: 'flex',
                   flexDirection: 'column',
                   cursor: 'pointer',
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease'
                 }}
-                whileHover={{ y: -5, boxShadow: '0 16px 36px rgba(200, 148, 10, 0.2)', borderColor: 'var(--gold)' }}
+                whileHover={{ y: -5, boxShadow: '0 16px 36px rgba(237, 108, 27, 0.2)', borderColor: 'var(--gold)' }}
               >
                 <div style={{
                   height: '210px',
@@ -287,7 +287,7 @@ export default function BlogPage() {
                       <Clock size={13} /> {b.date}
                     </span>
 
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#002147', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#0B2240', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                       Read <ArrowRight size={13} />
                     </span>
                   </div>
@@ -324,7 +324,7 @@ export default function BlogPage() {
               display: 'flex',
               flexDirection: 'column',
               position: 'relative',
-              boxShadow: '0 20px 50px rgba(0, 33, 71, 0.25)'
+              boxShadow: '0 20px 50px rgba(11, 34, 64, 0.25)'
             }}
           >
             {/* Close Button */}
@@ -339,7 +339,7 @@ export default function BlogPage() {
                 borderRadius: '50%',
                 width: 34,
                 height: 34,
-                color: '#002147',
+                color: '#0B2240',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -370,7 +370,7 @@ export default function BlogPage() {
                 fontSize: 11,
                 fontWeight: 800,
                 textTransform: 'uppercase',
-                color: '#002147',
+                color: '#0B2240',
                 backgroundColor: '#F1F5F9',
                 padding: '4px 12px',
                 borderRadius: 100,
@@ -384,7 +384,7 @@ export default function BlogPage() {
                 fontFamily: 'var(--font-h, Outfit, sans-serif)',
                 fontSize: 22,
                 fontWeight: 800,
-                color: '#002147',
+                color: '#0B2240',
                 marginBottom: 10,
                 lineHeight: 1.3
               }}>

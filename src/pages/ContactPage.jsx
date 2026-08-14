@@ -8,31 +8,31 @@ const countryCodes = ['+91', '+1', '+44', '+971', '+65', '+27', '+49', '+61', '+
 const contactCards = [
   {
     icon: Phone, label: 'Phone / WhatsApp',
-    value: '+91 9328602931',
+    value: '+91 98985 22905',
     sub: 'Mon–Sat, 9AM – 6PM IST',
-    href: 'tel:+919328602931',
-    color: '#C8940A'
+    href: 'tel:+919898522905',
+    color: '#ED6C1B'
   },
   {
     icon: Mail, label: 'Email Address',
-    value: 'sales@priyaimpexs.com',
+    value: 'sales@trishuimpex.com',
     sub: 'We reply within 24 hours',
-    href: 'mailto:sales@priyaimpexs.com',
-    color: '#D4AF37'
+    href: 'mailto:sales@trishuimpex.com',
+    color: '#FF8238'
   },
   {
     icon: MapPin, label: 'Our Location',
-    value: 'Rajkot, Gujarat, India',
+    value: 'Dayima Complex, Office No 1, Paliyad Road, Sayla - 363430, Gujarat, India',
     sub: 'Export Hub — Near Mundra Port',
     href: '#map',
-    color: '#C8940A'
+    color: '#ED6C1B'
   },
   {
     icon: Clock, label: 'Business Hours',
     value: 'Mon–Sat: 9AM – 6PM',
     sub: 'Sunday: Closed (IST)',
     href: null,
-    color: '#D4AF37'
+    color: '#FF8238'
   },
 ];
 
@@ -71,7 +71,7 @@ export default function ContactPage() {
         {/* Background Image */}
         <img 
           src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1920&q=80" 
-          alt="Contact Priya Impex Background" 
+          alt="Contact Trishu Impex Background" 
           style={{
             position: 'absolute',
             inset: 0,
@@ -97,8 +97,8 @@ export default function ContactPage() {
               alignItems: 'center',
               gap: '8px',
               backgroundColor: 'rgba(255, 255, 255, 0.12)',
-              border: '1.5px solid #F5C542',
-              color: '#F5C542',
+              border: '1.5px solid #ED6C1B',
+              color: '#ED6C1B',
               fontSize: '12px',
               fontWeight: 800,
               textTransform: 'uppercase',
@@ -119,7 +119,7 @@ export default function ContactPage() {
               lineHeight: 1.15,
               color: '#FFFFFF'
             }}>
-              Contact <span style={{ color: '#F5C542' }}>Priya Impex</span>
+              Contact <span style={{ color: '#ED6C1B' }}>Trishu Impex</span>
             </h1>
 
             <p style={{ fontSize: '17px', color: 'rgba(255, 255, 255, 0.9)', lineHeight: 1.6, maxWidth: '700px', margin: '0 auto', fontWeight: 500 }}>
@@ -145,14 +145,14 @@ export default function ContactPage() {
                   borderRadius: '20px',
                   padding: '24px 20px',
                   border: '1.5px solid var(--border)',
-                  boxShadow: '0 6px 20px rgba(200, 148, 10, 0.05)',
+                  boxShadow: '0 6px 20px rgba(237, 108, 27, 0.05)',
                   cursor: c.href ? 'pointer' : 'default',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '16px',
                   transition: 'all 0.3s ease'
                 }}
-                whileHover={{ y: -4, borderColor: 'var(--gold)', boxShadow: '0 12px 30px rgba(200, 148, 10, 0.15)' }}
+                whileHover={{ y: -4, borderColor: 'var(--gold)', boxShadow: '0 12px 30px rgba(237, 108, 27, 0.15)' }}
                 onClick={() => c.href && c.href !== '#map' && window.open(c.href)}
               >
                 <div style={{ width: 48, height: 48, borderRadius: 14, background: 'var(--gold-pale)', border: '1px solid var(--gold-light)', color: 'var(--gold-deep)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -263,8 +263,8 @@ export default function ContactPage() {
                 style={{ minHeight: 300 }}
               >
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119067.87434720948!2d70.7284077!3d22.2736308!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3959c98ac71cdf0f%3A0x76dd15cfbe93ad3b!2sRajkot%2C+Gujarat!5e0!3m2!1sen!2sin!4v1600000000000"
-                  title="Priya Impex Location - Rajkot Gujarat"
+                  src="https://maps.google.com/maps?q=Dayima+Complex,+Paliyad+Road,+Sayla,+Gujarat+363430&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                  title="Trishu Impex Location - Sayla, Gujarat"
                   allowFullScreen
                   loading="lazy"
                 />
@@ -285,7 +285,7 @@ export default function ContactPage() {
                   Chat directly with our export team on WhatsApp for the fastest response!
                 </p>
                 <a
-                  href="https://api.whatsapp.com/send?phone=919328602931&text=Hi%20Priya%20Impex!%20I%20would%20like%20to%20enquire%20about%20your%20products."
+                  href="https://api.whatsapp.com/send?phone=919898522905&text=Hi%20Trishu%20Impex!%20I%20would%20like%20to%20enquire%20about%20your%20products."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-primary"

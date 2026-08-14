@@ -40,7 +40,7 @@ export default function AdminLogin({ onLoginSuccess }) {
         backgroundColor: '#FFFFFF',
         borderRadius: '28px',
         padding: '40px 32px',
-        boxShadow: '0 24px 60px rgba(200, 148, 10, 0.25)',
+        boxShadow: '0 24px 60px rgba(237, 108, 27, 0.25)',
         border: '1.5px solid var(--border)'
       }}>
         {/* Brand Header */}
@@ -49,18 +49,18 @@ export default function AdminLogin({ onLoginSuccess }) {
             width: '64px',
             height: '64px',
             borderRadius: '20px',
-            background: 'linear-gradient(135deg, #C8940A 0%, #D4AF37 100%)',
+            background: 'linear-gradient(135deg, #ED6C1B 0%, #FF8238 100%)',
             color: '#1C1917',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: '16px',
-            boxShadow: '0 8px 24px rgba(200, 148, 10, 0.3)'
+            boxShadow: '0 8px 24px rgba(237, 108, 27, 0.3)'
           }}>
             <ShieldCheck size={32} />
           </div>
           <h2 style={{ fontSize: '26px', fontWeight: 900, color: 'var(--navy)', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
-            Priya Impex Admin Portal
+            Trishu Impex Admin Portal
           </h2>
           <p style={{ fontSize: '14px', color: '#475569', marginTop: '6px' }}>
             Authorized Personnel Only
@@ -151,7 +151,7 @@ export default function AdminLogin({ onLoginSuccess }) {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '10px',
-              boxShadow: '0 8px 24px rgba(200, 148, 10, 0.25)',
+              boxShadow: '0 8px 24px rgba(237, 108, 27, 0.25)',
               marginTop: '10px',
               transition: 'all 0.2s ease'
             }}
@@ -164,7 +164,7 @@ export default function AdminLogin({ onLoginSuccess }) {
         </form>
 
         <div style={{ marginTop: '28px', textAlign: 'center', fontSize: '12px', color: '#8C96A0' }}>
-          Priya Impex • B2B Secure Console
+          Trishu Impex • B2B Secure Console
         </div>
       </div>
     </div>

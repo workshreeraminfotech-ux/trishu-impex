@@ -68,13 +68,13 @@ export default function HeroBannerSlider({ onOpenQuote, onNavigate }) {
                 alignItems: 'center', 
                 gap: '8px', 
                 background: 'rgba(7, 16, 32, 0.82)', 
-                border: '1px solid rgba(200, 148, 10, 0.65)', 
+                border: '1px solid rgba(237, 108, 27, 0.65)', 
                 backdropFilter: 'blur(10px)', 
                 padding: '6px 16px', 
                 borderRadius: '100px', 
                 fontSize: '13px', 
                 fontWeight: 700, 
-                color: '#F5C542',
+                color: '#ED6C1B',
                 boxShadow: '0 4px 15px rgba(0,0,0,0.25)'
               }}
             >
@@ -100,7 +100,7 @@ export default function HeroBannerSlider({ onOpenQuote, onNavigate }) {
             }}
           >
             Premium Indian Spices & <br />
-            <span style={{ background: 'linear-gradient(135deg, #FFFFFF 0%, #F5C542 50%, #D4AF37 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <span style={{ background: 'linear-gradient(135deg, #FFFFFF 0%, #ED6C1B 50%, #FF8238 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Agro Commodities Exporter
             </span>
           </motion.h1>
@@ -139,7 +139,7 @@ export default function HeroBannerSlider({ onOpenQuote, onNavigate }) {
                 display: 'inline-flex', 
                 alignItems: 'center', 
                 gap: '8px', 
-                boxShadow: '0 8px 24px rgba(200, 148, 10, 0.35)',
+                boxShadow: '0 8px 24px rgba(237, 108, 27, 0.35)',
                 borderRadius: '8px'
               }}
             >

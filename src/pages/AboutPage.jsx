@@ -92,7 +92,7 @@ export default function AboutPage({ onNavigate, onOpenQuote }) {
         {/* Background Image */}
         <img 
           src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1920&q=80" 
-          alt="About Priya Impex Background" 
+          alt="About Trishu Impex Background" 
           style={{
             position: 'absolute',
             inset: 0,
@@ -130,7 +130,7 @@ export default function AboutPage({ onNavigate, onOpenQuote }) {
               backdropFilter: 'blur(6px)'
             }}>
               <Sparkles size={14} style={{ color: 'var(--gold-light)' }} />
-              PRIYA IMPEX • B2B AGRO EXPORTS
+              TRISHU IMPEX • B2B AGRO EXPORTS
             </span>
 
             <h1 style={{
@@ -168,7 +168,7 @@ export default function AboutPage({ onNavigate, onOpenQuote }) {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '30px' }}>
-            {/* Office 1: Rajkot India */}
+            {/* Corporate HQ: Sayla Gujarat */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -178,7 +178,7 @@ export default function AboutPage({ onNavigate, onOpenQuote }) {
                 borderRadius: '24px',
                 overflow: 'hidden',
                 border: '1.5px solid var(--border)',
-                boxShadow: '0 8px 24px rgba(200, 148, 10, 0.06)',
+                boxShadow: '0 8px 24px rgba(237, 108, 27, 0.06)',
                 display: 'flex',
                 flexDirection: 'column'
               }}
@@ -186,18 +186,18 @@ export default function AboutPage({ onNavigate, onOpenQuote }) {
               <div style={{ height: '200px', overflow: 'hidden', position: 'relative' }}>
                 <img 
                   src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80" 
-                  alt="Rajkot India Facility" 
+                  alt="Sayla Gujarat Facility" 
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                 />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 30%, rgba(42,29,8,0.85) 100%)' }}></div>
                 <div style={{ position: 'absolute', bottom: '16px', left: '20px', display: 'flex', alignItems: 'center', gap: '10px', color: '#FFFFFF' }}>
-                  <Building2 size={22} style={{ color: '#F5C542' }} />
+                  <Building2 size={22} style={{ color: '#ED6C1B' }} />
                   <span style={{ fontWeight: 800, fontSize: '18px' }}>India Headquarters</span>
                 </div>
               </div>
 
               <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '12.5px', color: 'var(--gold-deep)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Rajkot, Gujarat, INDIA</span>
+                <span style={{ fontSize: '12.5px', color: 'var(--gold-deep)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Dayima Complex, Office No 1, Paliyad Road, Sayla - 363430, Gujarat, India</span>
                 <p style={{ fontSize: '14.5px', color: 'var(--gray)', lineHeight: 1.6, margin: 0, fontWeight: 500 }}>
                   Main procurement, Sortex processing, lab testing, and container stuffing hub. Proximity to Mundra Port ensures fast container dispatch.
                 </p>
@@ -215,7 +215,7 @@ export default function AboutPage({ onNavigate, onOpenQuote }) {
                 borderRadius: '24px',
                 overflow: 'hidden',
                 border: '1.5px solid var(--border)',
-                boxShadow: '0 8px 24px rgba(200, 148, 10, 0.06)',
+                boxShadow: '0 8px 24px rgba(237, 108, 27, 0.06)',
                 display: 'flex',
                 flexDirection: 'column'
               }}
@@ -228,7 +228,7 @@ export default function AboutPage({ onNavigate, onOpenQuote }) {
                 />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 30%, rgba(42,29,8,0.85) 100%)' }}></div>
                 <div style={{ position: 'absolute', bottom: '16px', left: '20px', display: 'flex', alignItems: 'center', gap: '10px', color: '#FFFFFF' }}>
-                  <Globe2 size={22} style={{ color: '#F5C542' }} />
+                  <Globe2 size={22} style={{ color: '#ED6C1B' }} />
                   <span style={{ fontWeight: 800, fontSize: '18px' }}>International Desk</span>
                 </div>
               </div>
@@ -274,14 +274,14 @@ export default function AboutPage({ onNavigate, onOpenQuote }) {
                     borderRadius: '20px',
                     overflow: 'hidden',
                     border: '1.5px solid var(--border)',
-                    boxShadow: '0 6px 20px rgba(200, 148, 10, 0.04)',
+                    boxShadow: '0 6px 20px rgba(237, 108, 27, 0.04)',
                     display: 'flex',
                     flexDirection: 'column'
                   }}
                 >
                   <div style={{ height: '160px', overflow: 'hidden', position: 'relative' }}>
                     <img src={step.img} alt={step.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', top: 12, left: 12, width: 40, height: 40, borderRadius: '12px', background: 'linear-gradient(135deg, #C8940A 0%, #D4AF37 100%)', color: '#1C1917', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ position: 'absolute', top: 12, left: 12, width: 40, height: 40, borderRadius: '12px', background: 'linear-gradient(135deg, #ED6C1B 0%, #FF8238 100%)', color: '#1C1917', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <Icon size={20} />
                     </div>
                   </div>
@@ -307,7 +307,7 @@ export default function AboutPage({ onNavigate, onOpenQuote }) {
               Driven by Purpose, <span style={{ color: 'var(--gold)' }}>Guided by Integrity</span>
             </h2>
             <p style={{ color: 'var(--gray)', maxWidth: '600px', margin: '10px auto 0' }}>
-              Discover the core principles that power Priya Impex's global reputation as a premier agro commodity exporter.
+              Discover the core principles that power Trishu Impex's global reputation as a premier agro commodity exporter.
             </p>
           </div>
 
@@ -326,7 +326,7 @@ export default function AboutPage({ onNavigate, onOpenQuote }) {
                     borderRadius: '24px',
                     overflow: 'hidden',
                     border: '1.5px solid var(--border)',
-                    boxShadow: '0 8px 24px rgba(200, 148, 10, 0.05)',
+                    boxShadow: '0 8px 24px rgba(237, 108, 27, 0.05)',
                     display: 'flex',
                     flexDirection: 'column'
                   }}
@@ -335,7 +335,7 @@ export default function AboutPage({ onNavigate, onOpenQuote }) {
                     <img src={item.img} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 20%, rgba(42,29,8,0.85) 100%)' }}></div>
                     <div style={{ position: 'absolute', bottom: '14px', left: '16px', display: 'flex', alignItems: 'center', gap: '10px', color: '#FFFFFF' }}>
-                      <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'linear-gradient(135deg, #C8940A 0%, #D4AF37 100%)', color: '#1C1917', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'linear-gradient(135deg, #ED6C1B 0%, #FF8238 100%)', color: '#1C1917', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Icon size={18} />
                       </div>
                       <span style={{ fontSize: '18px', fontWeight: 800 }}>{item.title}</span>
@@ -362,7 +362,7 @@ export default function AboutPage({ onNavigate, onOpenQuote }) {
               OUR ADVANTAGES
             </span>
             <h2 style={{ color: 'var(--navy)', marginTop: '10px' }}>
-              Why Importers Choose <span style={{ color: 'var(--gold)' }}>Priya Impex</span>
+              Why Importers Choose <span style={{ color: 'var(--gold)' }}>Trishu Impex</span>
             </h2>
           </div>
 
@@ -379,14 +379,14 @@ export default function AboutPage({ onNavigate, onOpenQuote }) {
                   borderRadius: '20px',
                   overflow: 'hidden',
                   border: '1.5px solid var(--border)',
-                  boxShadow: '0 6px 20px rgba(200, 148, 10, 0.04)',
+                  boxShadow: '0 6px 20px rgba(237, 108, 27, 0.04)',
                   display: 'flex',
                   flexDirection: 'column'
                 }}
               >
                 <div style={{ height: '150px', overflow: 'hidden', position: 'relative' }}>
                   <img src={hl.img} alt={hl.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  <div style={{ position: 'absolute', top: 12, right: 12, background: 'linear-gradient(135deg, #C8940A 0%, #D4AF37 100%)', color: '#1C1917', padding: '4px 10px', borderRadius: '100px', fontSize: '11px', fontWeight: 800 }}>
+                  <div style={{ position: 'absolute', top: 12, right: 12, background: 'linear-gradient(135deg, #ED6C1B 0%, #FF8238 100%)', color: '#1C1917', padding: '4px 10px', borderRadius: '100px', fontSize: '11px', fontWeight: 800 }}>
                     Verified Advantage
                   </div>
                 </div>

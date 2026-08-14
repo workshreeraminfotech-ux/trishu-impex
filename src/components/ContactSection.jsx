@@ -103,22 +103,22 @@ export default function ContactSection() {
               <div className="contact-info-item">
                 <div className="ci-icon"><Phone size={18} /></div>
                 <div className="ci-text">
-                  <strong>+91 9328602931</strong>
+                  <strong>+91 98985 22905</strong>
                   <span>Mon–Sat, 9am – 6pm IST</span>
                 </div>
               </div>
               <div className="contact-info-item">
                 <div className="ci-icon"><Mail size={18} /></div>
                 <div className="ci-text">
-                  <strong>sales@priyaimpexs.com</strong>
+                  <strong>sales@trishuimpex.com</strong>
                   <span>We reply within 24 hours</span>
                 </div>
               </div>
               <div className="contact-info-item">
                 <div className="ci-icon"><MapPin size={18} /></div>
                 <div className="ci-text">
-                  <strong>Rajkot, Gujarat, India</strong>
-                  <span>Export Hub — Rajkot Port Access</span>
+                  <strong>Dayima Complex, Office No 1, Paliyad Road, Sayla - 363430, Gujarat, India</strong>
+                  <span>Export Hub — Kandla & Mundra Port Access</span>
                 </div>
               </div>
             </div>
@@ -133,8 +133,8 @@ export default function ContactSection() {
             transition={{ duration: 0.6 }}
           >
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119067.87434720948!2d70.7284077!3d22.2736308!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3959c98ac71cdf0f%3A0x76dd15cfbe93ad3b!2sRajkot%2C+Gujarat!5e0!3m2!1sen!2sin!4v1600000000000"
-              title="Priya Impex Location - Rajkot, Gujarat"
+              src="https://maps.google.com/maps?q=Dayima+Complex,+Paliyad+Road,+Sayla,+Gujarat+363430&t=&z=14&ie=UTF8&iwloc=&output=embed"
+              title="Trishu Impex Location - Sayla, Gujarat"
               allowFullScreen
               loading="lazy"
             />

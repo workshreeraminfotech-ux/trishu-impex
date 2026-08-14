@@ -1,4 +1,4 @@
-// Centralized Product Database — Priya Impex
+// Centralized Product Database — Trishu Impex
 // Easily extendable: Just import new product images and append to PRODUCTS array.
 
 import biryaniMasala from '../assets/products/Biryani Masala.png';

@@ -111,7 +111,7 @@ export default function CertificationsSection({ bgColor = '#F8FAFC' }) {
                 onMouseOver={(e) => e.currentTarget.style.opacity = '1'}
                 onMouseOut={(e) => e.currentTarget.style.opacity = '0'}
               >
-                <Eye size={16} color="#F5C542" />
+                <Eye size={16} color="#ED6C1B" />
                 <span>View Full</span>
               </div>
             </div>

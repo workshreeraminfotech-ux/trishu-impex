@@ -23,7 +23,7 @@ export default function ProductModal({ product, onClose, onOpenQuote }) {
         maxWidth: 680,
         width: '100%',
         overflow: 'hidden',
-        boxShadow: '0 20px 50px rgba(0, 33, 71, 0.25)',
+        boxShadow: '0 20px 50px rgba(11, 34, 64, 0.25)',
         display: 'grid',
         gridTemplateColumns: '1fr 1.2fr'
       }} onClick={(e) => e.stopPropagation()}>
@@ -42,7 +42,7 @@ export default function ProductModal({ product, onClose, onOpenQuote }) {
             height: 32,
             cursor: 'pointer',
             zIndex: 10,
-            color: '#002147',
+            color: '#0B2240',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'

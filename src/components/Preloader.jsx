@@ -48,7 +48,7 @@ export default function Preloader({ onFinish }) {
           >
             <motion.img
               src={logoImg}
-              alt="Priya Impex"
+              alt="Trishu Impex"
               animate={{ scale: [1, 1.04, 1] }}
               transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
               style={{
@@ -77,7 +77,7 @@ export default function Preloader({ onFinish }) {
                 transition={{ duration: 1.6, ease: 'easeInOut' }}
                 style={{
                   height: '100%',
-                  background: 'linear-gradient(135deg, #C8940A 0%, #D4AF37 100%)',
+                  background: 'linear-gradient(135deg, #ED6C1B 0%, #FF8238 100%)',
                   borderRadius: '100px'
                 }}
               />

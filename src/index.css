@@ -1,25 +1,35 @@
 /* ==========================================================================
-   Priya Impex — Premium Global Import & Export Website
-   Theme: Exact Logo-matched Deep Navy Blue (#0B2240) + Metallic Gold (#C8940A)
+   Trishu Impex — Premium Global Import & Export Website
+   Theme: Exact Logo-matched Corporate Navy Blue (#0B2240) + Sunset Orange (#ED6C1B)
    ========================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap');
 
 :root {
-  /* === BRAND PALETTE — Exact Priya Impex Logo Extraction === */
-  --navy: #0B2240;          /* Logo primary navy blue — 'P' & PRIYA IMPEX */
-  --navy-dark: #061426;     /* Deep royal navy for dark headers, hero & footer */
-  --navy-mid: #133A6B;      /* Mid-tone navy for card highlights & gradients */
-  --gold: #C8940A;          /* Logo primary metallic gold — 'I', Globe & Subtitle */
-  --gold-light: #D4AF37;    /* Warm metallic gold hover & badge accent */
-  --gold-glow: #F6E7B4;     /* Soft metallic gold glow */
-  --gold-pale: #FFF8E7;     /* Soft gold tint background */
-  --gold-deep: #A37505;     /* Rich dark gold for hover states */
+  /* === BRAND PALETTE — Exact Trishu Impex Logo Extraction === */
+  --navy: #0B2240;          /* Logo primary navy blue — TRISHU IMPEX */
+  --navy-dark: #07172C;     /* Deep royal navy for dark headers, hero & footer */
+  --navy-mid: #123668;      /* Mid-tone navy for card highlights & gradients */
+  
+  --orange: #ED6C1B;        /* Logo primary vibrant sunset orange — Globe & IMPEX */
+  --orange-light: #FF8238;  /* Warm orange hover & badge accent */
+  --orange-glow: rgba(237, 108, 27, 0.3); /* Soft sunset orange glow */
+  --orange-pale: #FFF4ED;   /* Soft warm orange tint background */
+  --orange-deep: #D0550B;   /* Rich deep orange for active/hover states */
 
-  /* === ACCENT — Metallic Gold & Slate Blue === */
-  --accent: #C8940A;        /* Primary accent = Warm Metallic Gold */
-  --accent-cyan: #D4AF37;   /* Secondary accent = Bright Gold */
-  --accent-light: #FFF8E7;  /* Light gold badge background */
-  --accent-deep: #0B2240;   /* Dark navy hover */
+  /* Mapped Brand Accent */
+  --gold: #ED6C1B;          /* Primary Accent = Logo Sunset Orange */
+  --gold-light: #FF8238;    /* Hover & bright accent */
+  --gold-glow: rgba(237, 108, 27, 0.3);
+  --gold-pale: #FFF4ED;     /* Soft warm tint badge */
+  --gold-deep: #D0550B;
+
+  --accent: #ED6C1B;        /* Primary accent */
+  --accent-cyan: #FF8238;   
+  --accent-light: #FFF4ED;  
+  --accent-deep: #0B2240;   
+
+  --red-accent: #E63946;    /* Logo 'i' dot ruby red */
+  --green-accent: #16A34A;  /* Logo underline emerald green */
 
   /* === NEUTRALS === */
   --black: #0B2240;         /* Deep Navy Black */
@@ -30,15 +40,11 @@
   --border: #E2E8F0;        /* Subtle metallic border */
 
   /* === BRAND ALIASES === */
-  --green: #C8940A;         /* Primary highlight accent = Metallic Gold */
-  --green-light: #D4AF37;
-  --green-pale: #FFF8E7;
-  --yellow: #C8940A;
-  --yellow-pale: #FFF8E7;
-  --gold: #C8940A;
-  --gold-light: #D4AF37;
-  --gold-pale: #FFF8E7;
-  --gold-deep: #A37505;
+  --green: #ED6C1B;
+  --green-light: #FF8238;
+  --green-pale: #FFF4ED;
+  --yellow: #ED6C1B;
+  --yellow-pale: #FFF4ED;
 
   --font-h: 'Outfit', sans-serif;
   --font-b: 'Inter', sans-serif;
@@ -48,7 +54,7 @@
   --radius-pill: 100px;
   --shadow: 0 4px 20px rgba(11, 34, 64, 0.08);
   --shadow-lg: 0 12px 40px rgba(11, 34, 64, 0.14);
-  --shadow-glow: 0 0 25px rgba(200, 148, 10, 0.25);
+  --shadow-glow: 0 0 25px rgba(237, 108, 27, 0.28);
   --transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -71,23 +77,23 @@ button, input, select, textarea { font: inherit; }
 /* ---- SECTION TITLES ---- */
 .section-title { text-align: center; margin-bottom: 40px; }
 .section-title.left-align { text-align: left; }
-.eyebrow { display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gold-deep); background: var(--gold-pale); border: 1px solid var(--gold-light); padding: 5px 16px; border-radius: 100px; margin-bottom: 12px; }
+.eyebrow { display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--orange-deep); background: var(--orange-pale); border: 1px solid rgba(237, 108, 27, 0.25); padding: 5px 16px; border-radius: 100px; margin-bottom: 12px; }
 .section-title h2 { font-family: var(--font-h); font-size: 38px; font-weight: 800; color: var(--navy); line-height: 1.15; }
-.section-title h2 span { color: var(--gold); }
+.section-title h2 span { color: var(--orange); }
 .section-title p { margin-top: 10px; font-size: 16px; color: var(--gray); max-width: 580px; margin-left: auto; margin-right: auto; }
 
 /* ---- BUTTONS ---- */
-/* Primary CTA = Warm Metallic Gold (logo 'I' and Globe) */
-.btn-primary { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #C8940A 0%, #D4AF37 100%); color: #0B2240; padding: 13px 28px; border-radius: var(--radius-pill); font-size: 15px; font-weight: 800; border: none; cursor: pointer; transition: var(--transition); box-shadow: 0 6px 20px rgba(200, 148, 10, 0.35); }
-.btn-primary:hover { background: linear-gradient(135deg, #D4AF37 0%, #E5C158 100%); color: #0B2240; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(200, 148, 10, 0.5); }
-/* Outline = Gold / Navy */
-.btn-outline { display: inline-flex; align-items: center; gap: 10px; background: transparent; color: var(--navy); padding: 12px 26px; border-radius: var(--radius-pill); font-size: 15px; font-weight: 800; border: 2px solid var(--gold); cursor: pointer; transition: var(--transition); }
-.btn-outline:hover { background: var(--gold); color: #0B2240; }
-/* Ghost = Gold */
+/* Primary CTA = Vibrant Logo Sunset Orange Gradient */
+.btn-primary { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #ED6C1B 0%, #F38734 100%); color: #ffffff; padding: 13px 28px; border-radius: var(--radius-pill); font-size: 15px; font-weight: 800; border: none; cursor: pointer; transition: var(--transition); box-shadow: 0 6px 20px rgba(237, 108, 27, 0.35); }
+.btn-primary:hover { background: linear-gradient(135deg, #DE5E0E 0%, #ED6C1B 100%); color: #ffffff; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(237, 108, 27, 0.5); }
+/* Outline = Orange / Navy */
+.btn-outline { display: inline-flex; align-items: center; gap: 10px; background: transparent; color: var(--navy); padding: 12px 26px; border-radius: var(--radius-pill); font-size: 15px; font-weight: 800; border: 2px solid var(--orange); cursor: pointer; transition: var(--transition); }
+.btn-outline:hover { background: var(--orange); color: #ffffff; }
+/* Ghost = Orange */
 .btn-ghost { display: inline-flex; align-items: center; gap: 8px; color: var(--navy); font-size: 15px; font-weight: 700; transition: var(--transition); }
-.btn-ghost:hover { gap: 12px; color: var(--gold-deep); }
+.btn-ghost:hover { gap: 12px; color: var(--orange-deep); }
 .btn-ghost-dark { display: inline-flex; align-items: center; gap: 8px; color: var(--black); font-size: 14px; font-weight: 600; transition: var(--transition); }
-.btn-ghost-dark:hover { color: var(--gold-deep); gap: 12px; }
+.btn-ghost-dark:hover { color: var(--orange-deep); gap: 12px; }
 
 /* ======================================================================
    ANNOUNCEMENT BAR
@@ -109,14 +115,12 @@ button, input, select, textarea { font: inherit; }
 .navbar { background: var(--white); box-shadow: 0 1px 0 var(--border); position: sticky; top: 0; z-index: 100; }
 .navbar-inner { display: flex; align-items: center; justify-content: space-between; padding: 0; height: 72px; }
 
-/* LOGO — transparent, no BG */
+/* LOGO — transparent, clean vector-sharp */
 .nav-logo img {
-  height: 72px;
+  height: 80px;
   width: auto;
   object-fit: contain;
-  /* Remove white background from logo using mix-blend-mode */
-  mix-blend-mode: multiply;
-  filter: contrast(1.05);
+  filter: drop-shadow(0 2px 8px rgba(11, 34, 64, 0.08));
   transition: var(--transition);
 }
 .nav-logo img:hover { transform: scale(1.03); }
@@ -218,14 +222,15 @@ button, input, select, textarea { font: inherit; }
 
 .hero-btn-primary {
   display: inline-flex; align-items: center; gap: 10px;
-  background: var(--gold); color: #fff;
+  background: linear-gradient(135deg, #ED6C1B 0%, #F38734 100%); color: #fff;
   padding: 14px 28px; border-radius: 100px;
   font-size: 15px; font-weight: 700;
   transition: var(--transition); white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(237,108,27,0.35);
 }
 .hero-btn-primary:hover {
-  background: var(--gold-deep); transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(200,148,10,0.4); color: #fff;
+  background: linear-gradient(135deg, #DE5E0E 0%, #ED6C1B 100%); transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(237,108,27,0.5); color: #fff;
 }
 
 .hero-btn-outline {
@@ -715,7 +720,7 @@ button, input, select, textarea { font: inherit; }
   transition: var(--transition);
   outline: none;
 }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,148,10,0.2); }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(237, 108, 27, 0.2); }
 .form-group textarea { resize: vertical; min-height: 110px; }
 .phone-field { display: grid; grid-template-columns: 110px 1fr; gap: 10px; }
 
@@ -724,7 +729,7 @@ button, input, select, textarea { font: inherit; }
 .contact-info-box { background: var(--gold-pale); border: 1px solid var(--gold-light); border-radius: var(--radius); padding: 24px; margin-top: 24px; }
 .contact-info-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
 .contact-info-item:last-child { margin-bottom: 0; }
-.ci-icon { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #C8940A 0%, #D4AF37 100%); color: #1C1917; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ci-icon { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #ED6C1B 0%, #FF8238 100%); color: #1C1917; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .ci-text strong { display: block; font-size: 14px; font-weight: 700; }
 .ci-text span { font-size: 13px; color: var(--gray); }
 
@@ -946,11 +951,11 @@ button, input, select, textarea { font: inherit; }
    JRP IMPEX THEME DESIGN SYSTEM & UTILITY STYLES
    ====================================================================== */
 :root {
-  --jrp-green: #1b5e20;
-  --jrp-green-dark: #0b2219;
-  --jrp-green-light: #2e7d32;
+  --jrp-green: #0B2240;
+  --jrp-green-dark: #07172C;
+  --jrp-green-light: #16A34A;
   --jrp-green-pale: #f0f7f4;
-  --jrp-gold: #c8940a;
+  --jrp-gold: #ED6C1B;
   --jrp-text-dark: #121815;
   --jrp-gray: #5a6660;
   --jrp-bg-gray: #f8faf9;
@@ -1176,7 +1181,7 @@ button, input, select, textarea { font: inherit; }
 .cert-photo-card:hover {
   transform: translateY(-5px);
   border-color: var(--gold) !important;
-  box-shadow: 0 12px 28px rgba(200, 148, 10, 0.2) !important;
+  box-shadow: 0 12px 28px rgba(237, 108, 27, 0.2) !important;
 }
 .cert-photo-card:hover img {
   transform: scale(1.08);
@@ -1187,8 +1192,8 @@ button, input, select, textarea { font: inherit; }
   align-items: center;
   gap: 8px;
   background: rgba(15, 33, 71, 0.65);
-  border: 1px solid rgba(200, 148, 10, 0.6);
-  color: #ffd700;
+  border: 1px solid rgba(237, 108, 27, 0.6);
+  color: #FF8238;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 1.5px;
@@ -1211,7 +1216,7 @@ button, input, select, textarea { font: inherit; }
 }
 
 .jrp-hero-content h1 span {
-  color: #f5b719;
+  color: #ED6C1B;
   display: inline;
   text-shadow: 0 3px 12px rgba(0, 0, 0, 0.9);
 }
@@ -1494,7 +1499,7 @@ button, input, select, textarea { font: inherit; }
 
 /* Footer JRP Style */
 .jrp-footer {
-  background: #091a13;
+  background: #07172C;
   color: rgba(255,255,255,0.8);
   padding-top: 70px;
 }
@@ -1605,7 +1610,7 @@ button, input, select, textarea { font: inherit; }
   display: flex;
   align-items: center;
   gap: 14px;
-  border: 2px solid rgba(200, 148, 10, 0.4);
+  border: 2px solid rgba(237, 108, 27, 0.4);
 }
 
 .about-experience-badge .exp-num {
@@ -1750,7 +1755,7 @@ button, input, select, textarea { font: inherit; }
   border-radius: 100px;
   margin-bottom: 14px;
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 12px rgba(200, 148, 10, 0.12);
+  box-shadow: 0 4px 12px rgba(237, 108, 27, 0.12);
 }
 
 .service-card-tag {
@@ -1778,7 +1783,7 @@ button, input, select, textarea { font: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 20px rgba(200, 148, 10, 0.35);
+  box-shadow: 0 8px 20px rgba(237, 108, 27, 0.35);
   border: 3px solid #ffffff;
   transition: var(--transition);
 }
@@ -1855,8 +1860,8 @@ button, input, select, textarea { font: inherit; }
   text-transform: uppercase;
   letter-spacing: 2px;
   color: var(--gold);
-  background: rgba(200, 148, 10, 0.15);
-  border: 1px solid rgba(200, 148, 10, 0.3);
+  background: rgba(237, 108, 27, 0.15);
+  border: 1px solid rgba(237, 108, 27, 0.3);
   padding: 5px 16px;
   border-radius: 100px;
   margin-bottom: 14px;
@@ -1918,13 +1923,13 @@ button, input, select, textarea { font: inherit; }
   width: 54px;
   height: 54px;
   border-radius: 16px;
-  background: rgba(200, 148, 10, 0.18);
+  background: rgba(237, 108, 27, 0.18);
   color: var(--gold-light);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 20px;
-  border: 1px solid rgba(200, 148, 10, 0.3);
+  border: 1px solid rgba(237, 108, 27, 0.3);
 }
 
 .work-process-card h3 {
@@ -1955,7 +1960,7 @@ button, input, select, textarea { font: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(200, 148, 10, 0.4);
+  border: 1px solid rgba(237, 108, 27, 0.4);
 }
 
 /* Update Work Process background to deep dark obsidian navy */
@@ -2276,11 +2281,11 @@ button, input, select, textarea { font: inherit; }
 }
 
 .footer-social-row a:hover {
-  background: #002147;
+  background: #0B2240;
   color: #ffffff;
   border-color: #8C96A0;
   transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0, 33, 71, 0.4);
+  box-shadow: 0 4px 12px rgba(11, 34, 64, 0.4);
 }
 
 .footer-col h3 {
@@ -2596,7 +2601,7 @@ button, input, select, textarea { font: inherit; }
   backdrop-filter: blur(8px);
   padding: 8px 18px;
   border-radius: 100px;
-  border: 1px solid rgba(200, 148, 10, 0.4);
+  border: 1px solid rgba(237, 108, 27, 0.4);
   font-size: 13px;
   font-weight: 700;
   color: #ffffff;
@@ -2613,8 +2618,8 @@ button, input, select, textarea { font: inherit; }
   font-weight: 700;
   letter-spacing: 1.5px;
   color: var(--gold);
-  background: rgba(200, 148, 10, 0.18);
-  border: 1px solid rgba(200, 148, 10, 0.35);
+  background: rgba(237, 108, 27, 0.18);
+  border: 1px solid rgba(237, 108, 27, 0.35);
   padding: 5px 16px;
   border-radius: 100px;
   margin-bottom: 16px;
@@ -2769,7 +2774,7 @@ button, input, select, textarea { font: inherit; }
 .btn-silver {
   background: linear-gradient(135deg, #0B2240 0%, #133A6B 100%);
   color: #ffffff;
-  border: 1.5px solid #D4AF37;
+  border: 1.5px solid #FF8238;
   position: relative;
   overflow: hidden;
   font-weight: 700;
@@ -2778,8 +2783,8 @@ button, input, select, textarea { font: inherit; }
 }
 
 .btn-silver:hover {
-  background: linear-gradient(135deg, #C8940A 0%, #D4AF37 100%);
-  box-shadow: 0 8px 25px rgba(200, 148, 10, 0.45);
+  background: linear-gradient(135deg, #ED6C1B 0%, #FF8238 100%);
+  box-shadow: 0 8px 25px rgba(237, 108, 27, 0.45);
   transform: translateY(-2px);
   color: #0B2240;
 }
@@ -2941,13 +2946,13 @@ img, video, iframe, canvas, svg {
 
   /* Prominent Big Logo & Header Bar on Mobile */
   .jrp-header-inner {
-    height: 92px !important;
+    height: 86px !important;
   }
   .jrp-header-logo-img {
-    height: 78px !important;
-    max-height: 78px !important;
+    height: 68px !important;
+    max-height: 68px !important;
     width: auto !important;
-    filter: contrast(1.08) drop-shadow(0 2px 6px rgba(0,0,0,0.06)) !important;
+    filter: drop-shadow(0 2px 6px rgba(11, 34, 64, 0.08)) !important;
   }
 
   .container {
@@ -3195,7 +3200,7 @@ img, video, iframe, canvas, svg {
 }
 
 /* ======================================================================
-   FLOATING WHATSAPP BUTTON (+91 9328602931)
+   FLOATING WHATSAPP BUTTON (+91 98985 22905)
    ====================================================================== */
 .wa-float-container {
   position: fixed;

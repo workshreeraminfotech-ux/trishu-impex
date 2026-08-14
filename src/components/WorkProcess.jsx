@@ -63,7 +63,7 @@ export default function WorkProcess() {
                   borderRadius: '20px',
                   padding: '32px 24px',
                   border: '1.5px solid var(--border)',
-                  boxShadow: '0 10px 30px rgba(200, 148, 10, 0.06)',
+                  boxShadow: '0 10px 30px rgba(237, 108, 27, 0.06)',
                   position: 'relative',
                   display: 'flex',
                   flexDirection: 'column'
@@ -71,7 +71,7 @@ export default function WorkProcess() {
               >
                 {/* Step Badge */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #C8940A 0%, #D4AF37 100%)', color: '#1C1917', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #ED6C1B 0%, #FF8238 100%)', color: '#1C1917', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Icon size={24} />
                   </div>
                   <span style={{ fontSize: '24px', fontWeight: 900, color: 'var(--gold)', opacity: 0.9 }}>

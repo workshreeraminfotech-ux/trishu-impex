@@ -80,8 +80,8 @@ export default function MainSeedsShowcase({ onSelectProduct, onOpenQuote, onNavi
         <div style={{ textAlign: 'center', maxWidth: '780px', margin: '0 auto 36px' }}>
           
           {/* Eyebrow Badge */}
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(200, 148, 10, 0.14)', border: '1px solid rgba(200, 148, 10, 0.45)', padding: '6px 20px', borderRadius: '100px', fontSize: '13px', fontWeight: 800, color: '#A37505', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '14px', boxShadow: '0 2px 10px rgba(200, 148, 10, 0.08)' }}>
-            <Sparkles size={14} color="#C8940A" />
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(237, 108, 27, 0.14)', border: '1px solid rgba(237, 108, 27, 0.45)', padding: '6px 20px', borderRadius: '100px', fontSize: '13px', fontWeight: 800, color: '#D0550B', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '14px', boxShadow: '0 2px 10px rgba(237, 108, 27, 0.08)' }}>
+            <Sparkles size={14} color="#ED6C1B" />
             <span>OUR SIGNATURE COMMODITIES • 100% SORTEX CLEANED</span>
           </div>
 
@@ -135,7 +135,7 @@ export default function MainSeedsShowcase({ onSelectProduct, onOpenQuote, onNavi
                 background: '#FFFFFF',
                 transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
               }}
-              whileHover={{ y: -6, boxShadow: '0 16px 36px rgba(200, 148, 10, 0.2)', borderColor: 'var(--gold)' }}
+              whileHover={{ y: -6, boxShadow: '0 16px 36px rgba(237, 108, 27, 0.2)', borderColor: 'var(--gold)' }}
             >
               {/* Product Image Box */}
               <div

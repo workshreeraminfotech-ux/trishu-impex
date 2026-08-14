@@ -18,10 +18,10 @@ export default function CtaBanner({ onOpenQuote, onNavigate }) {
             <div className="cta-banner-image-wrap">
               <img
                 src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80"
-                alt="Connect with Priya Impex"
+                alt="Connect with Trishu Impex"
               />
               <div className="cta-image-floating-tag">
-                <Sparkles size={15} color="#F5C542" />
+                <Sparkles size={15} color="#ED6C1B" />
                 <span>Delivering Trust, Exporting Excellence</span>
               </div>
             </div>
@@ -33,16 +33,16 @@ export default function CtaBanner({ onOpenQuote, onNavigate }) {
               </h2>
 
               <p className="cta-banner-desc">
-                Partner with Priya Impex for premium spices, oil seeds, herbs, and agricultural produce delivered to your port with guaranteed purity and complete export compliance.
+                Partner with Trishu Impex for premium spices, oil seeds, herbs, and agricultural produce delivered to your port with guaranteed purity and complete export compliance.
               </p>
 
               <div className="cta-features-pill-row">
                 <span className="cta-pill-item">
-                  <ShieldCheck size={14} color="#F5C542" />
+                  <ShieldCheck size={14} color="#ED6C1B" />
                   <span>ISO & APEDA Certified</span>
                 </span>
                 <span className="cta-pill-item">
-                  <ShieldCheck size={14} color="#F5C542" />
+                  <ShieldCheck size={14} color="#ED6C1B" />
                   <span>Worldwide Port Dispatch</span>
                 </span>
               </div>

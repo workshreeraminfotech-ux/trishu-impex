@@ -78,8 +78,8 @@ export default function ProductsPage({ onSelectProduct, onOpenQuote }) {
               alignItems: 'center',
               gap: '8px',
               backgroundColor: 'rgba(255, 255, 255, 0.12)',
-              border: '1.5px solid #F5C542',
-              color: '#F5C542',
+              border: '1.5px solid #ED6C1B',
+              color: '#ED6C1B',
               fontSize: '12px',
               fontWeight: 800,
               textTransform: 'uppercase',
@@ -89,7 +89,7 @@ export default function ProductsPage({ onSelectProduct, onOpenQuote }) {
               marginBottom: '20px',
               backdropFilter: 'blur(6px)'
             }}>
-              <Sparkles size={14} style={{ color: '#F5C542' }} />
+              <Sparkles size={14} style={{ color: '#ED6C1B' }} />
               100% Pure Indian Commodity Exporter • {productsList.length} Products
             </span>
 
@@ -103,7 +103,7 @@ export default function ProductsPage({ onSelectProduct, onOpenQuote }) {
               color: '#FFFFFF'
             }}>
               Explore Our Complete <br />
-              <span style={{ color: '#F5C542' }}>Agro Commodity Catalogue</span>
+              <span style={{ color: '#ED6C1B' }}>Agro Commodity Catalogue</span>
             </h1>
 
             <p style={{
@@ -128,15 +128,15 @@ export default function ProductsPage({ onSelectProduct, onOpenQuote }) {
               fontWeight: 700
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255, 255, 255, 0.1)', padding: '8px 18px', borderRadius: '100px', border: '1px solid rgba(245, 197, 66, 0.3)' }}>
-                <CheckCircle2 size={16} style={{ color: '#F5C542' }} />
+                <CheckCircle2 size={16} style={{ color: '#ED6C1B' }} />
                 <span>APEDA & Spice Board Certified</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255, 255, 255, 0.1)', padding: '8px 18px', borderRadius: '100px', border: '1px solid rgba(245, 197, 66, 0.3)' }}>
-                <CheckCircle2 size={16} style={{ color: '#F5C542' }} />
+                <CheckCircle2 size={16} style={{ color: '#ED6C1B' }} />
                 <span>Custom Bulk Packaging</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255, 255, 255, 0.1)', padding: '8px 18px', borderRadius: '100px', border: '1px solid rgba(245, 197, 66, 0.3)' }}>
-                <CheckCircle2 size={16} style={{ color: '#F5C542' }} />
+                <CheckCircle2 size={16} style={{ color: '#ED6C1B' }} />
                 <span>Global Container Exports</span>
               </div>
             </div>
@@ -152,7 +152,7 @@ export default function ProductsPage({ onSelectProduct, onOpenQuote }) {
           backgroundColor: '#FFFFFF',
           borderRadius: '24px',
           padding: '24px',
-          boxShadow: '0 20px 50px rgba(200, 148, 10, 0.08)',
+          boxShadow: '0 20px 50px rgba(237, 108, 27, 0.08)',
           border: '1.5px solid var(--border)',
           marginBottom: '40px'
         }}>
@@ -235,13 +235,13 @@ export default function ProductsPage({ onSelectProduct, onOpenQuote }) {
                       fontWeight: 800,
                       cursor: 'pointer',
                       border: isActive ? '1.5px solid var(--gold)' : '1.5px solid var(--border)',
-                      background: isActive ? 'linear-gradient(135deg, #C8940A 0%, #D4AF37 100%)' : '#FFFFFF',
+                      background: isActive ? 'linear-gradient(135deg, #ED6C1B 0%, #FF8238 100%)' : '#FFFFFF',
                       color: isActive ? '#1C1917' : 'var(--navy)',
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '8px',
                       transition: 'all 0.25s ease',
-                      boxShadow: isActive ? '0 4px 14px rgba(200, 148, 10, 0.3)' : 'none'
+                      boxShadow: isActive ? '0 4px 14px rgba(237, 108, 27, 0.3)' : 'none'
                     }}
                   >
                     <span>{cat}</span>
@@ -316,13 +316,13 @@ export default function ProductsPage({ onSelectProduct, onOpenQuote }) {
                   borderRadius: '20px',
                   overflow: 'hidden',
                   border: '1.5px solid var(--border)',
-                  boxShadow: '0 8px 30px rgba(200, 148, 10, 0.06)',
+                  boxShadow: '0 8px 30px rgba(237, 108, 27, 0.06)',
                   display: 'flex',
                   flexDirection: 'column',
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
                   cursor: 'pointer'
                 }}
-                whileHover={{ y: -6, boxShadow: '0 16px 40px rgba(200, 148, 10, 0.2)', borderColor: 'var(--gold)' }}
+                whileHover={{ y: -6, boxShadow: '0 16px 40px rgba(237, 108, 27, 0.2)', borderColor: 'var(--gold)' }}
                 onClick={() => onSelectProduct ? onSelectProduct(product) : null}
               >
                 {/* Product Image — Object-Fit Contain (Uncropped) */}

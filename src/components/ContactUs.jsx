@@ -39,7 +39,7 @@ export default function ContactUs() {
           <div>
             <span className="eyebrow green" style={{ color: 'var(--silver-light)' }}>Contact Export Desk</span>
             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '38px', fontWeight: 900, color: '#fff', marginBottom: '20px', lineHeight: 1.2 }}>
-              Get In Touch With <span>Priya Impex Team</span>
+              Get In Touch With <span>Trishu Impex Team</span>
             </h2>
             <p style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.85)', marginBottom: '36px', lineHeight: 1.6 }}>
               Have inquiries regarding bulk agro prices, container availability, or private label packaging? Send us a message and our team will respond within 24 hours.
@@ -52,7 +52,7 @@ export default function ContactUs() {
                 </div>
                 <div>
                   <strong style={{ display: 'block', fontSize: 14, color: '#fff' }}>Phone / WhatsApp:</strong>
-                  <a href="tel:+919328602931" style={{ fontSize: 15, color: 'rgba(255, 255, 255, 0.85)' }}>+91 9328602931</a>
+                  <a href="tel:+919898522905" style={{ fontSize: 15, color: 'rgba(255, 255, 255, 0.85)' }}>+91 98985 22905</a>
                 </div>
               </div>
 
@@ -62,7 +62,7 @@ export default function ContactUs() {
                 </div>
                 <div>
                   <strong style={{ display: 'block', fontSize: 14, color: '#fff' }}>Email Address:</strong>
-                  <a href="mailto:priyaimpex.export@gmail.com" style={{ fontSize: 15, color: 'rgba(255, 255, 255, 0.85)' }}>priyaimpex.export@gmail.com</a>
+                  <a href="mailto:sales@trishuimpex.com" style={{ fontSize: 15, color: 'rgba(255, 255, 255, 0.85)' }}>sales@trishuimpex.com</a>
                 </div>
               </div>
 
@@ -72,7 +72,7 @@ export default function ContactUs() {
                 </div>
                 <div>
                   <strong style={{ display: 'block', fontSize: 14, color: '#fff' }}>India Head Office:</strong>
-                  <p style={{ fontSize: 14, color: 'rgba(255, 255, 255, 0.85)' }}>Office No. 420, 4th Floor, R K Prime, Near Nana Mava Circle, 150 Ft. Ring Road, Rajkot - 360004 (Gujarat) India</p>
+                  <p style={{ fontSize: 14, color: 'rgba(255, 255, 255, 0.85)' }}>Dayima Complex, Office No 1, Paliyad Road, Sayla - 363430, Gujarat, India</p>
                 </div>
               </div>
 

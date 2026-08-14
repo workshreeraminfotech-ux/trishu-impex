@@ -54,12 +54,12 @@ export default function ProductsShowcaseSection({ onSelectProduct, onOpenQuote, 
                 borderRadius: '24px', 
                 overflow: 'hidden', 
                 border: '1.5px solid var(--border)', 
-                boxShadow: '0 8px 30px rgba(200, 148, 10, 0.06)', 
+                boxShadow: '0 8px 30px rgba(237, 108, 27, 0.06)', 
                 display: 'flex', 
                 flexDirection: 'column',
                 transition: 'transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease'
               }}
-              whileHover={{ y: -6, boxShadow: '0 20px 40px rgba(200, 148, 10, 0.2)', borderColor: 'var(--gold)' }}
+              whileHover={{ y: -6, boxShadow: '0 20px 40px rgba(237, 108, 27, 0.2)', borderColor: 'var(--gold)' }}
             >
               {/* Product Image — Object-Fit Contain (Uncropped) */}
               <div 

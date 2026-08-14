@@ -1,4 +1,4 @@
-// Centralized Dynamic Data & Admin Store — Priya Impex
+// Centralized Dynamic Data & Admin Store — Trishu Impex
 // Persists Products, Blogs, and Certificates dynamically in localStorage
 
 import { PRODUCTS as INITIAL_PRODUCTS, PRODUCT_CATEGORIES } from '../data/products';
@@ -58,24 +58,24 @@ const INITIAL_CERTS = [
 
 // --- AUTHENTICATION ---
 export function isAdminLoggedIn() {
-  return sessionStorage.getItem('marvex_admin_auth') === 'true';
+  return sessionStorage.getItem('trishu_admin_auth') === 'true';
 }
 
 export function loginAdmin(username, password) {
-  if ((username === 'admin' || username === 'marvex') && (password === 'admin123' || password === 'marvex2026#')) {
-    sessionStorage.setItem('marvex_admin_auth', 'true');
+  if ((username === 'admin' || username === 'trishu') && (password === 'admin123' || password === 'trishu2026#')) {
+    sessionStorage.setItem('trishu_admin_auth', 'true');
     return { success: true };
   }
   return { success: false, message: 'Invalid Admin Username or Password' };
 }
 
 export function logoutAdmin() {
-  sessionStorage.removeItem('marvex_admin_auth');
+  sessionStorage.removeItem('trishu_admin_auth');
 }
 
 // --- PRODUCTS STORE ---
 export function getProducts() {
-  const saved = localStorage.getItem('marvex_products');
+  const saved = localStorage.getItem('trishu_products');
   if (saved) {
     try {
       return JSON.parse(saved);
@@ -87,7 +87,7 @@ export function getProducts() {
 }
 
 export function saveProducts(productsList) {
-  localStorage.setItem('marvex_products', JSON.stringify(productsList));
+  localStorage.setItem('trishu_products', JSON.stringify(productsList));
 }
 
 export function addProduct(newProd) {
@@ -117,7 +117,7 @@ export function deleteProduct(id) {
 
 // --- BLOGS STORE ---
 export function getBlogs() {
-  const saved = localStorage.getItem('marvex_blogs');
+  const saved = localStorage.getItem('trishu_blogs');
   if (saved) {
     try {
       return JSON.parse(saved);
@@ -129,7 +129,7 @@ export function getBlogs() {
 }
 
 export function saveBlogs(blogsList) {
-  localStorage.setItem('marvex_blogs', JSON.stringify(blogsList));
+  localStorage.setItem('trishu_blogs', JSON.stringify(blogsList));
 }
 
 export function addBlog(newBlog) {
@@ -160,7 +160,7 @@ export function deleteBlog(id) {
 
 // --- CERTIFICATES STORE ---
 export function getCertificates() {
-  const saved = localStorage.getItem('marvex_certs');
+  const saved = localStorage.getItem('trishu_certs');
   if (saved) {
     try {
       return JSON.parse(saved);
@@ -172,7 +172,7 @@ export function getCertificates() {
 }
 
 export function saveCertificates(certsList) {
-  localStorage.setItem('marvex_certs', JSON.stringify(certsList));
+  localStorage.setItem('trishu_certs', JSON.stringify(certsList));
 }
 
 export function addCertificate(newCert) {
@@ -233,7 +233,7 @@ const INITIAL_ENQUIRIES = [
 ];
 
 export function getEnquiries() {
-  const saved = localStorage.getItem('marvex_enquiries');
+  const saved = localStorage.getItem('trishu_enquiries');
   if (saved) {
     try {
       return JSON.parse(saved);
@@ -245,7 +245,7 @@ export function getEnquiries() {
 }
 
 export function saveEnquiries(enquiriesList) {
-  localStorage.setItem('marvex_enquiries', JSON.stringify(enquiriesList));
+  localStorage.setItem('trishu_enquiries', JSON.stringify(enquiriesList));
 }
 
 export function addEnquiry(enquiryData) {
@@ -286,14 +286,14 @@ export function deleteEnquiry(id) {
 export function exportEnquiriesCSV(typeFilter = 'all') {
   const enquiries = getEnquiries();
   let filtered = enquiries;
-  let filenamePrefix = 'Priya_Impex_Customer_Enquiries';
+  let filenamePrefix = 'Trishu_Impex_Customer_Enquiries';
 
   if (typeFilter === 'product_quote') {
     filtered = enquiries.filter(e => (e.source || '').toLowerCase().includes('product') || (e.source || '').toLowerCase().includes('quote'));
-    filenamePrefix = 'Priya_Impex_Product_Quote_Enquiries';
+    filenamePrefix = 'Trishu_Impex_Product_Quote_Enquiries';
   } else if (typeFilter === 'contact_form') {
     filtered = enquiries.filter(e => (e.source || '').toLowerCase().includes('contact'));
-    filenamePrefix = 'Priya_Impex_Contact_Us_Enquiries';
+    filenamePrefix = 'Trishu_Impex_Contact_Us_Enquiries';
   }
 
   if (!filtered || filtered.length === 0) {

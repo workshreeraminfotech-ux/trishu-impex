@@ -20,14 +20,15 @@ export default function Navbar({ activePage, onNavigate }) {
             <a href="#" onClick={(e) => { e.preventDefault(); handleNav('home'); }} style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
               <img 
                 src={logoImg} 
-                alt="Priya Impex" 
+                alt="Trishu Impex" 
                 className="jrp-header-logo-img" 
                 style={{ 
-                  height: '88px', 
+                  height: '82px', 
                   width: 'auto', 
                   objectFit: 'contain',
-                  filter: 'contrast(1.08) drop-shadow(0 2px 8px rgba(0,0,0,0.06))',
-                  display: 'block'
+                  filter: 'drop-shadow(0 2px 8px rgba(11,34,64,0.08))',
+                  display: 'block',
+                  transition: 'transform 0.2s ease'
                 }} 
               />
             </a>
@@ -101,7 +102,7 @@ export default function Navbar({ activePage, onNavigate }) {
           <div className="jrp-offcanvas-overlay" onClick={() => setMobileOpen(false)} />
           <div className="jrp-offcanvas">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '30px' }}>
-              <img src={logoImg} alt="Priya Impex" style={{ height: '68px', width: 'auto', objectFit: 'contain', filter: 'contrast(1.08)' }} />
+              <img src={logoImg} alt="Trishu Impex" style={{ height: '68px', width: 'auto', objectFit: 'contain', filter: 'contrast(1.08)' }} />
               <button onClick={() => setMobileOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--navy)' }}>
                 <X size={24} />
               </button>
@@ -122,15 +123,15 @@ export default function Navbar({ activePage, onNavigate }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px', color: 'var(--gray)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <MapPin size={16} style={{ color: 'var(--gold)' }} />
-                  <span>Rajkot, Gujarat-360004, INDIA</span>
+                  <span>Dayima Complex, Office No 1, Paliyad Road, Sayla - 363430, Gujarat, India</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <Mail size={16} style={{ color: 'var(--gold)' }} />
-                  <span>sales@priyaimpexs.com</span>
+                  <span>sales@trishuimpex.com</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <Phone size={16} style={{ color: 'var(--gold)' }} />
-                  <span>+91 9328602931</span>
+                  <span>+91 98985 22905</span>
                 </div>
               </div>
 

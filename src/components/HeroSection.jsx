@@ -33,7 +33,7 @@ export default function HeroSection() {
             </h1>
 
             <p className="jrp-hero-description">
-              Choose Priya Impex for agro products and commodities that meet the highest international standards. Delivering trust, exporting excellence.
+              Choose Trishu Impex for agro products and commodities that meet the highest international standards. Delivering trust, exporting excellence.
             </p>
 
             <ul className="jrp-hero-list">

@@ -43,13 +43,13 @@ export default function RecentBlogs({ onNavigate }) {
                 borderRadius: '20px',
                 border: '1.5px solid var(--border)',
                 overflow: 'hidden',
-                boxShadow: '0 8px 30px rgba(200, 148, 10, 0.05)',
+                boxShadow: '0 8px 30px rgba(237, 108, 27, 0.05)',
                 display: 'flex',
                 flexDirection: 'column',
                 cursor: 'pointer',
                 transition: 'transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease'
               }}
-              whileHover={{ y: -5, boxShadow: '0 16px 36px rgba(200, 148, 10, 0.2)', borderColor: 'var(--gold)' }}
+              whileHover={{ y: -5, boxShadow: '0 16px 36px rgba(237, 108, 27, 0.2)', borderColor: 'var(--gold)' }}
             >
               <div style={{
                 height: '210px',

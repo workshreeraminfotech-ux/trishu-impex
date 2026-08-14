@@ -259,11 +259,11 @@ export default function AdminPanel() {
           position: 'fixed',
           bottom: '24px',
           right: '24px',
-          backgroundColor: '#002147',
+          backgroundColor: '#0B2240',
           color: '#FFFFFF',
           padding: '14px 24px',
           borderRadius: '16px',
-          boxShadow: '0 12px 30px rgba(0, 33, 71, 0.3)',
+          boxShadow: '0 12px 30px rgba(11, 34, 64, 0.3)',
           zIndex: 2000,
           display: 'flex',
           alignItems: 'center',
@@ -277,7 +277,7 @@ export default function AdminPanel() {
       )}
 
       {/* Admin Header Navbar */}
-      <header style={{ backgroundColor: '#002147', color: '#FFFFFF', padding: '16px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+      <header style={{ backgroundColor: '#0B2240', color: '#FFFFFF', padding: '16px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#07172C', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.2)' }}>
@@ -285,7 +285,7 @@ export default function AdminPanel() {
             </div>
             <div>
               <h2 style={{ fontSize: '18px', fontWeight: 900, margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
-                Priya Impex Admin Panel
+                Trishu Impex Admin Panel
               </h2>
               <span style={{ fontSize: '12px', color: '#CBD5E1' }}>Website Control Center</span>
             </div>
@@ -337,17 +337,17 @@ export default function AdminPanel() {
 
           return (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(0,33,71,0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#002147', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#0B2240', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Package size={22} />
                 </div>
                 <div>
                   <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Products</span>
-                  <h3 style={{ fontSize: '26px', fontWeight: 900, color: '#002147', margin: 0 }}>{products.length}</h3>
+                  <h3 style={{ fontSize: '26px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{products.length}</h3>
                 </div>
               </div>
 
-              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(0,33,71,0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
                 <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#0369A1', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Inbox size={22} />
                 </div>
@@ -357,7 +357,7 @@ export default function AdminPanel() {
                 </div>
               </div>
 
-              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(0,33,71,0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
                 <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#15803D', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Mail size={22} />
                 </div>
@@ -367,23 +367,23 @@ export default function AdminPanel() {
                 </div>
               </div>
 
-              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(0,33,71,0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#002147', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#0B2240', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <FileText size={22} />
                 </div>
                 <div>
                   <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Blog Articles</span>
-                  <h3 style={{ fontSize: '26px', fontWeight: 900, color: '#002147', margin: 0 }}>{blogs.length}</h3>
+                  <h3 style={{ fontSize: '26px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{blogs.length}</h3>
                 </div>
               </div>
 
-              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(0,33,71,0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#002147', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#0B2240', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Award size={22} />
                 </div>
                 <div>
                   <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Certifications</span>
-                  <h3 style={{ fontSize: '26px', fontWeight: 900, color: '#002147', margin: 0 }}>{certs.length}</h3>
+                  <h3 style={{ fontSize: '26px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{certs.length}</h3>
                 </div>
               </div>
             </div>
@@ -402,8 +402,8 @@ export default function AdminPanel() {
                 style={{
                   padding: '12px 22px',
                   borderRadius: '100px',
-                  backgroundColor: activeTab === 'products' ? '#002147' : 'transparent',
-                  color: activeTab === 'products' ? '#FFFFFF' : '#002147',
+                  backgroundColor: activeTab === 'products' ? '#0B2240' : 'transparent',
+                  color: activeTab === 'products' ? '#FFFFFF' : '#0B2240',
                   border: activeTab === 'products' ? 'none' : '1.5px solid #CBD5E1',
                   fontWeight: 800,
                   fontSize: '14px',
@@ -423,7 +423,7 @@ export default function AdminPanel() {
                   padding: '12px 22px',
                   borderRadius: '100px',
                   backgroundColor: activeTab === 'product_enquiries' ? '#0369A1' : 'transparent',
-                  color: activeTab === 'product_enquiries' ? '#FFFFFF' : '#002147',
+                  color: activeTab === 'product_enquiries' ? '#FFFFFF' : '#0B2240',
                   border: activeTab === 'product_enquiries' ? 'none' : '1.5px solid #CBD5E1',
                   fontWeight: 800,
                   fontSize: '14px',
@@ -443,7 +443,7 @@ export default function AdminPanel() {
                   padding: '12px 22px',
                   borderRadius: '100px',
                   backgroundColor: activeTab === 'contact_enquiries' ? '#15803D' : 'transparent',
-                  color: activeTab === 'contact_enquiries' ? '#FFFFFF' : '#002147',
+                  color: activeTab === 'contact_enquiries' ? '#FFFFFF' : '#0B2240',
                   border: activeTab === 'contact_enquiries' ? 'none' : '1.5px solid #CBD5E1',
                   fontWeight: 800,
                   fontSize: '14px',
@@ -462,8 +462,8 @@ export default function AdminPanel() {
                 style={{
                   padding: '12px 22px',
                   borderRadius: '100px',
-                  backgroundColor: activeTab === 'blogs' ? '#002147' : 'transparent',
-                  color: activeTab === 'blogs' ? '#FFFFFF' : '#002147',
+                  backgroundColor: activeTab === 'blogs' ? '#0B2240' : 'transparent',
+                  color: activeTab === 'blogs' ? '#FFFFFF' : '#0B2240',
                   border: activeTab === 'blogs' ? 'none' : '1.5px solid #CBD5E1',
                   fontWeight: 800,
                   fontSize: '14px',
@@ -482,8 +482,8 @@ export default function AdminPanel() {
                 style={{
                   padding: '12px 22px',
                   borderRadius: '100px',
-                  backgroundColor: activeTab === 'certs' ? '#002147' : 'transparent',
-                  color: activeTab === 'certs' ? '#FFFFFF' : '#002147',
+                  backgroundColor: activeTab === 'certs' ? '#0B2240' : 'transparent',
+                  color: activeTab === 'certs' ? '#FFFFFF' : '#0B2240',
                   border: activeTab === 'certs' ? 'none' : '1.5px solid #CBD5E1',
                   fontWeight: 800,
                   fontSize: '14px',
@@ -526,7 +526,7 @@ export default function AdminPanel() {
 
               <button
                 onClick={openAddProduct}
-                style={{ backgroundColor: '#002147', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(0, 33, 71, 0.15)' }}
+                style={{ backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(11, 34, 64, 0.15)' }}
               >
                 <Plus size={18} />
                 <span>Add New Product</span>
@@ -534,10 +534,10 @@ export default function AdminPanel() {
             </div>
 
             {/* Products Table Grid */}
-            <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,33,71,0.04)' }}>
+            <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden', boxShadow: '0 8px 24px rgba(11, 34, 64, 0.04)' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
                 <thead>
-                  <tr style={{ backgroundColor: '#F1F5F9', borderBottom: '1.5px solid #CBD5E1', color: '#002147', fontWeight: 800 }}>
+                  <tr style={{ backgroundColor: '#F1F5F9', borderBottom: '1.5px solid #CBD5E1', color: '#0B2240', fontWeight: 800 }}>
                     <th style={{ padding: '16px 20px' }}>Product</th>
                     <th style={{ padding: '16px 20px' }}>Category</th>
                     <th style={{ padding: '16px 20px' }}>Origin</th>
@@ -551,16 +551,16 @@ export default function AdminPanel() {
                       <td style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
                         <img src={p.image} alt={p.title} style={{ width: '48px', height: '48px', objectFit: 'contain', borderRadius: '10px', backgroundColor: '#F8FAFC', padding: '4px', border: '1px solid #E2E8F0' }} />
                         <div>
-                          <strong style={{ fontSize: '15px', color: '#002147', display: 'block' }}>{p.title}</strong>
+                          <strong style={{ fontSize: '15px', color: '#0B2240', display: 'block' }}>{p.title}</strong>
                           <span style={{ fontSize: '12px', color: '#475569' }}>{p.desc ? p.desc.substring(0, 50) + '...' : ''}</span>
                         </div>
                       </td>
-                      <td style={{ padding: '16px 20px', fontWeight: 600, color: '#002147' }}>{p.category || p.cat}</td>
+                      <td style={{ padding: '16px 20px', fontWeight: 600, color: '#0B2240' }}>{p.category || p.cat}</td>
                       <td style={{ padding: '16px 20px', color: '#475569' }}>{p.origin}</td>
                       <td style={{ padding: '16px 20px', color: '#475569', fontWeight: 600 }}>{p.hsCode || '—'}</td>
                       <td style={{ padding: '16px 20px', textAlign: 'right' }}>
                         <div style={{ display: 'inline-flex', gap: '8px' }}>
-                          <button onClick={() => openEditProduct(p)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#002147', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '12.5px' }}>
+                          <button onClick={() => openEditProduct(p)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '12.5px' }}>
                             <Edit3 size={14} /> Edit
                           </button>
                           <button onClick={() => handleDeleteProduct(p.id, p.title)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '12.5px' }}>
@@ -580,10 +580,10 @@ export default function AdminPanel() {
         {activeTab === 'blogs' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-              <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#002147', margin: 0 }}>Articles Database</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0B2240', margin: 0 }}>Articles Database</h3>
               <button
                 onClick={openAddBlog}
-                style={{ backgroundColor: '#002147', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                style={{ backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
               >
                 <Plus size={18} />
                 <span>Add New Blog</span>
@@ -597,14 +597,14 @@ export default function AdminPanel() {
                     <img src={b.image} alt={b.title} style={{ width: '100%', height: '160px', objectFit: 'cover', borderRadius: '14px' }} />
                   )}
                   <div>
-                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#002147', backgroundColor: '#F1F5F9', padding: '4px 12px', borderRadius: '100px' }}>{b.cat}</span>
-                    <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#002147', margin: '10px 0 6px' }}>{b.title}</h4>
+                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#0B2240', backgroundColor: '#F1F5F9', padding: '4px 12px', borderRadius: '100px' }}>{b.cat}</span>
+                    <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0B2240', margin: '10px 0 6px' }}>{b.title}</h4>
                     <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: 1.5, margin: 0 }}>{b.excerpt}</p>
                   </div>
                   <div style={{ marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: '12px', color: '#8C96A0' }}>{b.read}</span>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <button onClick={() => openEditBlog(b)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#002147', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>Edit</button>
+                      <button onClick={() => openEditBlog(b)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>Edit</button>
                       <button onClick={() => handleDeleteBlog(b.id, b.title)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>Delete</button>
                     </div>
                   </div>
@@ -619,7 +619,7 @@ export default function AdminPanel() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
               <div>
-                <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#002147', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0B2240', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Award size={22} />
                   <span>Official Certificates & Approvals ({certs.length})</span>
                 </h3>
@@ -627,7 +627,7 @@ export default function AdminPanel() {
               </div>
               <button
                 onClick={openAddCert}
-                style={{ backgroundColor: '#002147', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(0, 33, 71, 0.15)' }}
+                style={{ backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(11, 34, 64, 0.15)' }}
               >
                 <Plus size={18} />
                 <span>Add Certificate Photo</span>
@@ -636,7 +636,7 @@ export default function AdminPanel() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
               {certs.map((c, idx) => (
-                <div key={c.id || idx} style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 4px 16px rgba(0,33,71,0.04)' }}>
+                <div key={c.id || idx} style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)' }}>
                   
                   {/* Certificate Photo Display Area (Supports Vertical & Horizontal) */}
                   <div style={{ height: '160px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F8FAFC', border: '1.5px solid #E2E8F0', borderRadius: '16px', padding: '12px', position: 'relative' }}>
@@ -648,7 +648,7 @@ export default function AdminPanel() {
                   </div>
 
                   <div>
-                    <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#002147', marginBottom: '4px' }}>{c.name}</h4>
+                    <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0B2240', marginBottom: '4px' }}>{c.name}</h4>
                     <p style={{ fontSize: '13px', color: '#475569', margin: 0 }}>{c.tag || 'Official Authorized Certificate'}</p>
                   </div>
 
@@ -669,7 +669,7 @@ export default function AdminPanel() {
                     </label>
 
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <button onClick={() => openEditCert(c)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#002147', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>Edit</button>
+                      <button onClick={() => openEditCert(c)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>Edit</button>
                       <button onClick={() => handleDeleteCert(c.id, c.name)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>Delete</button>
                     </div>
                   </div>
@@ -719,11 +719,11 @@ export default function AdminPanel() {
               {productQuotes.length === 0 ? (
                 <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', padding: '60px 20px', textAlign: 'center', border: '1.5px solid #CBD5E1' }}>
                   <Inbox size={48} style={{ color: '#CBD5E1', marginBottom: '16px' }} />
-                  <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#002147' }}>No Product Quote Enquiries Yet</h4>
+                  <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0B2240' }}>No Product Quote Enquiries Yet</h4>
                   <p style={{ color: '#475569', fontSize: '14px' }}>Product quote requests submitted by website buyers will appear here in real time.</p>
                 </div>
               ) : (
-                <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,33,71,0.04)' }}>
+                <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden', boxShadow: '0 8px 24px rgba(11, 34, 64, 0.04)' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
                     <thead>
                       <tr style={{ backgroundColor: '#F0F9FF', borderBottom: '1.5px solid #BAE6FD', color: '#0369A1', fontWeight: 800 }}>
@@ -743,16 +743,16 @@ export default function AdminPanel() {
                             {enq.date}
                           </td>
                           <td style={{ padding: '16px 20px' }}>
-                            <strong style={{ fontSize: '15px', color: '#002147', display: 'block' }}>{enq.name}</strong>
+                            <strong style={{ fontSize: '15px', color: '#0B2240', display: 'block' }}>{enq.name}</strong>
                             <span style={{ fontSize: '12.5px', color: '#475569' }}>{enq.company}</span>
                           </td>
                           <td style={{ padding: '16px 20px' }}>
                             <strong style={{ color: '#0369A1', fontSize: '14.5px', display: 'block' }}>{enq.product}</strong>
                           </td>
-                          <td style={{ padding: '16px 20px', color: '#002147', fontWeight: 700 }}>
+                          <td style={{ padding: '16px 20px', color: '#0B2240', fontWeight: 700 }}>
                             {enq.quantity}
                           </td>
-                          <td style={{ padding: '16px 20px', color: '#002147', fontWeight: 600 }}>
+                          <td style={{ padding: '16px 20px', color: '#0B2240', fontWeight: 600 }}>
                             {enq.destinationPort || 'Not specified'}
                           </td>
                           <td style={{ padding: '16px 20px' }}>
@@ -761,9 +761,9 @@ export default function AdminPanel() {
                               borderRadius: '100px',
                               fontSize: '12px',
                               fontWeight: 800,
-                              backgroundColor: enq.status === 'New' ? '#FEF3C7' : '#D1FAE5',
+                              backgroundColor: enq.status === 'New' ? '#FFF4ED' : '#D1FAE5',
                               color: enq.status === 'New' ? '#92400E' : '#065F46',
-                              border: enq.status === 'New' ? '1px solid #FCD34D' : '1px solid #6EE7B7'
+                              border: enq.status === 'New' ? '1px solid #FF8238' : '1px solid #6EE7B7'
                             }}>
                               {enq.status || 'New'}
                             </span>
@@ -773,7 +773,7 @@ export default function AdminPanel() {
                               <button onClick={() => setSelectedEnquiry(enq)} style={{ backgroundColor: '#0369A1', color: '#FFFFFF', border: 'none', padding: '6px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
                                 View Details
                               </button>
-                              <button onClick={() => handleToggleEnquiryStatus(enq.id, enq.status)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#002147', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
+                              <button onClick={() => handleToggleEnquiryStatus(enq.id, enq.status)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
                                 {enq.status === 'New' ? 'Mark Replied' : 'Mark New'}
                               </button>
                               <button onClick={() => handleDeleteEnquiry(enq.id, enq.name)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
@@ -831,11 +831,11 @@ export default function AdminPanel() {
               {contactFormEnqs.length === 0 ? (
                 <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', padding: '60px 20px', textAlign: 'center', border: '1.5px solid #CBD5E1' }}>
                   <Mail size={48} style={{ color: '#CBD5E1', marginBottom: '16px' }} />
-                  <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#002147' }}>No Contact Form Submissions Yet</h4>
+                  <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0B2240' }}>No Contact Form Submissions Yet</h4>
                   <p style={{ color: '#475569', fontSize: '14px' }}>Submissions from the Contact Us page will appear here in real time.</p>
                 </div>
               ) : (
-                <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,33,71,0.04)' }}>
+                <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden', boxShadow: '0 8px 24px rgba(11, 34, 64, 0.04)' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
                     <thead>
                       <tr style={{ backgroundColor: '#F0FDF4', borderBottom: '1.5px solid #BBF7D0', color: '#15803D', fontWeight: 800 }}>
@@ -855,11 +855,11 @@ export default function AdminPanel() {
                             {enq.date}
                           </td>
                           <td style={{ padding: '16px 20px' }}>
-                            <strong style={{ fontSize: '15px', color: '#002147', display: 'block' }}>{enq.name}</strong>
+                            <strong style={{ fontSize: '15px', color: '#0B2240', display: 'block' }}>{enq.name}</strong>
                             <span style={{ fontSize: '12.5px', color: '#475569' }}>{enq.company || 'Individual Importer'}</span>
                           </td>
                           <td style={{ padding: '16px 20px' }}>
-                            <a href={`mailto:${enq.email}`} style={{ color: '#002147', fontWeight: 700, display: 'block', textDecoration: 'none', fontSize: '13.5px' }}>{enq.email}</a>
+                            <a href={`mailto:${enq.email}`} style={{ color: '#0B2240', fontWeight: 700, display: 'block', textDecoration: 'none', fontSize: '13.5px' }}>{enq.email}</a>
                             <span style={{ fontSize: '12.5px', color: '#475569' }}>{enq.phone}</span>
                           </td>
                           <td style={{ padding: '16px 20px', color: '#15803D', fontWeight: 700 }}>
@@ -874,9 +874,9 @@ export default function AdminPanel() {
                               borderRadius: '100px',
                               fontSize: '12px',
                               fontWeight: 800,
-                              backgroundColor: enq.status === 'New' ? '#FEF3C7' : '#D1FAE5',
+                              backgroundColor: enq.status === 'New' ? '#FFF4ED' : '#D1FAE5',
                               color: enq.status === 'New' ? '#92400E' : '#065F46',
-                              border: enq.status === 'New' ? '1px solid #FCD34D' : '1px solid #6EE7B7'
+                              border: enq.status === 'New' ? '1px solid #FF8238' : '1px solid #6EE7B7'
                             }}>
                               {enq.status || 'New'}
                             </span>
@@ -886,7 +886,7 @@ export default function AdminPanel() {
                               <button onClick={() => setSelectedEnquiry(enq)} style={{ backgroundColor: '#15803D', color: '#FFFFFF', border: 'none', padding: '6px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
                                 View Details
                               </button>
-                              <button onClick={() => handleToggleEnquiryStatus(enq.id, enq.status)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#002147', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
+                              <button onClick={() => handleToggleEnquiryStatus(enq.id, enq.status)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
                                 {enq.status === 'New' ? 'Mark Replied' : 'Mark New'}
                               </button>
                               <button onClick={() => handleDeleteEnquiry(enq.id, enq.name)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
@@ -911,7 +911,7 @@ export default function AdminPanel() {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(7,23,44,0.75)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(4px)' }}>
           <div style={{ backgroundColor: '#FFFFFF', borderRadius: '28px', padding: '32px', width: '100%', maxWidth: '640px', maxHeight: '90vh', overflowY: 'auto', border: '1.5px solid #CBD5E1', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '16px' }}>
-              <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#002147', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
+              <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
                 {editingProduct ? 'Edit Product Details' : 'Add New Agro Product'}
               </h3>
               <button onClick={() => setShowProductModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}>
@@ -922,7 +922,7 @@ export default function AdminPanel() {
             <form onSubmit={handleSaveProduct} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Product Title *</label>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Product Title *</label>
                   <input
                     type="text"
                     required
@@ -933,7 +933,7 @@ export default function AdminPanel() {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Category *</label>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Category *</label>
                   <select
                     value={prodForm.category}
                     onChange={(e) => setProdForm({ ...prodForm, category: e.target.value })}
@@ -946,7 +946,7 @@ export default function AdminPanel() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Origin</label>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Origin</label>
                   <input
                     type="text"
                     placeholder="e.g. Erode & Sangli, India"
@@ -956,7 +956,7 @@ export default function AdminPanel() {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>HS Code</label>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>HS Code</label>
                   <input
                     type="text"
                     placeholder="e.g. HS 09103020"
@@ -968,7 +968,7 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Product Image (URL or Upload)</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Product Image (URL or Upload)</label>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                   <input
                     type="text"
@@ -977,7 +977,7 @@ export default function AdminPanel() {
                     onChange={(e) => setProdForm({ ...prodForm, image: e.target.value })}
                     style={{ flex: 1, padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px' }}
                   />
-                  <label style={{ backgroundColor: '#F1F5F9', border: '1.5px solid #CBD5E1', padding: '10px 16px', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '13px', color: '#002147', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <label style={{ backgroundColor: '#F1F5F9', border: '1.5px solid #CBD5E1', padding: '10px 16px', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '13px', color: '#0B2240', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                     <Upload size={15} /> Upload File
                     <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageFileChange(e, (url) => setProdForm({ ...prodForm, image: url }))} />
                   </label>
@@ -988,7 +988,7 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Specifications</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Specifications</label>
                 <input
                   type="text"
                   placeholder="e.g. Curcumin > 3.5% | Moisture < 10%"
@@ -999,7 +999,7 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Description</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Description</label>
                 <textarea
                   rows={3}
                   placeholder="Detailed product description for global export buyers..."
@@ -1011,7 +1011,7 @@ export default function AdminPanel() {
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
                 <button type="button" onClick={() => setShowProductModal(false)} style={{ padding: '12px 24px', borderRadius: '100px', border: '1.5px solid #CBD5E1', backgroundColor: 'transparent', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '12px 32px', borderRadius: '100px', backgroundColor: '#002147', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer' }}>Save Product</button>
+                <button type="submit" style={{ padding: '12px 32px', borderRadius: '100px', backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer' }}>Save Product</button>
               </div>
             </form>
           </div>
@@ -1023,7 +1023,7 @@ export default function AdminPanel() {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(7,23,44,0.75)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(4px)' }}>
           <div style={{ backgroundColor: '#FFFFFF', borderRadius: '28px', padding: '32px', width: '100%', maxWidth: '640px', maxHeight: '90vh', overflowY: 'auto', border: '1.5px solid #CBD5E1', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '16px' }}>
-              <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#002147', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
+              <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
                 {editingBlog ? 'Edit Blog Article' : 'Publish New Blog'}
               </h3>
               <button onClick={() => setShowBlogModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}>
@@ -1033,7 +1033,7 @@ export default function AdminPanel() {
 
             <form onSubmit={handleSaveBlog} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Article Title *</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Article Title *</label>
                 <input
                   type="text"
                   required
@@ -1046,7 +1046,7 @@ export default function AdminPanel() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Category</label>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Category</label>
                   <input
                     type="text"
                     placeholder="e.g. Product Guide"
@@ -1056,7 +1056,7 @@ export default function AdminPanel() {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Read Time</label>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Read Time</label>
                   <input
                     type="text"
                     placeholder="e.g. 5 min read"
@@ -1068,7 +1068,7 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Cover Image (URL or Upload)</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Cover Image (URL or Upload)</label>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                   <input
                     type="text"
@@ -1077,7 +1077,7 @@ export default function AdminPanel() {
                     onChange={(e) => setBlogForm({ ...blogForm, image: e.target.value })}
                     style={{ flex: 1, padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px' }}
                   />
-                  <label style={{ backgroundColor: '#F1F5F9', border: '1.5px solid #CBD5E1', padding: '10px 16px', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '13px', color: '#002147', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <label style={{ backgroundColor: '#F1F5F9', border: '1.5px solid #CBD5E1', padding: '10px 16px', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '13px', color: '#0B2240', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                     <Upload size={15} /> Upload
                     <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageFileChange(e, (url) => setBlogForm({ ...blogForm, image: url }))} />
                   </label>
@@ -1085,7 +1085,7 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Excerpt (Short Summary)</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Excerpt (Short Summary)</label>
                 <textarea
                   rows={2}
                   placeholder="Short brief of article for blog card preview..."
@@ -1096,7 +1096,7 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Full Article Body</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Full Article Body</label>
                 <textarea
                   rows={6}
                   placeholder="Complete article content..."
@@ -1108,7 +1108,7 @@ export default function AdminPanel() {
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
                 <button type="button" onClick={() => setShowBlogModal(false)} style={{ padding: '12px 24px', borderRadius: '100px', border: '1.5px solid #CBD5E1', backgroundColor: 'transparent', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '12px 32px', borderRadius: '100px', backgroundColor: '#002147', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer' }}>Save Article</button>
+                <button type="submit" style={{ padding: '12px 32px', borderRadius: '100px', backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer' }}>Save Article</button>
               </div>
             </form>
           </div>
@@ -1120,7 +1120,7 @@ export default function AdminPanel() {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(7,23,44,0.75)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(4px)' }}>
           <div style={{ backgroundColor: '#FFFFFF', borderRadius: '28px', padding: '32px', width: '100%', maxWidth: '540px', border: '1.5px solid #CBD5E1', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '16px' }}>
-              <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#002147', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
+              <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
                 {editingCert ? 'Edit Certificate' : 'Add New Certificate'}
               </h3>
               <button onClick={() => setShowCertModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}>
@@ -1130,7 +1130,7 @@ export default function AdminPanel() {
 
             <form onSubmit={handleSaveCert} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Certificate Name / Authority *</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Certificate Name / Authority *</label>
                 <input
                   type="text"
                   required
@@ -1142,7 +1142,7 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Short Description / Details</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Short Description / Details</label>
                 <input
                   type="text"
                   placeholder="e.g. Ministry of Commerce & Industry, Govt of India"
@@ -1153,7 +1153,7 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#002147', marginBottom: '6px' }}>Certificate Photo / Logo *</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Certificate Photo / Logo *</label>
                 
                 {/* Visual Photo Upload Dropzone */}
                 <div style={{ border: '2px dashed #CBD5E1', borderRadius: '16px', padding: '20px', textAlign: 'center', background: '#F8FAFC', position: 'relative' }}>
@@ -1162,7 +1162,7 @@ export default function AdminPanel() {
                       <div style={{ height: '90px', width: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FFFFFF', border: '1.5px solid #E2E8F0', borderRadius: '14px', padding: '8px' }}>
                         <img src={certForm.logo} alt="Preview" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
                       </div>
-                      <label style={{ backgroundColor: '#002147', color: '#FFFFFF', padding: '8px 18px', borderRadius: '100px', cursor: 'pointer', fontWeight: 700, fontSize: '12.5px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <label style={{ backgroundColor: '#0B2240', color: '#FFFFFF', padding: '8px 18px', borderRadius: '100px', cursor: 'pointer', fontWeight: 700, fontSize: '12.5px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                         <Upload size={14} /> Change Photo
                         <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageFileChange(e, (url) => setCertForm({ ...certForm, logo: url }))} />
                       </label>
@@ -1171,7 +1171,7 @@ export default function AdminPanel() {
                     <div>
                       <Upload size={32} style={{ color: '#94A3B8', marginBottom: '8px' }} />
                       <p style={{ margin: '0 0 10px', fontSize: '13.5px', color: '#475569', fontWeight: 600 }}>Upload Certificate Image (PNG, JPG, SVG, WebP)</p>
-                      <label style={{ backgroundColor: '#002147', color: '#FFFFFF', padding: '9px 22px', borderRadius: '100px', cursor: 'pointer', fontWeight: 800, fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <label style={{ backgroundColor: '#0B2240', color: '#FFFFFF', padding: '9px 22px', borderRadius: '100px', cursor: 'pointer', fontWeight: 800, fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                         <Upload size={15} /> Select Certificate Photo
                         <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageFileChange(e, (url) => setCertForm({ ...certForm, logo: url }))} />
                       </label>
@@ -1192,7 +1192,7 @@ export default function AdminPanel() {
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
                 <button type="button" onClick={() => setShowCertModal(false)} style={{ padding: '12px 24px', borderRadius: '100px', border: '1.5px solid #CBD5E1', backgroundColor: 'transparent', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '12px 32px', borderRadius: '100px', backgroundColor: '#002147', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer' }}>Save Certificate</button>
+                <button type="submit" style={{ padding: '12px 32px', borderRadius: '100px', backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer' }}>Save Certificate</button>
               </div>
             </form>
           </div>
@@ -1209,7 +1209,7 @@ export default function AdminPanel() {
                   {selectedEnquiry.source || 'Website Form'}
                 </span>
                 <span style={{ fontSize: '12px', fontWeight: 800, color: '#8C96A0' }}>{selectedEnquiry.date}</span>
-                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#002147', margin: '4px 0 0', fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
+                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: '4px 0 0', fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
                   Enquiry & Quote Details
                 </h3>
               </div>
@@ -1222,27 +1222,27 @@ export default function AdminPanel() {
               <div style={{ backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '16px', border: '1px solid #E2E8F0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
                   <span style={{ fontSize: '12px', color: '#475569', display: 'block', fontWeight: 700 }}>BUYER NAME</span>
-                  <strong style={{ fontSize: '15px', color: '#002147' }}>{selectedEnquiry.name}</strong>
+                  <strong style={{ fontSize: '15px', color: '#0B2240' }}>{selectedEnquiry.name}</strong>
                 </div>
                 <div>
                   <span style={{ fontSize: '12px', color: '#475569', display: 'block', fontWeight: 700 }}>COMPANY</span>
-                  <strong style={{ fontSize: '15px', color: '#002147' }}>{selectedEnquiry.company}</strong>
+                  <strong style={{ fontSize: '15px', color: '#0B2240' }}>{selectedEnquiry.company}</strong>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#F1F5F9', padding: '12px 16px', borderRadius: '12px' }}>
-                  <Mail size={18} style={{ color: '#002147' }} />
+                  <Mail size={18} style={{ color: '#0B2240' }} />
                   <div>
                     <span style={{ fontSize: '11px', color: '#475569', display: 'block' }}>Email Address</span>
-                    <a href={`mailto:${selectedEnquiry.email}`} style={{ color: '#002147', fontWeight: 700, textDecoration: 'none' }}>{selectedEnquiry.email}</a>
+                    <a href={`mailto:${selectedEnquiry.email}`} style={{ color: '#0B2240', fontWeight: 700, textDecoration: 'none' }}>{selectedEnquiry.email}</a>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#F1F5F9', padding: '12px 16px', borderRadius: '12px' }}>
                   <Phone size={18} style={{ color: '#25D366' }} />
                   <div>
                     <span style={{ fontSize: '11px', color: '#475569', display: 'block' }}>Phone / WhatsApp</span>
-                    <a href={`https://api.whatsapp.com/send?phone=${selectedEnquiry.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" style={{ color: '#002147', fontWeight: 700, textDecoration: 'none' }}>{selectedEnquiry.phone}</a>
+                    <a href={`https://api.whatsapp.com/send?phone=${selectedEnquiry.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" style={{ color: '#0B2240', fontWeight: 700, textDecoration: 'none' }}>{selectedEnquiry.phone}</a>
                   </div>
                 </div>
               </div>
@@ -1250,16 +1250,16 @@ export default function AdminPanel() {
               <div style={{ backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '16px', border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div>
                   <span style={{ fontSize: '12px', color: '#475569', fontWeight: 700 }}>REQUESTED PRODUCT</span>
-                  <p style={{ margin: '2px 0 0', fontWeight: 800, color: '#002147', fontSize: '16px' }}>{selectedEnquiry.product}</p>
+                  <p style={{ margin: '2px 0 0', fontWeight: 800, color: '#0B2240', fontSize: '16px' }}>{selectedEnquiry.product}</p>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '8px' }}>
                   <div>
                     <span style={{ fontSize: '12px', color: '#475569', fontWeight: 700 }}>TARGET QUANTITY</span>
-                    <p style={{ margin: 0, fontWeight: 700, color: '#002147' }}>{selectedEnquiry.quantity}</p>
+                    <p style={{ margin: 0, fontWeight: 700, color: '#0B2240' }}>{selectedEnquiry.quantity}</p>
                   </div>
                   <div>
                     <span style={{ fontSize: '12px', color: '#475569', fontWeight: 700 }}>DESTINATION PORT</span>
-                    <p style={{ margin: 0, fontWeight: 700, color: '#002147' }}>{selectedEnquiry.destinationPort || 'Not specified'}</p>
+                    <p style={{ margin: 0, fontWeight: 700, color: '#0B2240' }}>{selectedEnquiry.destinationPort || 'Not specified'}</p>
                   </div>
                 </div>
               </div>
@@ -1279,13 +1279,13 @@ export default function AdminPanel() {
                     handleToggleEnquiryStatus(selectedEnquiry.id, selectedEnquiry.status);
                     setSelectedEnquiry(prev => ({ ...prev, status: prev.status === 'New' ? 'Replied' : 'New' }));
                   }}
-                  style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', padding: '10px 18px', borderRadius: '100px', fontWeight: 700, color: '#002147', cursor: 'pointer' }}
+                  style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', padding: '10px 18px', borderRadius: '100px', fontWeight: 700, color: '#0B2240', cursor: 'pointer' }}
                 >
                   Status: {selectedEnquiry.status} (Toggle)
                 </button>
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <a
-                    href={`https://api.whatsapp.com/send?phone=${selectedEnquiry.phone.replace(/[^0-9]/g, '')}&text=Hi%20${encodeURIComponent(selectedEnquiry.name)},%20thank%20you%20for%20your%20quote%20request%20for%20${encodeURIComponent(selectedEnquiry.product)}%20at%20Priya%20Impex.`}
+                    href={`https://api.whatsapp.com/send?phone=${selectedEnquiry.phone.replace(/[^0-9]/g, '')}&text=Hi%20${encodeURIComponent(selectedEnquiry.name)},%20thank%20you%20for%20your%20quote%20request%20for%20${encodeURIComponent(selectedEnquiry.product)}%20at%20Trishu%20Impex.`}
                     target="_blank"
                     rel="noreferrer"
                     style={{ backgroundColor: '#25D366', color: '#FFFFFF', padding: '10px 20px', borderRadius: '100px', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13.5px' }}

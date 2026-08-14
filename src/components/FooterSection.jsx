@@ -13,10 +13,10 @@ export default function FooterSection({ onNavigate }) {
               className="footer-logo-wrap" 
               onClick={() => { if (onNavigate) onNavigate('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             >
-              <img src={logoImg} alt="Priya Impex" />
+              <img src={logoImg} alt="Trishu Impex" />
             </div>
             <p className="footer-bio-text">
-              Priya Impex is a premier Indian exporter of high-grade food & agricultural products. Delivering trust, exporting excellence directly to global markets.
+              Trishu Impex is a premier Indian exporter of high-grade food & agricultural products. Delivering trust, exporting excellence directly to global markets.
             </p>
             <div className="footer-social-row">
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
@@ -96,15 +96,15 @@ export default function FooterSection({ onNavigate }) {
             <div className="footer-contact-list">
               <div className="footer-contact-item">
                 <MapPin size={18} className="contact-icon" />
-                <span>Rajkot, Gujarat-360004, INDIA</span>
+                <span>Dayima Complex, Office No 1, Paliyad Road, Sayla - 363430, Gujarat, India</span>
               </div>
-              <a href="tel:+919328602931" className="footer-contact-item item-link">
+              <a href="tel:+919898522905" className="footer-contact-item item-link">
                 <Phone size={18} className="contact-icon" />
-                <span>+91 9328602931</span>
+                <span>+91 98985 22905</span>
               </a>
-              <a href="mailto:sales@priyaimpexs.com" className="footer-contact-item item-link">
+              <a href="mailto:sales@trishuimpex.com" className="footer-contact-item item-link">
                 <Mail size={18} className="contact-icon" />
-                <span>sales@priyaimpexs.com</span>
+                <span>sales@trishuimpex.com</span>
               </a>
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function FooterSection({ onNavigate }) {
 
         {/* Footer Bottom copyright bar */}
         <div className="footer-bottom-bar">
-          <p>© {new Date().getFullYear()} Priya Impex. All Rights Reserved.</p>
+          <p>© {new Date().getFullYear()} Trishu Impex. All Rights Reserved.</p>
           <div className="footer-bottom-right">
             <span>
               Developed by{' '}
@@ -120,7 +120,7 @@ export default function FooterSection({ onNavigate }) {
                 href="https://www.matrixtechx.com" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                style={{ color: '#F5C542', fontWeight: 800, textDecoration: 'none', transition: 'color 0.2s ease' }}
+                style={{ color: '#ED6C1B', fontWeight: 800, textDecoration: 'none', transition: 'color 0.2s ease' }}
                 onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
                 onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
               >
