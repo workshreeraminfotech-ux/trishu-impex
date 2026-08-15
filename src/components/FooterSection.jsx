@@ -47,7 +47,12 @@ export default function FooterSection({ onNavigate }) {
               </li>
               <li>
                 <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('products'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> Products
+                  <ChevronRight size={14} className="link-arrow" /> Spices Catalog
+                </a>
+              </li>
+              <li>
+                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('agro'); }}>
+                  <ChevronRight size={14} className="link-arrow" /> Agro Commodities
                 </a>
               </li>
               <li>
@@ -65,26 +70,36 @@ export default function FooterSection({ onNavigate }) {
 
           {/* Col 3: Product Categories */}
           <div className="footer-col">
-            <h3>Spice Categories</h3>
+            <h3>Product Categories</h3>
             <ul className="footer-links-list">
               <li>
                 <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('products'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> Ground Spices
+                  <ChevronRight size={14} className="link-arrow" /> Spices & Seasonings
                 </a>
               </li>
               <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('products'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> Whole Spices
+                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('agro'); }}>
+                  <ChevronRight size={14} className="link-arrow" /> Agro Commodities
                 </a>
               </li>
               <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('products'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> Seed Spices
+                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('sanitaryware'); }}>
+                  <ChevronRight size={14} className="link-arrow" /> Sanitaryware
                 </a>
               </li>
               <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('products'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> Blended Spices
+                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('tiles'); }}>
+                  <ChevronRight size={14} className="link-arrow" /> Tiles & Ceramics
+                </a>
+              </li>
+              <li>
+                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('hardware'); }}>
+                  <ChevronRight size={14} className="link-arrow" /> Architectural Hardware
+                </a>
+              </li>
+              <li>
+                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('pvc-pipes'); }}>
+                  <ChevronRight size={14} className="link-arrow" /> PVC & CPVC Pipes
                 </a>
               </li>
             </ul>

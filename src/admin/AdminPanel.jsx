@@ -2,38 +2,56 @@ import React, { useState, useEffect } from 'react';
 import { 
   Package, FileText, Award, LogOut, Plus, Trash2, Edit3, Search, 
   CheckCircle2, X, Upload, ShieldCheck, ExternalLink, RefreshCw,
-  Inbox, MessageSquare, Mail, Phone, Clock, Globe, AlertCircle, Download
+  Inbox, MessageSquare, Mail, Phone, Clock, Globe, AlertCircle, Download,
+  Sprout, Bath, Grid3X3, Wrench, Waves, Sparkles
 } from 'lucide-react';
 import AdminLogin from './AdminLogin';
 import { 
   isAdminLoggedIn, logoutAdmin, 
   getProducts, addProduct, updateProduct, deleteProduct,
+  getAgroProducts, addAgroProduct, updateAgroProduct, deleteAgroProduct,
+  getSanitarywareProducts, addSanitarywareProduct, updateSanitarywareProduct, deleteSanitarywareProduct,
+  getTilesProducts, addTilesProduct, updateTilesProduct, deleteTilesProduct,
+  getHardwareProducts, addHardwareProduct, updateHardwareProduct, deleteHardwareProduct,
+  getPvcPipeProducts, addPvcPipeProduct, updatePvcPipeProduct, deletePvcPipeProduct,
   getBlogs, addBlog, updateBlog, deleteBlog,
   getCertificates, addCertificate, updateCertificate, deleteCertificate,
   getEnquiries, updateEnquiryStatus, deleteEnquiry, exportEnquiriesCSV
 } from '../utils/adminStore';
+
 import { PRODUCT_CATEGORIES } from '../data/products';
+import { AGRO_CATEGORIES } from '../data/agroProducts';
+import { SANITARYWARE_CATEGORIES } from '../data/sanitarywareProducts';
+import { TILES_CATEGORIES } from '../data/tilesProducts';
+import { HARDWARE_CATEGORIES } from '../data/hardwareProducts';
+import { PVC_PIPE_CATEGORIES } from '../data/pvcPipeProducts';
 
 export default function AdminPanel() {
   const [authenticated, setAuthenticated] = useState(isAdminLoggedIn());
-  const [activeTab, setActiveTab] = useState('products'); // 'products' | 'blogs' | 'certs' | 'enquiries'
+  const [mainTab, setMainTab] = useState('catalog'); // 'catalog' | 'product_enquiries' | 'contact_enquiries' | 'blogs' | 'certs'
+  const [selectedCatalog, setSelectedCatalog] = useState('spices'); // 'spices' | 'agro' | 'sanitaryware' | 'tiles' | 'hardware' | 'pvc-pipes'
   const [toast, setToast] = useState('');
 
   // Stores
-  const [products, setProductsState] = useState(getProducts());
+  const [spicesList, setSpicesList] = useState(getProducts());
+  const [agroList, setAgroList] = useState(getAgroProducts());
+  const [sanitaryList, setSanitaryList] = useState(getSanitarywareProducts());
+  const [tilesList, setTilesList] = useState(getTilesProducts());
+  const [hardwareList, setHardwareList] = useState(getHardwareProducts());
+  const [pvcList, setPvcList] = useState(getPvcPipeProducts());
+
   const [blogs, setBlogsState] = useState(getBlogs());
   const [certs, setCertsState] = useState(getCertificates());
   const [enquiries, setEnquiriesState] = useState(getEnquiries());
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
-  const [enquiryFilter, setEnquiryFilter] = useState('all'); // 'all' | 'product_quote' | 'contact_form'
 
-  // Search & Filter State
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCat, setSelectedCat] = useState('All');
+  // Search & Filter State for Catalog
+  const [catalogSearch, setCatalogSearch] = useState('');
+  const [selectedSubCat, setSelectedSubCat] = useState('All');
 
   // Modal States
-  const [showProductModal, setShowProductModal] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [showItemModal, setShowItemModal] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
 
   const [showBlogModal, setShowBlogModal] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
@@ -42,8 +60,8 @@ export default function AdminPanel() {
   const [editingCert, setEditingCert] = useState(null);
 
   // Form States
-  const [prodForm, setProdForm] = useState({
-    title: '', category: 'Ground Spices', origin: '', packaging: '', specs: '', description: '', image: '', hsCode: '', isFeatured: false
+  const [itemForm, setItemForm] = useState({
+    title: '', category: '', origin: 'India', packaging: '', specs: '', description: '', image: '', hsCode: '', isFeatured: false
   });
 
   const [blogForm, setBlogForm] = useState({
@@ -56,27 +74,16 @@ export default function AdminPanel() {
 
   // Sync state on load
   useEffect(() => {
-    setProductsState(getProducts());
+    setSpicesList(getProducts());
+    setAgroList(getAgroProducts());
+    setSanitaryList(getSanitarywareProducts());
+    setTilesList(getTilesProducts());
+    setHardwareList(getHardwareProducts());
+    setPvcList(getPvcPipeProducts());
     setBlogsState(getBlogs());
     setCertsState(getCertificates());
     setEnquiriesState(getEnquiries());
   }, [authenticated]);
-
-  // --- ENQUIRY ACTIONS ---
-  const handleToggleEnquiryStatus = (id, currentStatus) => {
-    const newStatus = currentStatus === 'New' ? 'Replied' : 'New';
-    const updated = updateEnquiryStatus(id, newStatus);
-    setEnquiriesState(updated);
-    showNotification(`Enquiry status updated to ${newStatus}.`);
-  };
-
-  const handleDeleteEnquiry = (id, name) => {
-    if (window.confirm(`Delete enquiry from "${name}"?`)) {
-      const updated = deleteEnquiry(id);
-      setEnquiriesState(updated);
-      showNotification(`Enquiry deleted.`);
-    }
-  };
 
   const showNotification = (msg) => {
     setToast(msg);
@@ -104,52 +111,182 @@ export default function AdminPanel() {
     }
   };
 
-  // --- PRODUCT ACTIONS ---
-  const openAddProduct = () => {
-    setEditingProduct(null);
-    setProdForm({
-      title: '', category: 'Ground Spices', origin: 'India', packaging: '25kg PP Bags', specs: '', description: '', image: '', hsCode: 'HS 0910', isFeatured: false
-    });
-    setShowProductModal(true);
-  };
-
-  const openEditProduct = (prod) => {
-    setEditingProduct(prod);
-    setProdForm({
-      title: prod.title || '',
-      category: prod.category || prod.cat || 'Ground Spices',
-      origin: prod.origin || '',
-      packaging: prod.packaging || '',
-      specs: prod.specs || '',
-      description: prod.description || prod.desc || '',
-      image: prod.image || '',
-      hsCode: prod.hsCode || '',
-      isFeatured: prod.isFeatured || false
-    });
-    setShowProductModal(true);
-  };
-
-  const handleSaveProduct = (e) => {
-    e.preventDefault();
-    if (!prodForm.title.trim()) return alert('Please enter product title');
-
-    if (editingProduct) {
-      const updated = updateProduct({ ...editingProduct, ...prodForm, cat: prodForm.category, desc: prodForm.description });
-      setProductsState(updated);
-      showNotification(`Product "${prodForm.title}" updated successfully!`);
-    } else {
-      const updated = addProduct({ ...prodForm, cat: prodForm.category, desc: prodForm.description });
-      setProductsState(updated);
-      showNotification(`New Product "${prodForm.title}" added to catalogue!`);
+  // --- CATALOG CONFIGURATION MAPPING ---
+  const catalogConfigs = {
+    spices: {
+      name: 'Spices & Seasonings',
+      icon: Sparkles,
+      color: '#ED6C1B',
+      list: spicesList,
+      setList: setSpicesList,
+      categories: PRODUCT_CATEGORIES,
+      defaultCategory: 'Ground Spices',
+      defaultHs: 'HS 0910',
+      defaultPack: '25kg / 50kg PP Bags',
+      addFn: addProduct,
+      updateFn: updateProduct,
+      deleteFn: deleteProduct
+    },
+    agro: {
+      name: 'Agro Commodities',
+      icon: Sprout,
+      color: '#166534',
+      list: agroList,
+      setList: setAgroList,
+      categories: AGRO_CATEGORIES,
+      defaultCategory: 'Rice & Basmati',
+      defaultHs: 'HS 1006',
+      defaultPack: '25kg / 50kg PP Bags / Bulk FCL',
+      addFn: addAgroProduct,
+      updateFn: updateAgroProduct,
+      deleteFn: deleteAgroProduct
+    },
+    sanitaryware: {
+      name: 'Sanitaryware',
+      icon: Bath,
+      color: '#0369A1',
+      list: sanitaryList,
+      setList: setSanitaryList,
+      categories: SANITARYWARE_CATEGORIES,
+      defaultCategory: 'Water Closets & Toilets',
+      defaultHs: 'HS 69101000',
+      defaultPack: '5-Ply Export Carton / Wooden Pallets',
+      addFn: addSanitarywareProduct,
+      updateFn: updateSanitarywareProduct,
+      deleteFn: deleteSanitarywareProduct
+    },
+    tiles: {
+      name: 'Tiles & Ceramics',
+      icon: Grid3X3,
+      color: '#854D0E',
+      list: tilesList,
+      setList: setTilesList,
+      categories: TILES_CATEGORIES,
+      defaultCategory: 'GVT / PGVT Vitrified Tiles',
+      defaultHs: 'HS 69072100',
+      defaultPack: 'Export Box on Euro Pallets',
+      addFn: addTilesProduct,
+      updateFn: updateTilesProduct,
+      deleteFn: deleteTilesProduct
+    },
+    hardware: {
+      name: 'Architectural Hardware',
+      icon: Wrench,
+      color: '#475569',
+      list: hardwareList,
+      setList: setHardwareList,
+      categories: HARDWARE_CATEGORIES,
+      defaultCategory: 'Door Handles & Locks',
+      defaultHs: 'HS 83024110',
+      defaultPack: 'Box with Fixings / Master Export Carton',
+      addFn: addHardwareProduct,
+      updateFn: updateHardwareProduct,
+      deleteFn: deleteHardwareProduct
+    },
+    'pvc-pipes': {
+      name: 'PVC & CPVC Pipes',
+      icon: Waves,
+      color: '#0284C7',
+      list: pvcList,
+      setList: setPvcList,
+      categories: PVC_PIPE_CATEGORIES,
+      defaultCategory: 'UPVC Plumbing Pipes & Fittings',
+      defaultHs: 'HS 39172300',
+      defaultPack: 'Polywrap Bundles / Container Nested',
+      addFn: addPvcPipeProduct,
+      updateFn: updatePvcPipeProduct,
+      deleteFn: deletePvcPipeProduct
     }
-    setShowProductModal(false);
   };
 
-  const handleDeleteProduct = (id, title) => {
-    if (window.confirm(`Are you sure you want to delete "${title}"?`)) {
-      const updated = deleteProduct(id);
-      setProductsState(updated);
-      showNotification(`Product "${title}" removed.`);
+  const currentConfig = catalogConfigs[selectedCatalog];
+
+  // Filter items in current catalog
+  const filteredCatalogItems = currentConfig.list.filter(item => {
+    const matchesCat = selectedSubCat === 'All' || item.category === selectedSubCat || item.cat === selectedSubCat;
+    const matchesQuery = catalogSearch.trim() === '' || item.title.toLowerCase().includes(catalogSearch.toLowerCase());
+    return matchesCat && matchesQuery;
+  });
+
+  // --- CATALOG ITEM ACTIONS ---
+  const openAddItem = () => {
+    setEditingItem(null);
+    setItemForm({
+      title: '',
+      category: currentConfig.defaultCategory,
+      origin: 'India',
+      packaging: currentConfig.defaultPack,
+      specs: '',
+      description: '',
+      image: '',
+      hsCode: currentConfig.defaultHs,
+      isFeatured: false
+    });
+    setShowItemModal(true);
+  };
+
+  const openEditItem = (item) => {
+    setEditingItem(item);
+    setItemForm({
+      title: item.title || '',
+      category: item.category || item.cat || currentConfig.defaultCategory,
+      origin: item.origin || '',
+      packaging: item.packaging || '',
+      specs: item.specs || '',
+      description: item.description || item.desc || '',
+      image: item.image || '',
+      hsCode: item.hsCode || '',
+      isFeatured: item.isFeatured || false
+    });
+    setShowItemModal(true);
+  };
+
+  const handleSaveItem = (e) => {
+    e.preventDefault();
+    if (!itemForm.title.trim()) return alert('Please enter product title');
+
+    if (editingItem) {
+      const updated = currentConfig.updateFn({
+        ...editingItem,
+        ...itemForm,
+        cat: itemForm.category,
+        desc: itemForm.description
+      });
+      currentConfig.setList(updated);
+      showNotification(`"${itemForm.title}" updated in ${currentConfig.name}!`);
+    } else {
+      const updated = currentConfig.addFn({
+        ...itemForm,
+        cat: itemForm.category,
+        desc: itemForm.description
+      });
+      currentConfig.setList(updated);
+      showNotification(`New item "${itemForm.title}" added to ${currentConfig.name}!`);
+    }
+    setShowItemModal(false);
+  };
+
+  const handleDeleteItem = (id, title) => {
+    if (window.confirm(`Are you sure you want to delete "${title}" from ${currentConfig.name}?`)) {
+      const updated = currentConfig.deleteFn(id);
+      currentConfig.setList(updated);
+      showNotification(`"${title}" deleted from ${currentConfig.name}.`);
+    }
+  };
+
+  // --- ENQUIRY ACTIONS ---
+  const handleToggleEnquiryStatus = (id, currentStatus) => {
+    const newStatus = currentStatus === 'New' ? 'Replied' : 'New';
+    const updated = updateEnquiryStatus(id, newStatus);
+    setEnquiriesState(updated);
+    showNotification(`Enquiry marked as ${newStatus}.`);
+  };
+
+  const handleDeleteEnquiry = (id, name) => {
+    if (window.confirm(`Delete enquiry from "${name}"?`)) {
+      const updated = deleteEnquiry(id);
+      setEnquiriesState(updated);
+      showNotification(`Enquiry deleted.`);
     }
   };
 
@@ -157,7 +294,7 @@ export default function AdminPanel() {
   const openAddBlog = () => {
     setEditingBlog(null);
     setBlogForm({
-      title: '', cat: 'Export Guide', read: '5 min read', excerpt: '', body: '', image: ''
+      title: '', cat: 'Product Guide', read: '5 min read', excerpt: '', body: '', image: ''
     });
     setShowBlogModal(true);
   };
@@ -166,7 +303,7 @@ export default function AdminPanel() {
     setEditingBlog(blog);
     setBlogForm({
       title: blog.title || '',
-      cat: blog.cat || 'Export Guide',
+      cat: blog.cat || 'Product Guide',
       read: blog.read || '5 min read',
       excerpt: blog.excerpt || '',
       body: blog.body || '',
@@ -243,12 +380,9 @@ export default function AdminPanel() {
     }
   };
 
-  // Filtered Products
-  const filteredProducts = products.filter(p => {
-    const matchesCat = selectedCat === 'All' || p.category === selectedCat || p.cat === selectedCat;
-    const matchesQuery = searchQuery.trim() === '' || p.title.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCat && matchesQuery;
-  });
+  const totalProductsCount = spicesList.length + agroList.length + sanitaryList.length + tilesList.length + hardwareList.length + pvcList.length;
+  const productQuotesCount = enquiries.filter(e => (e.source || '').toLowerCase().includes('product') || (e.source || '').toLowerCase().includes('quote')).length;
+  const contactFormCount = enquiries.filter(e => (e.source || '').toLowerCase().includes('contact')).length;
 
   return (
     <div style={{ backgroundColor: '#F8FAFC', minHeight: '100vh', fontFamily: 'var(--font-b, Inter, sans-serif)' }}>
@@ -264,7 +398,7 @@ export default function AdminPanel() {
           padding: '14px 24px',
           borderRadius: '16px',
           boxShadow: '0 12px 30px rgba(11, 34, 64, 0.3)',
-          zIndex: 2000,
+          zIndex: 4000,
           display: 'flex',
           alignItems: 'center',
           gap: '10px',
@@ -276,7 +410,7 @@ export default function AdminPanel() {
         </div>
       )}
 
-      {/* Admin Header Navbar */}
+      {/* Admin Header */}
       <header style={{ backgroundColor: '#0B2240', color: '#FFFFFF', padding: '16px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -287,7 +421,7 @@ export default function AdminPanel() {
               <h2 style={{ fontSize: '18px', fontWeight: 900, margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
                 Trishu Impex Admin Panel
               </h2>
-              <span style={{ fontSize: '12px', color: '#CBD5E1' }}>Website Control Center</span>
+              <span style={{ fontSize: '12px', color: '#CBD5E1' }}>Complete 6-Category Export Management Suite</span>
             </div>
           </div>
 
@@ -331,209 +465,244 @@ export default function AdminPanel() {
       <div className="container" style={{ padding: '36px 24px 80px' }}>
         
         {/* Dashboard Stats Row */}
-        {(() => {
-          const productQuotesCount = enquiries.filter(e => (e.source || '').toLowerCase().includes('product') || (e.source || '').toLowerCase().includes('quote')).length;
-          const contactFormCount = enquiries.filter(e => (e.source || '').toLowerCase().includes('contact')).length;
-
-          return (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#0B2240', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Package size={22} />
-                </div>
-                <div>
-                  <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Products</span>
-                  <h3 style={{ fontSize: '26px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{products.length}</h3>
-                </div>
-              </div>
-
-              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#0369A1', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Inbox size={22} />
-                </div>
-                <div>
-                  <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Product Quotes</span>
-                  <h3 style={{ fontSize: '26px', fontWeight: 900, color: '#0369A1', margin: 0 }}>{productQuotesCount}</h3>
-                </div>
-              </div>
-
-              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#15803D', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Mail size={22} />
-                </div>
-                <div>
-                  <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Contact Form</span>
-                  <h3 style={{ fontSize: '26px', fontWeight: 900, color: '#15803D', margin: 0 }}>{contactFormCount}</h3>
-                </div>
-              </div>
-
-              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#0B2240', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <FileText size={22} />
-                </div>
-                <div>
-                  <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Blog Articles</span>
-                  <h3 style={{ fontSize: '26px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{blogs.length}</h3>
-                </div>
-              </div>
-
-              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: '#0B2240', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Award size={22} />
-                </div>
-                <div>
-                  <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Certifications</span>
-                  <h3 style={{ fontSize: '26px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{certs.length}</h3>
-                </div>
-              </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#0B2240', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Package size={20} />
             </div>
-          );
-        })()}
-
-        {/* Tab Navigation Controls */}
-        {(() => {
-          const productQuotesCount = enquiries.filter(e => (e.source || '').toLowerCase().includes('product') || (e.source || '').toLowerCase().includes('quote')).length;
-          const contactFormCount = enquiries.filter(e => (e.source || '').toLowerCase().includes('contact')).length;
-
-          return (
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '28px', borderBottom: '2px solid #E2E8F0', paddingBottom: '12px', flexWrap: 'wrap' }}>
-              <button
-                onClick={() => setActiveTab('products')}
-                style={{
-                  padding: '12px 22px',
-                  borderRadius: '100px',
-                  backgroundColor: activeTab === 'products' ? '#0B2240' : 'transparent',
-                  color: activeTab === 'products' ? '#FFFFFF' : '#0B2240',
-                  border: activeTab === 'products' ? 'none' : '1.5px solid #CBD5E1',
-                  fontWeight: 800,
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <Package size={17} />
-                <span>Manage Products ({products.length})</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('product_enquiries')}
-                style={{
-                  padding: '12px 22px',
-                  borderRadius: '100px',
-                  backgroundColor: activeTab === 'product_enquiries' ? '#0369A1' : 'transparent',
-                  color: activeTab === 'product_enquiries' ? '#FFFFFF' : '#0B2240',
-                  border: activeTab === 'product_enquiries' ? 'none' : '1.5px solid #CBD5E1',
-                  fontWeight: 800,
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <Inbox size={17} />
-                <span>📦 Product Quote Enquiries ({productQuotesCount})</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('contact_enquiries')}
-                style={{
-                  padding: '12px 22px',
-                  borderRadius: '100px',
-                  backgroundColor: activeTab === 'contact_enquiries' ? '#15803D' : 'transparent',
-                  color: activeTab === 'contact_enquiries' ? '#FFFFFF' : '#0B2240',
-                  border: activeTab === 'contact_enquiries' ? 'none' : '1.5px solid #CBD5E1',
-                  fontWeight: 800,
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <Mail size={17} />
-                <span>✉️ Contact Us Enquiries ({contactFormCount})</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('blogs')}
-                style={{
-                  padding: '12px 22px',
-                  borderRadius: '100px',
-                  backgroundColor: activeTab === 'blogs' ? '#0B2240' : 'transparent',
-                  color: activeTab === 'blogs' ? '#FFFFFF' : '#0B2240',
-                  border: activeTab === 'blogs' ? 'none' : '1.5px solid #CBD5E1',
-                  fontWeight: 800,
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <FileText size={17} />
-                <span>Manage Blogs ({blogs.length})</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('certs')}
-                style={{
-                  padding: '12px 22px',
-                  borderRadius: '100px',
-                  backgroundColor: activeTab === 'certs' ? '#0B2240' : 'transparent',
-                  color: activeTab === 'certs' ? '#FFFFFF' : '#0B2240',
-                  border: activeTab === 'certs' ? 'none' : '1.5px solid #CBD5E1',
-                  fontWeight: 800,
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <Award size={17} />
-                <span>Manage Certificates ({certs.length})</span>
-              </button>
+            <div>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Products</span>
+              <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{totalProductsCount}</h3>
             </div>
-          );
-        })()}
+          </div>
 
-        {/* TAB 1: PRODUCTS MANAGER */}
-        {activeTab === 'products' && (
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#0369A1', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Inbox size={20} />
+            </div>
+            <div>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Product Quotes</span>
+              <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#0369A1', margin: 0 }}>{productQuotesCount}</h3>
+            </div>
+          </div>
+
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#15803D', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Mail size={20} />
+            </div>
+            <div>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Contact Form</span>
+              <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#15803D', margin: 0 }}>{contactFormCount}</h3>
+            </div>
+          </div>
+
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#0B2240', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <FileText size={20} />
+            </div>
+            <div>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Blogs</span>
+              <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{blogs.length}</h3>
+            </div>
+          </div>
+
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#0B2240', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Award size={20} />
+            </div>
+            <div>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Certificates</span>
+              <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{certs.length}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Tab Controls */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '24px', borderBottom: '2px solid #E2E8F0', paddingBottom: '12px', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setMainTab('catalog')}
+            style={{
+              padding: '12px 22px',
+              borderRadius: '100px',
+              backgroundColor: mainTab === 'catalog' ? '#0B2240' : 'transparent',
+              color: mainTab === 'catalog' ? '#FFFFFF' : '#0B2240',
+              border: mainTab === 'catalog' ? 'none' : '1.5px solid #CBD5E1',
+              fontWeight: 800,
+              fontSize: '14px',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            <Package size={17} />
+            <span>📦 Manage Products & Categories ({totalProductsCount})</span>
+          </button>
+
+          <button
+            onClick={() => setMainTab('product_enquiries')}
+            style={{
+              padding: '12px 22px',
+              borderRadius: '100px',
+              backgroundColor: mainTab === 'product_enquiries' ? '#0369A1' : 'transparent',
+              color: mainTab === 'product_enquiries' ? '#FFFFFF' : '#0B2240',
+              border: mainTab === 'product_enquiries' ? 'none' : '1.5px solid #CBD5E1',
+              fontWeight: 800,
+              fontSize: '14px',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            <Inbox size={17} />
+            <span>Product Quote Enquiries ({productQuotesCount})</span>
+          </button>
+
+          <button
+            onClick={() => setMainTab('contact_enquiries')}
+            style={{
+              padding: '12px 22px',
+              borderRadius: '100px',
+              backgroundColor: mainTab === 'contact_enquiries' ? '#15803D' : 'transparent',
+              color: mainTab === 'contact_enquiries' ? '#FFFFFF' : '#0B2240',
+              border: mainTab === 'contact_enquiries' ? 'none' : '1.5px solid #CBD5E1',
+              fontWeight: 800,
+              fontSize: '14px',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            <Mail size={17} />
+            <span>Contact Us Enquiries ({contactFormCount})</span>
+          </button>
+
+          <button
+            onClick={() => setMainTab('blogs')}
+            style={{
+              padding: '12px 22px',
+              borderRadius: '100px',
+              backgroundColor: mainTab === 'blogs' ? '#0B2240' : 'transparent',
+              color: mainTab === 'blogs' ? '#FFFFFF' : '#0B2240',
+              border: mainTab === 'blogs' ? 'none' : '1.5px solid #CBD5E1',
+              fontWeight: 800,
+              fontSize: '14px',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            <FileText size={17} />
+            <span>Manage Blogs ({blogs.length})</span>
+          </button>
+
+          <button
+            onClick={() => setMainTab('certs')}
+            style={{
+              padding: '12px 22px',
+              borderRadius: '100px',
+              backgroundColor: mainTab === 'certs' ? '#0B2240' : 'transparent',
+              color: mainTab === 'certs' ? '#FFFFFF' : '#0B2240',
+              border: mainTab === 'certs' ? 'none' : '1.5px solid #CBD5E1',
+              fontWeight: 800,
+              fontSize: '14px',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            <Award size={17} />
+            <span>Manage Certificates ({certs.length})</span>
+          </button>
+        </div>
+
+        {/* TAB 1: PRODUCT CATALOG MANAGER WITH 6 CATEGORIES SWITCHER */}
+        {mainTab === 'catalog' && (
           <div>
+            {/* 6 Category Sub-Navigation Buttons */}
+            <div style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: '20px',
+              padding: '12px',
+              border: '1.5px solid #CBD5E1',
+              marginBottom: '24px',
+              display: 'flex',
+              gap: '8px',
+              flexWrap: 'wrap'
+            }}>
+              {Object.keys(catalogConfigs).map((catKey) => {
+                const cfg = catalogConfigs[catKey];
+                const IconC = cfg.icon;
+                const isSelected = selectedCatalog === catKey;
+
+                return (
+                  <button
+                    key={catKey}
+                    onClick={() => {
+                      setSelectedCatalog(catKey);
+                      setSelectedSubCat('All');
+                      setCatalogSearch('');
+                    }}
+                    style={{
+                      padding: '10px 18px',
+                      borderRadius: '12px',
+                      backgroundColor: isSelected ? '#0B2240' : '#F8FAFC',
+                      color: isSelected ? '#FFFFFF' : '#0B2240',
+                      border: isSelected ? '1px solid #0B2240' : '1px solid #E2E8F0',
+                      fontWeight: 800,
+                      fontSize: '13.5px',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      transition: 'all 0.2s ease',
+                      flex: '1 1 auto',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <IconC size={16} style={{ color: isSelected ? '#ED6C1B' : cfg.color }} />
+                    <span>{cfg.name} ({cfg.list.length})</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Catalog Controls: Search, Sub-category filter, and Add Item button */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
-              <div style={{ display: 'flex', gap: '12px', flex: 1, maxWidth: '600px' }}>
+              <div style={{ display: 'flex', gap: '12px', flex: 1, maxWidth: '640px' }}>
                 <div style={{ position: 'relative', flex: 1 }}>
                   <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#8C96A0' }} />
                   <input
                     type="text"
-                    placeholder="Search products by title..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={`Search ${currentConfig.name}...`}
+                    value={catalogSearch}
+                    onChange={(e) => setCatalogSearch(e.target.value)}
                     style={{ width: '100%', padding: '12px 16px 12px 44px', borderRadius: '100px', border: '1.5px solid #CBD5E1', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
                   />
                 </div>
                 <select
-                  value={selectedCat}
-                  onChange={(e) => setSelectedCat(e.target.value)}
+                  value={selectedSubCat}
+                  onChange={(e) => setSelectedSubCat(e.target.value)}
                   style={{ padding: '12px 20px', borderRadius: '100px', border: '1.5px solid #CBD5E1', fontSize: '14px', fontWeight: 700, outline: 'none', backgroundColor: '#FFFFFF' }}
                 >
-                  {PRODUCT_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                  {currentConfig.categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                 </select>
               </div>
 
               <button
-                onClick={openAddProduct}
+                onClick={openAddItem}
                 style={{ backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(11, 34, 64, 0.15)' }}
               >
                 <Plus size={18} />
-                <span>Add New Product</span>
+                <span>Add in {currentConfig.name}</span>
               </button>
             </div>
 
-            {/* Products Table Grid */}
+            {/* Products Table */}
             <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden', boxShadow: '0 8px 24px rgba(11, 34, 64, 0.04)' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
                 <thead>
@@ -546,38 +715,113 @@ export default function AdminPanel() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredProducts.map((p, idx) => (
-                    <tr key={p.id || idx} style={{ borderBottom: '1px solid #E2E8F0' }}>
-                      <td style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                        <img src={p.image} alt={p.title} style={{ width: '48px', height: '48px', objectFit: 'contain', borderRadius: '10px', backgroundColor: '#F8FAFC', padding: '4px', border: '1px solid #E2E8F0' }} />
-                        <div>
-                          <strong style={{ fontSize: '15px', color: '#0B2240', display: 'block' }}>{p.title}</strong>
-                          <span style={{ fontSize: '12px', color: '#475569' }}>{p.desc ? p.desc.substring(0, 50) + '...' : ''}</span>
-                        </div>
-                      </td>
-                      <td style={{ padding: '16px 20px', fontWeight: 600, color: '#0B2240' }}>{p.category || p.cat}</td>
-                      <td style={{ padding: '16px 20px', color: '#475569' }}>{p.origin}</td>
-                      <td style={{ padding: '16px 20px', color: '#475569', fontWeight: 600 }}>{p.hsCode || '—'}</td>
-                      <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                        <div style={{ display: 'inline-flex', gap: '8px' }}>
-                          <button onClick={() => openEditProduct(p)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '12.5px' }}>
-                            <Edit3 size={14} /> Edit
-                          </button>
-                          <button onClick={() => handleDeleteProduct(p.id, p.title)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '12.5px' }}>
-                            <Trash2 size={14} /> Delete
-                          </button>
-                        </div>
+                  {filteredCatalogItems.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} style={{ padding: '40px 20px', textAlign: 'center', color: '#64748B', fontWeight: 600 }}>
+                        No items found in {currentConfig.name}. Click "Add in {currentConfig.name}" to add new products.
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    filteredCatalogItems.map((p, idx) => (
+                      <tr key={p.id || idx} style={{ borderBottom: '1px solid #E2E8F0' }}>
+                        <td style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                          <img src={p.image} alt={p.title} style={{ width: '48px', height: '48px', objectFit: 'contain', borderRadius: '10px', backgroundColor: '#F8FAFC', padding: '4px', border: '1px solid #E2E8F0' }} />
+                          <div>
+                            <strong style={{ fontSize: '15px', color: '#0B2240', display: 'block' }}>{p.title}</strong>
+                            <span style={{ fontSize: '12px', color: '#475569' }}>{p.description ? p.description.substring(0, 50) + '...' : (p.desc ? p.desc.substring(0, 50) + '...' : '')}</span>
+                          </div>
+                        </td>
+                        <td style={{ padding: '16px 20px', fontWeight: 600, color: '#0B2240' }}>{p.category || p.cat}</td>
+                        <td style={{ padding: '16px 20px', color: '#475569' }}>{p.origin}</td>
+                        <td style={{ padding: '16px 20px', color: '#475569', fontWeight: 600 }}>{p.hsCode || '—'}</td>
+                        <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                          <div style={{ display: 'inline-flex', gap: '8px' }}>
+                            <button onClick={() => openEditItem(p)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '12.5px' }}>
+                              <Edit3 size={14} /> Edit
+                            </button>
+                            <button onClick={() => handleDeleteItem(p.id, p.title)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '12.5px' }}>
+                              <Trash2 size={14} /> Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
         )}
 
-        {/* TAB 2: BLOGS MANAGER */}
-        {activeTab === 'blogs' && (
+        {/* TAB 2 & 3: ENQUIRIES */}
+        {(mainTab === 'product_enquiries' || mainTab === 'contact_enquiries') && (
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+              <div>
+                <h3 style={{ fontSize: '20px', fontWeight: 900, color: '#0B2240', margin: 0 }}>
+                  {mainTab === 'product_enquiries' ? '📦 Product Quote Enquiries' : '✉️ Contact Form Inquiries'}
+                </h3>
+              </div>
+              <button
+                onClick={() => exportEnquiriesCSV(mainTab === 'product_enquiries' ? 'product_quote' : 'contact_form')}
+                style={{ backgroundColor: '#0369A1', color: '#FFFFFF', border: 'none', padding: '10px 20px', borderRadius: '100px', fontWeight: 700, fontSize: '13.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+              >
+                <Download size={16} /> Export to Excel / CSV
+              </button>
+            </div>
+
+            <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#F1F5F9', borderBottom: '1.5px solid #CBD5E1', color: '#0B2240', fontWeight: 800 }}>
+                    <th style={{ padding: '16px 20px' }}>Date</th>
+                    <th style={{ padding: '16px 20px' }}>Buyer / Company</th>
+                    <th style={{ padding: '16px 20px' }}>Product / Subject</th>
+                    <th style={{ padding: '16px 20px' }}>Destination Port</th>
+                    <th style={{ padding: '16px 20px' }}>Status</th>
+                    <th style={{ padding: '16px 20px', textAlign: 'right' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {enquiries
+                    .filter(e => mainTab === 'product_enquiries' ? ((e.source || '').toLowerCase().includes('product') || (e.source || '').toLowerCase().includes('quote')) : (e.source || '').toLowerCase().includes('contact'))
+                    .map((enq, idx) => (
+                      <tr key={enq.id || idx} style={{ borderBottom: '1px solid #E2E8F0' }}>
+                        <td style={{ padding: '16px 20px', fontSize: '13px', color: '#64748B' }}>{enq.date}</td>
+                        <td style={{ padding: '16px 20px' }}>
+                          <strong style={{ color: '#0B2240', display: 'block' }}>{enq.name}</strong>
+                          <span style={{ fontSize: '12px', color: '#64748B' }}>{enq.company || enq.email}</span>
+                        </td>
+                        <td style={{ padding: '16px 20px', fontWeight: 600, color: '#0B2240' }}>{enq.product || enq.title || 'General Enquiry'}</td>
+                        <td style={{ padding: '16px 20px', color: '#64748B' }}>{enq.destinationPort || '—'}</td>
+                        <td style={{ padding: '16px 20px' }}>
+                          <span style={{ padding: '4px 10px', borderRadius: '100px', fontSize: '12px', fontWeight: 800, backgroundColor: enq.status === 'Replied' ? '#DCFCE7' : '#FEF3C7', color: enq.status === 'Replied' ? '#166534' : '#92400E' }}>
+                            {enq.status || 'New'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                          <div style={{ display: 'inline-flex', gap: '8px' }}>
+                            <button onClick={() => setSelectedEnquiry(enq)} style={{ backgroundColor: '#15803D', color: '#FFFFFF', border: 'none', padding: '6px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
+                              Details
+                            </button>
+                            <button onClick={() => handleToggleEnquiryStatus(enq.id, enq.status)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
+                              {enq.status === 'New' ? 'Mark Replied' : 'Mark New'}
+                            </button>
+                            <button onClick={() => handleDeleteEnquiry(enq.id, enq.name)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: BLOGS MANAGER */}
+        {mainTab === 'blogs' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
               <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0B2240', margin: 0 }}>Articles Database</h3>
@@ -614,8 +858,8 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* TAB 3: CERTIFICATES MANAGER */}
-        {activeTab === 'certs' && (
+        {/* TAB 5: CERTIFICATES MANAGER */}
+        {mainTab === 'certs' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
               <div>
@@ -623,11 +867,10 @@ export default function AdminPanel() {
                   <Award size={22} />
                   <span>Official Certificates & Approvals ({certs.length})</span>
                 </h3>
-                <span style={{ fontSize: '13px', color: '#475569' }}>These certificate photos scroll automatically on the website's Trusted & Govt. Authorized section.</span>
               </div>
               <button
                 onClick={openAddCert}
-                style={{ backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(11, 34, 64, 0.15)' }}
+                style={{ backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
               >
                 <Plus size={18} />
                 <span>Add Certificate Photo</span>
@@ -637,321 +880,77 @@ export default function AdminPanel() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
               {certs.map((c, idx) => (
                 <div key={c.id || idx} style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)' }}>
-                  
-                  {/* Certificate Photo Display Area (Supports Vertical & Horizontal) */}
-                  <div style={{ height: '160px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F8FAFC', border: '1.5px solid #E2E8F0', borderRadius: '16px', padding: '12px', position: 'relative' }}>
+                  <div style={{ height: '160px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F8FAFC', border: '1.5px solid #E2E8F0', borderRadius: '16px', padding: '12px' }}>
                     {c.logo ? (
-                      <img src={c.logo} alt={c.name} style={{ maxHeight: '100%', maxWidth: '100%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
+                      <img src={c.logo} alt={c.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
                     ) : (
                       <span style={{ color: '#94A3B8', fontSize: '13px', fontWeight: 600 }}>No Certificate Photo</span>
                     )}
                   </div>
-
                   <div>
-                    <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0B2240', marginBottom: '4px' }}>{c.name}</h4>
-                    <p style={{ fontSize: '13px', color: '#475569', margin: 0 }}>{c.tag || 'Official Authorized Certificate'}</p>
+                    <h4 style={{ fontSize: '16px', fontWeight: 800, color: '#0B2240', margin: '0 0 4px' }}>{c.name}</h4>
+                    <span style={{ fontSize: '12px', color: '#64748B' }}>{c.tag}</span>
                   </div>
-
-                  <div style={{ marginTop: 'auto', paddingTop: '14px', borderTop: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
-                    {/* Quick Direct Upload Photo */}
-                    <label style={{ backgroundColor: '#F0F9FF', border: '1px solid #BAE6FD', color: '#0369A1', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                      <Upload size={14} /> Upload Photo
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        style={{ display: 'none' }} 
-                        onChange={(e) => handleImageFileChange(e, (url) => {
-                          const updated = updateCertificate({ ...c, logo: url });
-                          setCertsState(updated);
-                          showNotification(`Certificate photo for "${c.name}" updated!`);
-                        })} 
-                      />
-                    </label>
-
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button onClick={() => openEditCert(c)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>Edit</button>
-                      <button onClick={() => handleDeleteCert(c.id, c.name)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>Delete</button>
-                    </div>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
+                    <button onClick={() => openEditCert(c)} style={{ flex: 1, backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '8px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12.5px' }}>Edit</button>
+                    <button onClick={() => handleDeleteCert(c.id, c.name)} style={{ flex: 1, backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '8px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12.5px' }}>Delete</button>
                   </div>
                 </div>
               ))}
             </div>
           </div>
         )}
-
-        {/* TAB 4: PRODUCT QUOTE ENQUIRIES */}
-        {activeTab === 'product_enquiries' && (() => {
-          const productQuotes = enquiries.filter(e => (e.source || '').toLowerCase().includes('product') || (e.source || '').toLowerCase().includes('quote'));
-
-          return (
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
-                <div>
-                  <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0369A1', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Inbox size={22} />
-                    <span>📦 Product Quote Enquiries Inbox ({productQuotes.length})</span>
-                  </h3>
-                  <span style={{ fontSize: '13px', color: '#475569' }}>Specific RFQs submitted by buyers clicking "Request Export Quote" on products</span>
-                </div>
-
-                <button
-                  onClick={() => exportEnquiriesCSV('product_quote')}
-                  style={{
-                    backgroundColor: '#0369A1',
-                    color: '#FFFFFF',
-                    border: 'none',
-                    padding: '12px 24px',
-                    borderRadius: '100px',
-                    fontWeight: 800,
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    boxShadow: '0 4px 14px rgba(3, 105, 161, 0.25)'
-                  }}
-                >
-                  <Download size={18} />
-                  <span>📥 Export Product Enquiries (CSV)</span>
-                </button>
-              </div>
-
-              {productQuotes.length === 0 ? (
-                <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', padding: '60px 20px', textAlign: 'center', border: '1.5px solid #CBD5E1' }}>
-                  <Inbox size={48} style={{ color: '#CBD5E1', marginBottom: '16px' }} />
-                  <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0B2240' }}>No Product Quote Enquiries Yet</h4>
-                  <p style={{ color: '#475569', fontSize: '14px' }}>Product quote requests submitted by website buyers will appear here in real time.</p>
-                </div>
-              ) : (
-                <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden', boxShadow: '0 8px 24px rgba(11, 34, 64, 0.04)' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
-                    <thead>
-                      <tr style={{ backgroundColor: '#F0F9FF', borderBottom: '1.5px solid #BAE6FD', color: '#0369A1', fontWeight: 800 }}>
-                        <th style={{ padding: '16px 20px' }}>Date</th>
-                        <th style={{ padding: '16px 20px' }}>Buyer & Company</th>
-                        <th style={{ padding: '16px 20px' }}>Requested Commodity</th>
-                        <th style={{ padding: '16px 20px' }}>Target Quantity</th>
-                        <th style={{ padding: '16px 20px' }}>Destination Port</th>
-                        <th style={{ padding: '16px 20px' }}>Status</th>
-                        <th style={{ padding: '16px 20px', textAlign: 'right' }}>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {productQuotes.map((enq) => (
-                        <tr key={enq.id} style={{ borderBottom: '1px solid #E2E8F0', backgroundColor: enq.status === 'New' ? 'rgba(3, 105, 161, 0.03)' : '#FFFFFF' }}>
-                          <td style={{ padding: '16px 20px', fontSize: '13px', color: '#475569', fontWeight: 600 }}>
-                            {enq.date}
-                          </td>
-                          <td style={{ padding: '16px 20px' }}>
-                            <strong style={{ fontSize: '15px', color: '#0B2240', display: 'block' }}>{enq.name}</strong>
-                            <span style={{ fontSize: '12.5px', color: '#475569' }}>{enq.company}</span>
-                          </td>
-                          <td style={{ padding: '16px 20px' }}>
-                            <strong style={{ color: '#0369A1', fontSize: '14.5px', display: 'block' }}>{enq.product}</strong>
-                          </td>
-                          <td style={{ padding: '16px 20px', color: '#0B2240', fontWeight: 700 }}>
-                            {enq.quantity}
-                          </td>
-                          <td style={{ padding: '16px 20px', color: '#0B2240', fontWeight: 600 }}>
-                            {enq.destinationPort || 'Not specified'}
-                          </td>
-                          <td style={{ padding: '16px 20px' }}>
-                            <span style={{
-                              padding: '4px 12px',
-                              borderRadius: '100px',
-                              fontSize: '12px',
-                              fontWeight: 800,
-                              backgroundColor: enq.status === 'New' ? '#FFF4ED' : '#D1FAE5',
-                              color: enq.status === 'New' ? '#92400E' : '#065F46',
-                              border: enq.status === 'New' ? '1px solid #FF8238' : '1px solid #6EE7B7'
-                            }}>
-                              {enq.status || 'New'}
-                            </span>
-                          </td>
-                          <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                            <div style={{ display: 'inline-flex', gap: '8px' }}>
-                              <button onClick={() => setSelectedEnquiry(enq)} style={{ backgroundColor: '#0369A1', color: '#FFFFFF', border: 'none', padding: '6px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
-                                View Details
-                              </button>
-                              <button onClick={() => handleToggleEnquiryStatus(enq.id, enq.status)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
-                                {enq.status === 'New' ? 'Mark Replied' : 'Mark New'}
-                              </button>
-                              <button onClick={() => handleDeleteEnquiry(enq.id, enq.name)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
-                                <Trash2 size={13} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          );
-        })()}
-
-        {/* TAB 5: CONTACT US ENQUIRIES */}
-        {activeTab === 'contact_enquiries' && (() => {
-          const contactFormEnqs = enquiries.filter(e => (e.source || '').toLowerCase().includes('contact'));
-
-          return (
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
-                <div>
-                  <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#15803D', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Mail size={22} />
-                    <span>✉️ Contact Us Form Submissions Inbox ({contactFormEnqs.length})</span>
-                  </h3>
-                  <span style={{ fontSize: '13px', color: '#475569' }}>General export enquiries submitted through the website Contact Us page form</span>
-                </div>
-
-                <button
-                  onClick={() => exportEnquiriesCSV('contact_form')}
-                  style={{
-                    backgroundColor: '#15803D',
-                    color: '#FFFFFF',
-                    border: 'none',
-                    padding: '12px 24px',
-                    borderRadius: '100px',
-                    fontWeight: 800,
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    boxShadow: '0 4px 14px rgba(21, 128, 61, 0.25)'
-                  }}
-                >
-                  <Download size={18} />
-                  <span>📥 Export Contact Enquiries (CSV)</span>
-                </button>
-              </div>
-
-              {contactFormEnqs.length === 0 ? (
-                <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', padding: '60px 20px', textAlign: 'center', border: '1.5px solid #CBD5E1' }}>
-                  <Mail size={48} style={{ color: '#CBD5E1', marginBottom: '16px' }} />
-                  <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0B2240' }}>No Contact Form Submissions Yet</h4>
-                  <p style={{ color: '#475569', fontSize: '14px' }}>Submissions from the Contact Us page will appear here in real time.</p>
-                </div>
-              ) : (
-                <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden', boxShadow: '0 8px 24px rgba(11, 34, 64, 0.04)' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
-                    <thead>
-                      <tr style={{ backgroundColor: '#F0FDF4', borderBottom: '1.5px solid #BBF7D0', color: '#15803D', fontWeight: 800 }}>
-                        <th style={{ padding: '16px 20px' }}>Date</th>
-                        <th style={{ padding: '16px 20px' }}>Sender Name & Company</th>
-                        <th style={{ padding: '16px 20px' }}>Email & Phone</th>
-                        <th style={{ padding: '16px 20px' }}>Product Interest</th>
-                        <th style={{ padding: '16px 20px' }}>Message / Enquiry</th>
-                        <th style={{ padding: '16px 20px' }}>Status</th>
-                        <th style={{ padding: '16px 20px', textAlign: 'right' }}>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {contactFormEnqs.map((enq) => (
-                        <tr key={enq.id} style={{ borderBottom: '1px solid #E2E8F0', backgroundColor: enq.status === 'New' ? 'rgba(21, 128, 61, 0.03)' : '#FFFFFF' }}>
-                          <td style={{ padding: '16px 20px', fontSize: '13px', color: '#475569', fontWeight: 600 }}>
-                            {enq.date}
-                          </td>
-                          <td style={{ padding: '16px 20px' }}>
-                            <strong style={{ fontSize: '15px', color: '#0B2240', display: 'block' }}>{enq.name}</strong>
-                            <span style={{ fontSize: '12.5px', color: '#475569' }}>{enq.company || 'Individual Importer'}</span>
-                          </td>
-                          <td style={{ padding: '16px 20px' }}>
-                            <a href={`mailto:${enq.email}`} style={{ color: '#0B2240', fontWeight: 700, display: 'block', textDecoration: 'none', fontSize: '13.5px' }}>{enq.email}</a>
-                            <span style={{ fontSize: '12.5px', color: '#475569' }}>{enq.phone}</span>
-                          </td>
-                          <td style={{ padding: '16px 20px', color: '#15803D', fontWeight: 700 }}>
-                            {enq.product}
-                          </td>
-                          <td style={{ padding: '16px 20px', color: '#475569', fontSize: '13px', maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {enq.notes || enq.message || 'No message attached'}
-                          </td>
-                          <td style={{ padding: '16px 20px' }}>
-                            <span style={{
-                              padding: '4px 12px',
-                              borderRadius: '100px',
-                              fontSize: '12px',
-                              fontWeight: 800,
-                              backgroundColor: enq.status === 'New' ? '#FFF4ED' : '#D1FAE5',
-                              color: enq.status === 'New' ? '#92400E' : '#065F46',
-                              border: enq.status === 'New' ? '1px solid #FF8238' : '1px solid #6EE7B7'
-                            }}>
-                              {enq.status || 'New'}
-                            </span>
-                          </td>
-                          <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                            <div style={{ display: 'inline-flex', gap: '8px' }}>
-                              <button onClick={() => setSelectedEnquiry(enq)} style={{ backgroundColor: '#15803D', color: '#FFFFFF', border: 'none', padding: '6px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
-                                View Details
-                              </button>
-                              <button onClick={() => handleToggleEnquiryStatus(enq.id, enq.status)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
-                                {enq.status === 'New' ? 'Mark Replied' : 'Mark New'}
-                              </button>
-                              <button onClick={() => handleDeleteEnquiry(enq.id, enq.name)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
-                                <Trash2 size={13} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          );
-        })()}
-
       </div>
 
-      {/* --- MODAL 1: ADD / EDIT PRODUCT --- */}
-      {showProductModal && (
+      {/* --- UNIVERSAL MODAL: ADD / EDIT PRODUCT IN CURRENT CATEGORY --- */}
+      {showItemModal && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(7,23,44,0.75)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(4px)' }}>
           <div style={{ backgroundColor: '#FFFFFF', borderRadius: '28px', padding: '32px', width: '100%', maxWidth: '640px', maxHeight: '90vh', overflowY: 'auto', border: '1.5px solid #CBD5E1', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '16px' }}>
-              <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
-                {editingProduct ? 'Edit Product Details' : 'Add New Agro Product'}
-              </h3>
-              <button onClick={() => setShowProductModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}>
+              <div>
+                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
+                  {editingItem ? `Edit ${currentConfig.name} Item` : `Add in ${currentConfig.name}`}
+                </h3>
+                <span style={{ fontSize: '13px', color: '#64748B' }}>Category: {currentConfig.name}</span>
+              </div>
+              <button onClick={() => setShowItemModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}>
                 <X size={24} />
               </button>
             </div>
 
-            <form onSubmit={handleSaveProduct} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <form onSubmit={handleSaveItem} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Product Title *</label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Turmeric Powder"
-                    value={prodForm.title}
-                    onChange={(e) => setProdForm({ ...prodForm, title: e.target.value })}
+                    placeholder="e.g. Item Title"
+                    value={itemForm.title}
+                    onChange={(e) => setItemForm({ ...itemForm, title: e.target.value })}
                     style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Category *</label>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Sub-Category *</label>
                   <select
-                    value={prodForm.category}
-                    onChange={(e) => setProdForm({ ...prodForm, category: e.target.value })}
+                    value={itemForm.category}
+                    onChange={(e) => setItemForm({ ...itemForm, category: e.target.value })}
                     style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', backgroundColor: '#FFFFFF', boxSizing: 'border-box' }}
                   >
-                    {PRODUCT_CATEGORIES.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
+                    {currentConfig.categories.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Origin</label>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Origin / Hub</label>
                   <input
                     type="text"
-                    placeholder="e.g. Erode & Sangli, India"
-                    value={prodForm.origin}
-                    onChange={(e) => setProdForm({ ...prodForm, origin: e.target.value })}
+                    placeholder="e.g. Gujarat, India"
+                    value={itemForm.origin}
+                    onChange={(e) => setItemForm({ ...itemForm, origin: e.target.value })}
                     style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
                   />
                 </div>
@@ -959,12 +958,23 @@ export default function AdminPanel() {
                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>HS Code</label>
                   <input
                     type="text"
-                    placeholder="e.g. HS 09103020"
-                    value={prodForm.hsCode}
-                    onChange={(e) => setProdForm({ ...prodForm, hsCode: e.target.value })}
+                    placeholder="e.g. HS Code"
+                    value={itemForm.hsCode}
+                    onChange={(e) => setItemForm({ ...itemForm, hsCode: e.target.value })}
                     style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
                   />
                 </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Export Packaging</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Export Packaging details"
+                  value={itemForm.packaging}
+                  onChange={(e) => setItemForm({ ...itemForm, packaging: e.target.value })}
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
+                />
               </div>
 
               <div>
@@ -972,45 +982,45 @@ export default function AdminPanel() {
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                   <input
                     type="text"
-                    placeholder="Paste Image URL or select file below"
-                    value={prodForm.image}
-                    onChange={(e) => setProdForm({ ...prodForm, image: e.target.value })}
+                    placeholder="Paste Image URL or choose file below"
+                    value={itemForm.image}
+                    onChange={(e) => setItemForm({ ...itemForm, image: e.target.value })}
                     style={{ flex: 1, padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px' }}
                   />
                   <label style={{ backgroundColor: '#F1F5F9', border: '1.5px solid #CBD5E1', padding: '10px 16px', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '13px', color: '#0B2240', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                     <Upload size={15} /> Upload File
-                    <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageFileChange(e, (url) => setProdForm({ ...prodForm, image: url }))} />
+                    <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageFileChange(e, (url) => setItemForm({ ...itemForm, image: url }))} />
                   </label>
                 </div>
-                {prodForm.image && (
-                  <img src={prodForm.image} alt="Preview" style={{ height: '60px', marginTop: '10px', borderRadius: '10px', objectFit: 'contain', border: '1px solid #CBD5E1' }} />
+                {itemForm.image && (
+                  <img src={itemForm.image} alt="Preview" style={{ height: '60px', marginTop: '10px', borderRadius: '10px', objectFit: 'contain', border: '1px solid #CBD5E1' }} />
                 )}
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Specifications</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Specifications & Technical Parameters</label>
                 <input
                   type="text"
-                  placeholder="e.g. Curcumin > 3.5% | Moisture < 10%"
-                  value={prodForm.specs}
-                  onChange={(e) => setProdForm({ ...prodForm, specs: e.target.value })}
+                  placeholder="e.g. Dimensions, Grade, Purity, Material..."
+                  value={itemForm.specs}
+                  onChange={(e) => setItemForm({ ...itemForm, specs: e.target.value })}
                   style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Description</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Export Description</label>
                 <textarea
                   rows={3}
-                  placeholder="Detailed product description for global export buyers..."
-                  value={prodForm.description}
-                  onChange={(e) => setProdForm({ ...prodForm, description: e.target.value })}
+                  placeholder="Detailed description for global buyers and freight tenders..."
+                  value={itemForm.description}
+                  onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })}
                   style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
                 />
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
-                <button type="button" onClick={() => setShowProductModal(false)} style={{ padding: '12px 24px', borderRadius: '100px', border: '1.5px solid #CBD5E1', backgroundColor: 'transparent', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+                <button type="button" onClick={() => setShowItemModal(false)} style={{ padding: '12px 24px', borderRadius: '100px', border: '1.5px solid #CBD5E1', backgroundColor: 'transparent', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
                 <button type="submit" style={{ padding: '12px 32px', borderRadius: '100px', backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer' }}>Save Product</button>
               </div>
             </form>
@@ -1018,12 +1028,44 @@ export default function AdminPanel() {
         </div>
       )}
 
-      {/* --- MODAL 2: ADD / EDIT BLOG --- */}
+      {/* --- MODAL: ENQUIRY DETAILS MODAL --- */}
+      {selectedEnquiry && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(7,23,44,0.75)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(4px)' }}>
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '28px', padding: '32px', width: '100%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto', border: '1.5px solid #CBD5E1' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '14px' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: 900, color: '#0B2240', margin: 0 }}>Enquiry Details</h3>
+              <button onClick={() => setSelectedEnquiry(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}>
+                <X size={22} />
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px' }}>
+              <div><strong style={{ color: '#0B2240' }}>Buyer Name:</strong> {selectedEnquiry.name}</div>
+              <div><strong style={{ color: '#0B2240' }}>Company:</strong> {selectedEnquiry.company || 'N/A'}</div>
+              <div><strong style={{ color: '#0B2240' }}>Email:</strong> <a href={`mailto:${selectedEnquiry.email}`} style={{ color: '#0369A1' }}>{selectedEnquiry.email}</a></div>
+              <div><strong style={{ color: '#0B2240' }}>Phone:</strong> <a href={`tel:${selectedEnquiry.phone}`} style={{ color: '#0369A1' }}>{selectedEnquiry.phone}</a></div>
+              <div><strong style={{ color: '#0B2240' }}>Product Requested:</strong> {selectedEnquiry.product}</div>
+              <div><strong style={{ color: '#0B2240' }}>Quantity:</strong> {selectedEnquiry.quantity || 'N/A'}</div>
+              <div><strong style={{ color: '#0B2240' }}>Destination Port:</strong> {selectedEnquiry.destinationPort || 'N/A'}</div>
+              <div style={{ backgroundColor: '#F8FAFC', padding: '14px', borderRadius: '12px', border: '1px solid #E2E8F0', marginTop: '6px' }}>
+                <strong style={{ color: '#0B2240', display: 'block', marginBottom: '4px' }}>Buyer Notes / Message:</strong>
+                <p style={{ margin: 0, color: '#475569', lineHeight: 1.5 }}>{selectedEnquiry.notes || selectedEnquiry.message || 'No additional notes provided.'}</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
+              <button onClick={() => setSelectedEnquiry(null)} style={{ padding: '10px 22px', borderRadius: '100px', backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', fontWeight: 700, cursor: 'pointer' }}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- MODAL: ADD / EDIT BLOG --- */}
       {showBlogModal && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(7,23,44,0.75)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(4px)' }}>
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '28px', padding: '32px', width: '100%', maxWidth: '640px', maxHeight: '90vh', overflowY: 'auto', border: '1.5px solid #CBD5E1', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '28px', padding: '32px', width: '100%', maxWidth: '640px', maxHeight: '90vh', overflowY: 'auto', border: '1.5px solid #CBD5E1' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '16px' }}>
-              <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
+              <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0 }}>
                 {editingBlog ? 'Edit Blog Article' : 'Publish New Blog'}
               </h3>
               <button onClick={() => setShowBlogModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}>
@@ -1037,7 +1079,7 @@ export default function AdminPanel() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Sourcing High-Curcumin Indian Turmeric"
+                  placeholder="e.g. Sourcing High-Quality Indian Ceramic Tiles"
                   value={blogForm.title}
                   onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })}
                   style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
@@ -1099,7 +1141,7 @@ export default function AdminPanel() {
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Full Article Body</label>
                 <textarea
                   rows={6}
-                  placeholder="Complete article content..."
+                  placeholder="Full markdown/text content of blog article..."
                   value={blogForm.body}
                   onChange={(e) => setBlogForm({ ...blogForm, body: e.target.value })}
                   style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
@@ -1108,20 +1150,20 @@ export default function AdminPanel() {
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
                 <button type="button" onClick={() => setShowBlogModal(false)} style={{ padding: '12px 24px', borderRadius: '100px', border: '1.5px solid #CBD5E1', backgroundColor: 'transparent', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '12px 32px', borderRadius: '100px', backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer' }}>Save Article</button>
+                <button type="submit" style={{ padding: '12px 32px', borderRadius: '100px', backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer' }}>Publish Blog</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* --- MODAL 3: ADD / EDIT CERTIFICATE --- */}
+      {/* --- MODAL: ADD / EDIT CERTIFICATE --- */}
       {showCertModal && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(7,23,44,0.75)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(4px)' }}>
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '28px', padding: '32px', width: '100%', maxWidth: '540px', border: '1.5px solid #CBD5E1', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '28px', padding: '32px', width: '100%', maxWidth: '540px', maxHeight: '90vh', overflowY: 'auto', border: '1.5px solid #CBD5E1' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '16px' }}>
-              <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
-                {editingCert ? 'Edit Certificate' : 'Add New Certificate'}
+              <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0 }}>
+                {editingCert ? 'Edit Certificate' : 'Add New Certificate Photo'}
               </h3>
               <button onClick={() => setShowCertModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}>
                 <X size={24} />
@@ -1130,11 +1172,11 @@ export default function AdminPanel() {
 
             <form onSubmit={handleSaveCert} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Certificate Name / Authority *</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Certificate Name *</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. APEDA Certified Exporter, US FDA, Spices Board..."
+                  placeholder="e.g. APEDA / ISO 9001 / CE Certified"
                   value={certForm.name}
                   onChange={(e) => setCertForm({ ...certForm, name: e.target.value })}
                   style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
@@ -1142,10 +1184,10 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Short Description / Details</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Issuing Authority / Tag</label>
                 <input
                   type="text"
-                  placeholder="e.g. Ministry of Commerce & Industry, Govt of India"
+                  placeholder="e.g. Ministry of Commerce & Industry / International Compliance"
                   value={certForm.tag}
                   onChange={(e) => setCertForm({ ...certForm, tag: e.target.value })}
                   style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
@@ -1153,41 +1195,23 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Certificate Photo / Logo *</label>
-                
-                {/* Visual Photo Upload Dropzone */}
-                <div style={{ border: '2px dashed #CBD5E1', borderRadius: '16px', padding: '20px', textAlign: 'center', background: '#F8FAFC', position: 'relative' }}>
-                  {certForm.logo ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ height: '90px', width: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FFFFFF', border: '1.5px solid #E2E8F0', borderRadius: '14px', padding: '8px' }}>
-                        <img src={certForm.logo} alt="Preview" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
-                      </div>
-                      <label style={{ backgroundColor: '#0B2240', color: '#FFFFFF', padding: '8px 18px', borderRadius: '100px', cursor: 'pointer', fontWeight: 700, fontSize: '12.5px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                        <Upload size={14} /> Change Photo
-                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageFileChange(e, (url) => setCertForm({ ...certForm, logo: url }))} />
-                      </label>
-                    </div>
-                  ) : (
-                    <div>
-                      <Upload size={32} style={{ color: '#94A3B8', marginBottom: '8px' }} />
-                      <p style={{ margin: '0 0 10px', fontSize: '13.5px', color: '#475569', fontWeight: 600 }}>Upload Certificate Image (PNG, JPG, SVG, WebP)</p>
-                      <label style={{ backgroundColor: '#0B2240', color: '#FFFFFF', padding: '9px 22px', borderRadius: '100px', cursor: 'pointer', fontWeight: 800, fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                        <Upload size={15} /> Select Certificate Photo
-                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageFileChange(e, (url) => setCertForm({ ...certForm, logo: url }))} />
-                      </label>
-                    </div>
-                  )}
-                </div>
-
-                <div style={{ marginTop: '10px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Certificate Logo / Photo</label>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                   <input
                     type="text"
-                    placeholder="Or paste external image URL..."
+                    placeholder="Paste Logo URL or upload file"
                     value={certForm.logo}
                     onChange={(e) => setCertForm({ ...certForm, logo: e.target.value })}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                    style={{ flex: 1, padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px' }}
                   />
+                  <label style={{ backgroundColor: '#F1F5F9', border: '1.5px solid #CBD5E1', padding: '10px 16px', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '13px', color: '#0B2240', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <Upload size={15} /> Upload
+                    <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageFileChange(e, (url) => setCertForm({ ...certForm, logo: url }))} />
+                  </label>
                 </div>
+                {certForm.logo && (
+                  <img src={certForm.logo} alt="Preview" style={{ height: '60px', marginTop: '10px', borderRadius: '10px', objectFit: 'contain', border: '1px solid #CBD5E1' }} />
+                )}
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
@@ -1198,107 +1222,6 @@ export default function AdminPanel() {
           </div>
         </div>
       )}
-
-      {/* --- MODAL 4: VIEW ENQUIRY DETAILS --- */}
-      {selectedEnquiry && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(7,23,44,0.75)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(4px)' }}>
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '28px', padding: '32px', width: '100%', maxWidth: '600px', border: '1.5px solid #CBD5E1', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '16px' }}>
-              <div>
-                <span style={{ fontSize: '11px', fontWeight: 800, color: '#0369A1', backgroundColor: '#E0F2FE', padding: '3px 8px', borderRadius: '6px', marginRight: '8px', border: '1px solid #BAE6FD' }}>
-                  {selectedEnquiry.source || 'Website Form'}
-                </span>
-                <span style={{ fontSize: '12px', fontWeight: 800, color: '#8C96A0' }}>{selectedEnquiry.date}</span>
-                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: '4px 0 0', fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
-                  Enquiry & Quote Details
-                </h3>
-              </div>
-              <button onClick={() => setSelectedEnquiry(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}>
-                <X size={24} />
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', fontSize: '14px' }}>
-              <div style={{ backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '16px', border: '1px solid #E2E8F0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <span style={{ fontSize: '12px', color: '#475569', display: 'block', fontWeight: 700 }}>BUYER NAME</span>
-                  <strong style={{ fontSize: '15px', color: '#0B2240' }}>{selectedEnquiry.name}</strong>
-                </div>
-                <div>
-                  <span style={{ fontSize: '12px', color: '#475569', display: 'block', fontWeight: 700 }}>COMPANY</span>
-                  <strong style={{ fontSize: '15px', color: '#0B2240' }}>{selectedEnquiry.company}</strong>
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#F1F5F9', padding: '12px 16px', borderRadius: '12px' }}>
-                  <Mail size={18} style={{ color: '#0B2240' }} />
-                  <div>
-                    <span style={{ fontSize: '11px', color: '#475569', display: 'block' }}>Email Address</span>
-                    <a href={`mailto:${selectedEnquiry.email}`} style={{ color: '#0B2240', fontWeight: 700, textDecoration: 'none' }}>{selectedEnquiry.email}</a>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#F1F5F9', padding: '12px 16px', borderRadius: '12px' }}>
-                  <Phone size={18} style={{ color: '#25D366' }} />
-                  <div>
-                    <span style={{ fontSize: '11px', color: '#475569', display: 'block' }}>Phone / WhatsApp</span>
-                    <a href={`https://api.whatsapp.com/send?phone=${selectedEnquiry.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" style={{ color: '#0B2240', fontWeight: 700, textDecoration: 'none' }}>{selectedEnquiry.phone}</a>
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '16px', border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div>
-                  <span style={{ fontSize: '12px', color: '#475569', fontWeight: 700 }}>REQUESTED PRODUCT</span>
-                  <p style={{ margin: '2px 0 0', fontWeight: 800, color: '#0B2240', fontSize: '16px' }}>{selectedEnquiry.product}</p>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '8px' }}>
-                  <div>
-                    <span style={{ fontSize: '12px', color: '#475569', fontWeight: 700 }}>TARGET QUANTITY</span>
-                    <p style={{ margin: 0, fontWeight: 700, color: '#0B2240' }}>{selectedEnquiry.quantity}</p>
-                  </div>
-                  <div>
-                    <span style={{ fontSize: '12px', color: '#475569', fontWeight: 700 }}>DESTINATION PORT</span>
-                    <p style={{ margin: 0, fontWeight: 700, color: '#0B2240' }}>{selectedEnquiry.destinationPort || 'Not specified'}</p>
-                  </div>
-                </div>
-              </div>
-
-              {selectedEnquiry.notes && (
-                <div>
-                  <span style={{ fontSize: '12px', color: '#475569', fontWeight: 700, display: 'block', marginBottom: '4px' }}>BUYER NOTES / MESSAGE</span>
-                  <div style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A', padding: '14px', borderRadius: '12px', color: '#92400E', lineHeight: 1.5, fontSize: '13.5px' }}>
-                    {selectedEnquiry.notes}
-                  </div>
-                </div>
-              )}
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', paddingTop: '16px', borderTop: '1px solid #E2E8F0' }}>
-                <button
-                  onClick={() => {
-                    handleToggleEnquiryStatus(selectedEnquiry.id, selectedEnquiry.status);
-                    setSelectedEnquiry(prev => ({ ...prev, status: prev.status === 'New' ? 'Replied' : 'New' }));
-                  }}
-                  style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', padding: '10px 18px', borderRadius: '100px', fontWeight: 700, color: '#0B2240', cursor: 'pointer' }}
-                >
-                  Status: {selectedEnquiry.status} (Toggle)
-                </button>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <a
-                    href={`https://api.whatsapp.com/send?phone=${selectedEnquiry.phone.replace(/[^0-9]/g, '')}&text=Hi%20${encodeURIComponent(selectedEnquiry.name)},%20thank%20you%20for%20your%20quote%20request%20for%20${encodeURIComponent(selectedEnquiry.product)}%20at%20Trishu%20Impex.`}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ backgroundColor: '#25D366', color: '#FFFFFF', padding: '10px 20px', borderRadius: '100px', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13.5px' }}
-                  >
-                    <MessageSquare size={16} /> Reply on WhatsApp
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 }

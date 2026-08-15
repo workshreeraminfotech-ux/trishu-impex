@@ -15,6 +15,11 @@ import Preloader from './components/Preloader';
 import Home from './pages/Home';
 import AboutPage from './pages/AboutPage';
 import ProductsPage from './pages/ProductsPage';
+import AgroPage from './pages/AgroPage';
+import SanitarywarePage from './pages/SanitarywarePage';
+import TilesPage from './pages/TilesPage';
+import HardwarePage from './pages/HardwarePage';
+import PvcPipePage from './pages/PvcPipePage';
 import BlogPage from './pages/BlogPage';
 import ContactPage from './pages/ContactPage';
 
@@ -96,8 +101,38 @@ export default function App() {
             onOpenQuote={() => handleOpenQuote()} 
           />
         )}
-        {activePage === 'products' && (
+        {(activePage === 'products' || activePage === 'spices') && (
           <ProductsPage 
+            onSelectProduct={setSelectedProduct} 
+            onOpenQuote={(prod) => handleOpenQuote(prod)} 
+          />
+        )}
+        {activePage === 'agro' && (
+          <AgroPage 
+            onSelectProduct={setSelectedProduct} 
+            onOpenQuote={(prod) => handleOpenQuote(prod)} 
+          />
+        )}
+        {activePage === 'sanitaryware' && (
+          <SanitarywarePage 
+            onSelectProduct={setSelectedProduct} 
+            onOpenQuote={(prod) => handleOpenQuote(prod)} 
+          />
+        )}
+        {activePage === 'tiles' && (
+          <TilesPage 
+            onSelectProduct={setSelectedProduct} 
+            onOpenQuote={(prod) => handleOpenQuote(prod)} 
+          />
+        )}
+        {activePage === 'hardware' && (
+          <HardwarePage 
+            onSelectProduct={setSelectedProduct} 
+            onOpenQuote={(prod) => handleOpenQuote(prod)} 
+          />
+        )}
+        {activePage === 'pvc-pipes' && (
+          <PvcPipePage 
             onSelectProduct={setSelectedProduct} 
             onOpenQuote={(prod) => handleOpenQuote(prod)} 
           />

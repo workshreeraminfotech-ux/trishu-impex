@@ -2,6 +2,11 @@
 // Persists Products, Blogs, and Certificates dynamically in localStorage
 
 import { PRODUCTS as INITIAL_PRODUCTS, PRODUCT_CATEGORIES } from '../data/products';
+import { AGRO_PRODUCTS as INITIAL_AGRO_PRODUCTS, AGRO_CATEGORIES } from '../data/agroProducts';
+import { SANITARYWARE_PRODUCTS as INITIAL_SANITARYWARE_PRODUCTS, SANITARYWARE_CATEGORIES } from '../data/sanitarywareProducts';
+import { TILES_PRODUCTS as INITIAL_TILES_PRODUCTS, TILES_CATEGORIES } from '../data/tilesProducts';
+import { HARDWARE_PRODUCTS as INITIAL_HARDWARE_PRODUCTS, HARDWARE_CATEGORIES } from '../data/hardwareProducts';
+import { PVC_PIPE_PRODUCTS as INITIAL_PVC_PIPE_PRODUCTS, PVC_PIPE_CATEGORIES } from '../data/pvcPipeProducts';
 import { BLOGS as INITIAL_BLOGS } from '../data/blogs';
 
 import apedaLogo from '../assets/certificate/apeda.png';
@@ -112,6 +117,216 @@ export function deleteProduct(id) {
   const list = getProducts();
   const updated = list.filter(p => p.id !== id);
   saveProducts(updated);
+  return updated;
+}
+
+// --- AGRO COMMODITIES STORE ---
+export function getAgroProducts() {
+  const saved = localStorage.getItem('trishu_agro_products');
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.error('Failed to parse saved agro products', e);
+    }
+  }
+  return INITIAL_AGRO_PRODUCTS;
+}
+
+export function saveAgroProducts(agroList) {
+  localStorage.setItem('trishu_agro_products', JSON.stringify(agroList));
+}
+
+export function addAgroProduct(newAgro) {
+  const list = getAgroProducts();
+  const agroWithId = {
+    ...newAgro,
+    id: newAgro.id || `agro-${Date.now()}`
+  };
+  const updated = [agroWithId, ...list];
+  saveAgroProducts(updated);
+  return updated;
+}
+
+export function updateAgroProduct(updatedAgro) {
+  const list = getAgroProducts();
+  const updated = list.map(p => (p.id === updatedAgro.id ? { ...p, ...updatedAgro } : p));
+  saveAgroProducts(updated);
+  return updated;
+}
+
+export function deleteAgroProduct(id) {
+  const list = getAgroProducts();
+  const updated = list.filter(p => p.id !== id);
+  saveAgroProducts(updated);
+  return updated;
+}
+
+// --- SANITARYWARE STORE ---
+export function getSanitarywareProducts() {
+  const saved = localStorage.getItem('trishu_sanitaryware_products');
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.error('Failed to parse saved sanitaryware products', e);
+    }
+  }
+  return INITIAL_SANITARYWARE_PRODUCTS;
+}
+
+export function saveSanitarywareProducts(list) {
+  localStorage.setItem('trishu_sanitaryware_products', JSON.stringify(list));
+}
+
+export function addSanitarywareProduct(newProd) {
+  const list = getSanitarywareProducts();
+  const prodWithId = {
+    ...newProd,
+    id: newProd.id || `sanitary-${Date.now()}`
+  };
+  const updated = [prodWithId, ...list];
+  saveSanitarywareProducts(updated);
+  return updated;
+}
+
+export function updateSanitarywareProduct(updatedProd) {
+  const list = getSanitarywareProducts();
+  const updated = list.map(p => (p.id === updatedProd.id ? { ...p, ...updatedProd } : p));
+  saveSanitarywareProducts(updated);
+  return updated;
+}
+
+export function deleteSanitarywareProduct(id) {
+  const list = getSanitarywareProducts();
+  const updated = list.filter(p => p.id !== id);
+  saveSanitarywareProducts(updated);
+  return updated;
+}
+
+// --- TILES STORE ---
+export function getTilesProducts() {
+  const saved = localStorage.getItem('trishu_tiles_products');
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.error('Failed to parse saved tiles products', e);
+    }
+  }
+  return INITIAL_TILES_PRODUCTS;
+}
+
+export function saveTilesProducts(list) {
+  localStorage.setItem('trishu_tiles_products', JSON.stringify(list));
+}
+
+export function addTilesProduct(newProd) {
+  const list = getTilesProducts();
+  const prodWithId = {
+    ...newProd,
+    id: newProd.id || `tiles-${Date.now()}`
+  };
+  const updated = [prodWithId, ...list];
+  saveTilesProducts(updated);
+  return updated;
+}
+
+export function updateTilesProduct(updatedProd) {
+  const list = getTilesProducts();
+  const updated = list.map(p => (p.id === updatedProd.id ? { ...p, ...updatedProd } : p));
+  saveTilesProducts(updated);
+  return updated;
+}
+
+export function deleteTilesProduct(id) {
+  const list = getTilesProducts();
+  const updated = list.filter(p => p.id !== id);
+  saveTilesProducts(updated);
+  return updated;
+}
+
+// --- HARDWARE STORE ---
+export function getHardwareProducts() {
+  const saved = localStorage.getItem('trishu_hardware_products');
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.error('Failed to parse saved hardware products', e);
+    }
+  }
+  return INITIAL_HARDWARE_PRODUCTS;
+}
+
+export function saveHardwareProducts(list) {
+  localStorage.setItem('trishu_hardware_products', JSON.stringify(list));
+}
+
+export function addHardwareProduct(newProd) {
+  const list = getHardwareProducts();
+  const prodWithId = {
+    ...newProd,
+    id: newProd.id || `hard-${Date.now()}`
+  };
+  const updated = [prodWithId, ...list];
+  saveHardwareProducts(updated);
+  return updated;
+}
+
+export function updateHardwareProduct(updatedProd) {
+  const list = getHardwareProducts();
+  const updated = list.map(p => (p.id === updatedProd.id ? { ...p, ...updatedProd } : p));
+  saveHardwareProducts(updated);
+  return updated;
+}
+
+export function deleteHardwareProduct(id) {
+  const list = getHardwareProducts();
+  const updated = list.filter(p => p.id !== id);
+  saveHardwareProducts(updated);
+  return updated;
+}
+
+// --- PVC PIPE STORE ---
+export function getPvcPipeProducts() {
+  const saved = localStorage.getItem('trishu_pvcpipe_products');
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.error('Failed to parse saved pvc pipe products', e);
+    }
+  }
+  return INITIAL_PVC_PIPE_PRODUCTS;
+}
+
+export function savePvcPipeProducts(list) {
+  localStorage.setItem('trishu_pvcpipe_products', JSON.stringify(list));
+}
+
+export function addPvcPipeProduct(newProd) {
+  const list = getPvcPipeProducts();
+  const prodWithId = {
+    ...newProd,
+    id: newProd.id || `pvc-${Date.now()}`
+  };
+  const updated = [prodWithId, ...list];
+  savePvcPipeProducts(updated);
+  return updated;
+}
+
+export function updatePvcPipeProduct(updatedProd) {
+  const list = getPvcPipeProducts();
+  const updated = list.map(p => (p.id === updatedProd.id ? { ...p, ...updatedProd } : p));
+  savePvcPipeProducts(updated);
+  return updated;
+}
+
+export function deletePvcPipeProduct(id) {
+  const list = getPvcPipeProducts();
+  const updated = list.filter(p => p.id !== id);
+  savePvcPipeProducts(updated);
   return updated;
 }
 
