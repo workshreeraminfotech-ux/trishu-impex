@@ -106,17 +106,15 @@ function getInitialList(lsKey, fallback) {
 const INITIAL_PRODUCTS_MAP = new Map(INITIAL_PRODUCTS.map(p => [p.id, p]));
 const INITIAL_CERTS_MAP = new Map(INITIAL_CERTS.map(c => [c.id, c]));
 
-// Resilient Image Normalizer
+// Resilient Image Normalizer — ALWAYS preserves custom user-uploaded/edited images
 function sanitizeProductList(list) {
   if (!Array.isArray(list) || list.length === 0) return INITIAL_PRODUCTS;
   return list.map(item => {
     const defaultItem = INITIAL_PRODUCTS_MAP.get(item.id);
-    let img = item.image || (defaultItem ? defaultItem.image : '');
-    // If image is a broken or stale local dev/vite URL, restore bundled asset
-    if (defaultItem && defaultItem.image) {
-      if (!img || (typeof img === 'string' && (img.startsWith('/@fs') || img.includes('localhost:') || img.startsWith('blob:')))) {
-        img = defaultItem.image;
-      }
+    let img = item.image;
+    // Only fall back if the user has NOT provided an image, or if it is an invalid dev server path
+    if (!img || (typeof img === 'string' && img.startsWith('/@fs'))) {
+      img = defaultItem ? defaultItem.image : '';
     }
     return {
       ...item,
@@ -129,11 +127,9 @@ function sanitizeCertList(list) {
   if (!Array.isArray(list) || list.length === 0) return INITIAL_CERTS;
   return list.map(item => {
     const defaultItem = INITIAL_CERTS_MAP.get(item.id);
-    let logo = item.logo || (defaultItem ? defaultItem.logo : '');
-    if (defaultItem && defaultItem.logo) {
-      if (!logo || (typeof logo === 'string' && (logo.startsWith('/@fs') || logo.includes('localhost:') || logo.startsWith('blob:')))) {
-        logo = defaultItem.logo;
-      }
+    let logo = item.logo;
+    if (!logo || (typeof logo === 'string' && logo.startsWith('/@fs'))) {
+      logo = defaultItem ? defaultItem.logo : '';
     }
     return {
       ...item,
