@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import AdminLogin from './AdminLogin';
 import { 
-  isAdminLoggedIn, logoutAdmin, compressImageFile,
+  isAdminLoggedIn, logoutAdmin, compressImageFile, resetAllCustomData,
   getProducts, addProduct, updateProduct, deleteProduct,
   getAgroProducts, addAgroProduct, updateAgroProduct, deleteAgroProduct,
   getSanitarywareProducts, addSanitarywareProduct, updateSanitarywareProduct, deleteSanitarywareProduct,
@@ -72,17 +72,30 @@ export default function AdminPanel() {
     name: '', code: '', tag: '', logo: ''
   });
 
-  // Sync state on load
+  // Sync state helper
+  const syncStateFromStore = () => {
+    setSpicesList([...getProducts()]);
+    setAgroList([...getAgroProducts()]);
+    setSanitaryList([...getSanitarywareProducts()]);
+    setTilesList([...getTilesProducts()]);
+    setHardwareList([...getHardwareProducts()]);
+    setPvcList([...getPvcPipeProducts()]);
+    setBlogsState([...getBlogs()]);
+    setCertsState([...getCertificates()]);
+    setEnquiriesState([...getEnquiries()]);
+  };
+
+  // Sync state on load and on IndexedDB bootstrap sync
   useEffect(() => {
-    setSpicesList(getProducts());
-    setAgroList(getAgroProducts());
-    setSanitaryList(getSanitarywareProducts());
-    setTilesList(getTilesProducts());
-    setHardwareList(getHardwareProducts());
-    setPvcList(getPvcPipeProducts());
-    setBlogsState(getBlogs());
-    setCertsState(getCertificates());
-    setEnquiriesState(getEnquiries());
+    syncStateFromStore();
+
+    const handleSync = () => syncStateFromStore();
+    window.addEventListener('trishu_store_sync', handleSync);
+    window.addEventListener('trishu_store_updated', handleSync);
+    return () => {
+      window.removeEventListener('trishu_store_sync', handleSync);
+      window.removeEventListener('trishu_store_updated', handleSync);
+    };
   }, [authenticated]);
 
   const showNotification = (msg) => {
@@ -433,17 +446,9 @@ export default function AdminPanel() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <button
-              onClick={() => {
-                if (window.confirm('Reset all custom changes to default initial catalogue? (Useful if storage was full of large uncompressed files)')) {
-                  localStorage.removeItem('trishu_products');
-                  localStorage.removeItem('trishu_agro_products');
-                  localStorage.removeItem('trishu_sanitaryware_products');
-                  localStorage.removeItem('trishu_tiles_products');
-                  localStorage.removeItem('trishu_hardware_products');
-                  localStorage.removeItem('trishu_pvcpipe_products');
-                  localStorage.removeItem('trishu_blogs');
-                  localStorage.removeItem('trishu_certs');
-                  window.location.reload();
+              onClick={async () => {
+                if (window.confirm('Reset all custom changes to default initial catalogue? This will clear local database and reset to initial state.')) {
+                  await resetAllCustomData();
                 }
               }}
               style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#FCD34D', border: '1px solid rgba(252, 211, 77, 0.4)', fontSize: '13px', fontWeight: 700, padding: '8px 16px', borderRadius: '100px', background: 'rgba(252, 211, 77, 0.1)', cursor: 'pointer' }}

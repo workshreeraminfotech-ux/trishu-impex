@@ -1,5 +1,5 @@
 // Centralized Dynamic Data & Admin Store — Trishu Impex
-// Persists Products, Blogs, Certificates, and Enquiries dynamically in localStorage with safe storage and automatic image compression
+// Powered by Persistent IndexedDB (GBs capacity) + In-Memory Fast Cache + Safe LocalStorage
 
 import { PRODUCTS as INITIAL_PRODUCTS, PRODUCT_CATEGORIES } from '../data/products';
 import { AGRO_PRODUCTS as INITIAL_AGRO_PRODUCTS, AGRO_CATEGORIES } from '../data/agroProducts';
@@ -8,6 +8,7 @@ import { TILES_PRODUCTS as INITIAL_TILES_PRODUCTS, TILES_CATEGORIES } from '../d
 import { HARDWARE_PRODUCTS as INITIAL_HARDWARE_PRODUCTS, HARDWARE_CATEGORIES } from '../data/hardwareProducts';
 import { PVC_PIPE_PRODUCTS as INITIAL_PVC_PIPE_PRODUCTS, PVC_PIPE_CATEGORIES } from '../data/pvcPipeProducts';
 import { BLOGS as INITIAL_BLOGS } from '../data/blogs';
+import { idbGet, idbSet, idbDel, idbClear } from './idbStore';
 
 import apedaLogo from '../assets/certificate/apeda.png';
 import spicesBoardLogo from '../assets/certificate/spices board.png';
@@ -61,9 +62,118 @@ const INITIAL_CERTS = [
   }
 ];
 
-// --- HIGH PERFORMANCE CLIENT-SIDE IMAGE COMPRESSOR ---
-// Automatically downscales large camera photos (e.g. 5MB+) into lightweight WebP/JPEG (approx. 20-40KB)
-export function compressImageFile(file, maxWidth = 700, maxHeight = 700, quality = 0.72) {
+const INITIAL_ENQUIRIES = [
+  {
+    id: 'enq-101',
+    source: 'Product Quote Request',
+    name: 'Hans Weber',
+    company: 'EuroSpices GmbH',
+    email: 'h.weber@eurospices.de',
+    phone: '+49 171 5550192',
+    product: 'Turmeric Powder (Curcumin > 3.5%)',
+    quantity: '20 MT (1x20ft FCL)',
+    destinationPort: 'Hamburg Port, Germany',
+    notes: 'Please quote CIF Hamburg rates with phytosanitary & lab COA test certificates.',
+    status: 'New',
+    date: 'Aug 08, 2026 10:15 AM'
+  },
+  {
+    id: 'enq-102',
+    source: 'Contact Us Form',
+    name: 'Tariq Al-Mansoor',
+    company: 'Gulf General Trading Co.',
+    email: 'tariq@gulfgeneral.ae',
+    phone: '+971 50 1234567',
+    product: 'Guntur S17 Red Chilli & Cumin Seeds',
+    quantity: '40 MT (2x40ft FCL)',
+    destinationPort: 'Jebel Ali Port, Dubai',
+    notes: 'Urgent container requirement for Ramadan shipment. Halal certification required.',
+    status: 'New',
+    date: 'Aug 07, 2026 04:30 PM'
+  }
+];
+
+// --- HELPER: INITIAL SEED FROM LOCALSTORAGE ---
+function getInitialList(lsKey, fallback) {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = localStorage.getItem(lsKey);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return fallback;
+}
+
+// IN-MEMORY FAST CACHE (Synchronous access for components)
+const memoryCache = {
+  products: getInitialList('trishu_products', INITIAL_PRODUCTS),
+  agro: getInitialList('trishu_agro_products', INITIAL_AGRO_PRODUCTS),
+  sanitaryware: getInitialList('trishu_sanitaryware_products', INITIAL_SANITARYWARE_PRODUCTS),
+  tiles: getInitialList('trishu_tiles_products', INITIAL_TILES_PRODUCTS),
+  hardware: getInitialList('trishu_hardware_products', INITIAL_HARDWARE_PRODUCTS),
+  pvcpipe: getInitialList('trishu_pvcpipe_products', INITIAL_PVC_PIPE_PRODUCTS),
+  blogs: getInitialList('trishu_blogs', INITIAL_BLOGS),
+  certs: getInitialList('trishu_certs', INITIAL_CERTS),
+  enquiries: getInitialList('trishu_enquiries', INITIAL_ENQUIRIES)
+};
+
+// ASYNC BOOTSTRAP: Load full persistent IndexedDB data
+async function initIndexedDBStore() {
+  const keys = [
+    { idbKey: 'products', memKey: 'products', lsKey: 'trishu_products' },
+    { idbKey: 'agro', memKey: 'agro', lsKey: 'trishu_agro_products' },
+    { idbKey: 'sanitaryware', memKey: 'sanitaryware', lsKey: 'trishu_sanitaryware_products' },
+    { idbKey: 'tiles', memKey: 'tiles', lsKey: 'trishu_tiles_products' },
+    { idbKey: 'hardware', memKey: 'hardware', lsKey: 'trishu_hardware_products' },
+    { idbKey: 'pvcpipe', memKey: 'pvcpipe', lsKey: 'trishu_pvcpipe_products' },
+    { idbKey: 'blogs', memKey: 'blogs', lsKey: 'trishu_blogs' },
+    { idbKey: 'certs', memKey: 'certs', lsKey: 'trishu_certs' },
+    { idbKey: 'enquiries', memKey: 'enquiries', lsKey: 'trishu_enquiries' }
+  ];
+
+  let hasUpdates = false;
+  for (const k of keys) {
+    const fromIdb = await idbGet(k.idbKey);
+    if (fromIdb && Array.isArray(fromIdb) && fromIdb.length > 0) {
+      memoryCache[k.memKey] = fromIdb;
+      hasUpdates = true;
+    } else {
+      // Seed IndexedDB from current memory cache
+      await idbSet(k.idbKey, memoryCache[k.memKey]);
+    }
+  }
+
+  if (hasUpdates && typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('trishu_store_sync'));
+  }
+}
+
+// Auto-run bootstrap on module load
+if (typeof window !== 'undefined') {
+  initIndexedDBStore();
+}
+
+// Universal Persistence Handler
+function persistData(memKey, idbKey, lsKey, data) {
+  memoryCache[memKey] = data;
+
+  // 1. Asynchronously save full dataset to IndexedDB (Unlimited capacity, never fails)
+  idbSet(idbKey, data).catch(() => {});
+
+  // 2. Best-effort save to localStorage (suppressing quota limits silently)
+  try {
+    localStorage.setItem(lsKey, JSON.stringify(data));
+  } catch (err) {
+    // Quota exceeded in localStorage is completely safe now because IndexedDB holds everything!
+  }
+
+  // 3. Dispatch reactive update event
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('trishu_store_updated', { detail: { key: memKey, data } }));
+  }
+}
+
+// --- CLIENT-SIDE IMAGE OPTIMIZER & CONVERTER ---
+export function compressImageFile(file, maxWidth = 800, maxHeight = 800, quality = 0.75) {
   return new Promise((resolve, reject) => {
     if (!file) return resolve('');
     if (!file.type || !file.type.startsWith('image/')) {
@@ -101,7 +211,6 @@ export function compressImageFile(file, maxWidth = 700, maxHeight = 700, quality
         ctx.fillRect(0, 0, width, height);
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Convert to optimized JPEG DataURL
         const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
         resolve(compressedDataUrl);
       };
@@ -111,21 +220,6 @@ export function compressImageFile(file, maxWidth = 700, maxHeight = 700, quality
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
-}
-
-// Safe LocalStorage Set with Quota Handling
-function safeSetItem(key, data) {
-  try {
-    const stringified = JSON.stringify(data);
-    localStorage.setItem(key, stringified);
-    return true;
-  } catch (err) {
-    console.error(`Storage error for key ${key}:`, err);
-    if (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014) {
-      alert('Browser storage is full! Please use smaller images or clear browser cache.');
-    }
-    return false;
-  }
 }
 
 // --- AUTHENTICATION ---
@@ -147,19 +241,11 @@ export function logoutAdmin() {
 
 // --- PRODUCTS STORE ---
 export function getProducts() {
-  const saved = localStorage.getItem('trishu_products');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {
-      console.error('Failed to parse saved products', e);
-    }
-  }
-  return INITIAL_PRODUCTS;
+  return memoryCache.products;
 }
 
-export function saveProducts(productsList) {
-  safeSetItem('trishu_products', productsList);
+export function saveProducts(list) {
+  persistData('products', 'products', 'trishu_products', list);
 }
 
 export function addProduct(newProd) {
@@ -189,19 +275,11 @@ export function deleteProduct(id) {
 
 // --- AGRO COMMODITIES STORE ---
 export function getAgroProducts() {
-  const saved = localStorage.getItem('trishu_agro_products');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {
-      console.error('Failed to parse saved agro products', e);
-    }
-  }
-  return INITIAL_AGRO_PRODUCTS;
+  return memoryCache.agro;
 }
 
-export function saveAgroProducts(agroList) {
-  safeSetItem('trishu_agro_products', agroList);
+export function saveAgroProducts(list) {
+  persistData('agro', 'agro', 'trishu_agro_products', list);
 }
 
 export function addAgroProduct(newAgro) {
@@ -231,19 +309,11 @@ export function deleteAgroProduct(id) {
 
 // --- SANITARYWARE STORE ---
 export function getSanitarywareProducts() {
-  const saved = localStorage.getItem('trishu_sanitaryware_products');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {
-      console.error('Failed to parse saved sanitaryware products', e);
-    }
-  }
-  return INITIAL_SANITARYWARE_PRODUCTS;
+  return memoryCache.sanitaryware;
 }
 
 export function saveSanitarywareProducts(list) {
-  safeSetItem('trishu_sanitaryware_products', list);
+  persistData('sanitaryware', 'sanitaryware', 'trishu_sanitaryware_products', list);
 }
 
 export function addSanitarywareProduct(newProd) {
@@ -273,19 +343,11 @@ export function deleteSanitarywareProduct(id) {
 
 // --- TILES STORE ---
 export function getTilesProducts() {
-  const saved = localStorage.getItem('trishu_tiles_products');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {
-      console.error('Failed to parse saved tiles products', e);
-    }
-  }
-  return INITIAL_TILES_PRODUCTS;
+  return memoryCache.tiles;
 }
 
 export function saveTilesProducts(list) {
-  safeSetItem('trishu_tiles_products', list);
+  persistData('tiles', 'tiles', 'trishu_tiles_products', list);
 }
 
 export function addTilesProduct(newProd) {
@@ -315,19 +377,11 @@ export function deleteTilesProduct(id) {
 
 // --- HARDWARE STORE ---
 export function getHardwareProducts() {
-  const saved = localStorage.getItem('trishu_hardware_products');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {
-      console.error('Failed to parse saved hardware products', e);
-    }
-  }
-  return INITIAL_HARDWARE_PRODUCTS;
+  return memoryCache.hardware;
 }
 
 export function saveHardwareProducts(list) {
-  safeSetItem('trishu_hardware_products', list);
+  persistData('hardware', 'hardware', 'trishu_hardware_products', list);
 }
 
 export function addHardwareProduct(newProd) {
@@ -357,19 +411,11 @@ export function deleteHardwareProduct(id) {
 
 // --- PVC PIPE STORE ---
 export function getPvcPipeProducts() {
-  const saved = localStorage.getItem('trishu_pvcpipe_products');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {
-      console.error('Failed to parse saved pvc pipe products', e);
-    }
-  }
-  return INITIAL_PVC_PIPE_PRODUCTS;
+  return memoryCache.pvcpipe;
 }
 
 export function savePvcPipeProducts(list) {
-  safeSetItem('trishu_pvcpipe_products', list);
+  persistData('pvcpipe', 'pvcpipe', 'trishu_pvcpipe_products', list);
 }
 
 export function addPvcPipeProduct(newProd) {
@@ -399,19 +445,11 @@ export function deletePvcPipeProduct(id) {
 
 // --- BLOGS STORE ---
 export function getBlogs() {
-  const saved = localStorage.getItem('trishu_blogs');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {
-      console.error('Failed to parse saved blogs', e);
-    }
-  }
-  return INITIAL_BLOGS;
+  return memoryCache.blogs;
 }
 
-export function saveBlogs(blogsList) {
-  safeSetItem('trishu_blogs', blogsList);
+export function saveBlogs(list) {
+  persistData('blogs', 'blogs', 'trishu_blogs', list);
 }
 
 export function addBlog(newBlog) {
@@ -442,19 +480,11 @@ export function deleteBlog(id) {
 
 // --- CERTIFICATES STORE ---
 export function getCertificates() {
-  const saved = localStorage.getItem('trishu_certs');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {
-      console.error('Failed to parse saved certs', e);
-    }
-  }
-  return INITIAL_CERTS;
+  return memoryCache.certs;
 }
 
-export function saveCertificates(certsList) {
-  safeSetItem('trishu_certs', certsList);
+export function saveCertificates(list) {
+  persistData('certs', 'certs', 'trishu_certs', list);
 }
 
 export function addCertificate(newCert) {
@@ -483,51 +513,12 @@ export function deleteCertificate(id) {
 }
 
 // --- ENQUIRIES STORE ---
-const INITIAL_ENQUIRIES = [
-  {
-    id: 'enq-101',
-    source: 'Product Quote Request',
-    name: 'Hans Weber',
-    company: 'EuroSpices GmbH',
-    email: 'h.weber@eurospices.de',
-    phone: '+49 171 5550192',
-    product: 'Turmeric Powder (Curcumin > 3.5%)',
-    quantity: '20 MT (1x20ft FCL)',
-    destinationPort: 'Hamburg Port, Germany',
-    notes: 'Please quote CIF Hamburg rates with phytosanitary & lab COA test certificates.',
-    status: 'New',
-    date: 'Aug 08, 2026 10:15 AM'
-  },
-  {
-    id: 'enq-102',
-    source: 'Contact Us Form',
-    name: 'Tariq Al-Mansoor',
-    company: 'Gulf General Trading Co.',
-    email: 'tariq@gulfgeneral.ae',
-    phone: '+971 50 1234567',
-    product: 'Guntur S17 Red Chilli & Cumin Seeds',
-    quantity: '40 MT (2x40ft FCL)',
-    destinationPort: 'Jebel Ali Port, Dubai',
-    notes: 'Urgent container requirement for Ramadan shipment. Halal certification required.',
-    status: 'New',
-    date: 'Aug 07, 2026 04:30 PM'
-  }
-];
-
 export function getEnquiries() {
-  const saved = localStorage.getItem('trishu_enquiries');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {
-      console.error('Failed to parse saved enquiries', e);
-    }
-  }
-  return INITIAL_ENQUIRIES;
+  return memoryCache.enquiries;
 }
 
-export function saveEnquiries(enquiryList) {
-  safeSetItem('trishu_enquiries', enquiryList);
+export function saveEnquiries(list) {
+  persistData('enquiries', 'enquiries', 'trishu_enquiries', list);
 }
 
 export function addEnquiry(enquiryData) {
@@ -605,4 +596,19 @@ export function exportEnquiriesCSV(filter = 'all') {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+// Reset everything in IndexedDB and LocalStorage
+export async function resetAllCustomData() {
+  await idbClear();
+  localStorage.removeItem('trishu_products');
+  localStorage.removeItem('trishu_agro_products');
+  localStorage.removeItem('trishu_sanitaryware_products');
+  localStorage.removeItem('trishu_tiles_products');
+  localStorage.removeItem('trishu_hardware_products');
+  localStorage.removeItem('trishu_pvcpipe_products');
+  localStorage.removeItem('trishu_blogs');
+  localStorage.removeItem('trishu_certs');
+  localStorage.removeItem('trishu_enquiries');
+  window.location.reload();
 }
