@@ -89,13 +89,13 @@ export default function AdminLogin({ onLoginSuccess }) {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--navy)', marginBottom: '8px' }}>
-              Admin Username
+              Admin ID
             </label>
             <div style={{ position: 'relative' }}>
               <User size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--gold)' }} />
               <input
                 type="text"
-                placeholder="Enter admin username"
+                placeholder="Enter Admin ID"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 style={{

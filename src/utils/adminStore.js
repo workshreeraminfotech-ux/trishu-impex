@@ -223,20 +223,30 @@ export function compressImageFile(file, maxWidth = 800, maxHeight = 800, quality
 }
 
 // --- AUTHENTICATION ---
+const AUTH_STORAGE_KEY = 'trishu_admin_auth_v3';
+
 export function isAdminLoggedIn() {
-  return sessionStorage.getItem('trishu_admin_auth') === 'true';
+  return sessionStorage.getItem(AUTH_STORAGE_KEY) === 'true';
 }
 
 export function loginAdmin(username, password) {
-  if ((username === 'admin' || username === 'trishu') && (password === 'admin123' || password === 'trishu2026#')) {
-    sessionStorage.setItem('trishu_admin_auth', 'true');
+  const cleanUser = (username || '').trim().toLowerCase();
+  const cleanPass = (password || '').trim();
+
+  if (
+    (cleanUser === 'trishu impex' || cleanUser === 'trishuimpex') &&
+    cleanPass === 'trishuimpex@123'
+  ) {
+    sessionStorage.setItem(AUTH_STORAGE_KEY, 'true');
     return { success: true };
   }
-  return { success: false, message: 'Invalid Admin Username or Password' };
+  return { success: false, message: 'Invalid Admin ID or Password. (ID: trishu impex)' };
 }
 
 export function logoutAdmin() {
+  sessionStorage.removeItem(AUTH_STORAGE_KEY);
   sessionStorage.removeItem('trishu_admin_auth');
+  sessionStorage.removeItem('trishu_admin_auth_v2');
 }
 
 // --- PRODUCTS STORE ---
