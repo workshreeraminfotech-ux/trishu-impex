@@ -116,34 +116,102 @@ const memoryCache = {
   enquiries: getInitialList('trishu_enquiries', INITIAL_ENQUIRIES)
 };
 
-// ASYNC BOOTSTRAP: Load full persistent IndexedDB data
-async function initIndexedDBStore() {
-  const keys = [
-    { idbKey: 'products', memKey: 'products', lsKey: 'trishu_products' },
-    { idbKey: 'agro', memKey: 'agro', lsKey: 'trishu_agro_products' },
-    { idbKey: 'sanitaryware', memKey: 'sanitaryware', lsKey: 'trishu_sanitaryware_products' },
-    { idbKey: 'tiles', memKey: 'tiles', lsKey: 'trishu_tiles_products' },
-    { idbKey: 'hardware', memKey: 'hardware', lsKey: 'trishu_hardware_products' },
-    { idbKey: 'pvcpipe', memKey: 'pvcpipe', lsKey: 'trishu_pvcpipe_products' },
-    { idbKey: 'blogs', memKey: 'blogs', lsKey: 'trishu_blogs' },
-    { idbKey: 'certs', memKey: 'certs', lsKey: 'trishu_certs' },
-    { idbKey: 'enquiries', memKey: 'enquiries', lsKey: 'trishu_enquiries' }
-  ];
+import { getCloudData, setCloudData, isFirebaseConnected, getFirebaseConfig, saveFirebaseConfig } from './firebase';
 
+export { isFirebaseConnected, getFirebaseConfig, saveFirebaseConfig };
+
+// ASYNC BOOTSTRAP: Load full persistent IndexedDB data + Cloud Sync
+const STORE_KEYS = [
+  { idbKey: 'products', memKey: 'products', lsKey: 'trishu_products' },
+  { idbKey: 'agro', memKey: 'agro', lsKey: 'trishu_agro_products' },
+  { idbKey: 'sanitaryware', memKey: 'sanitaryware', lsKey: 'trishu_sanitaryware_products' },
+  { idbKey: 'tiles', memKey: 'tiles', lsKey: 'trishu_tiles_products' },
+  { idbKey: 'hardware', memKey: 'hardware', lsKey: 'trishu_hardware_products' },
+  { idbKey: 'pvcpipe', memKey: 'pvcpipe', lsKey: 'trishu_pvcpipe_products' },
+  { idbKey: 'blogs', memKey: 'blogs', lsKey: 'trishu_blogs' },
+  { idbKey: 'certs', memKey: 'certs', lsKey: 'trishu_certs' },
+  { idbKey: 'enquiries', memKey: 'enquiries', lsKey: 'trishu_enquiries' }
+];
+
+async function initIndexedDBStore() {
   let hasUpdates = false;
-  for (const k of keys) {
+
+  // 1. Fast local cache from IndexedDB
+  for (const k of STORE_KEYS) {
     const fromIdb = await idbGet(k.idbKey);
     if (fromIdb && Array.isArray(fromIdb) && fromIdb.length > 0) {
       memoryCache[k.memKey] = fromIdb;
       hasUpdates = true;
     } else {
-      // Seed IndexedDB from current memory cache
       await idbSet(k.idbKey, memoryCache[k.memKey]);
     }
   }
 
   if (hasUpdates && typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('trishu_store_sync'));
+  }
+
+  // 2. Asynchronous Cloud Database Synchronization (Firebase)
+  if (isFirebaseConnected()) {
+    try {
+      let cloudUpdated = false;
+      for (const k of STORE_KEYS) {
+        const cloudItems = await getCloudData(k.idbKey);
+        if (cloudItems && Array.isArray(cloudItems) && cloudItems.length > 0) {
+          memoryCache[k.memKey] = cloudItems;
+          await idbSet(k.idbKey, cloudItems);
+          try { localStorage.setItem(k.lsKey, JSON.stringify(cloudItems)); } catch (e) {}
+          cloudUpdated = true;
+        }
+      }
+      if (cloudUpdated && typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('trishu_store_sync'));
+      }
+    } catch (err) {
+      console.warn('Cloud sync error on startup:', err);
+    }
+  }
+}
+
+// Push all current local data to Firebase Cloud
+export async function syncAllToCloud() {
+  if (!isFirebaseConnected()) {
+    return { success: false, message: 'Firebase is not connected. Please enter your Firebase configuration.' };
+  }
+
+  try {
+    for (const k of STORE_KEYS) {
+      await setCloudData(k.idbKey, memoryCache[k.memKey]);
+    }
+    return { success: true, message: 'All website data successfully uploaded to Firebase Cloud!' };
+  } catch (err) {
+    return { success: false, message: err.message || 'Failed to sync to cloud.' };
+  }
+}
+
+// Pull all data from Firebase Cloud to local
+export async function syncAllFromCloud() {
+  if (!isFirebaseConnected()) {
+    return { success: false, message: 'Firebase is not connected.' };
+  }
+
+  try {
+    let count = 0;
+    for (const k of STORE_KEYS) {
+      const cloudItems = await getCloudData(k.idbKey);
+      if (cloudItems && Array.isArray(cloudItems) && cloudItems.length > 0) {
+        memoryCache[k.memKey] = cloudItems;
+        await idbSet(k.idbKey, cloudItems);
+        try { localStorage.setItem(k.lsKey, JSON.stringify(cloudItems)); } catch (e) {}
+        count++;
+      }
+    }
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('trishu_store_sync'));
+    }
+    return { success: true, message: `Successfully synced ${count} data collections from Firebase Cloud!` };
+  } catch (err) {
+    return { success: false, message: err.message || 'Failed to pull from cloud.' };
   }
 }
 
@@ -159,14 +227,17 @@ function persistData(memKey, idbKey, lsKey, data) {
   // 1. Asynchronously save full dataset to IndexedDB (Unlimited capacity, never fails)
   idbSet(idbKey, data).catch(() => {});
 
-  // 2. Best-effort save to localStorage (suppressing quota limits silently)
+  // 2. Best-effort save to localStorage
   try {
     localStorage.setItem(lsKey, JSON.stringify(data));
-  } catch (err) {
-    // Quota exceeded in localStorage is completely safe now because IndexedDB holds everything!
+  } catch (err) {}
+
+  // 3. Save to Firebase Cloud Firestore
+  if (isFirebaseConnected()) {
+    setCloudData(idbKey, data).catch(err => console.warn('Background cloud save error:', err));
   }
 
-  // 3. Dispatch reactive update event
+  // 4. Dispatch reactive update event
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('trishu_store_updated', { detail: { key: memKey, data } }));
   }

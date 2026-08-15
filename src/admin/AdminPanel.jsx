@@ -3,7 +3,7 @@ import {
   Package, FileText, Award, LogOut, Plus, Trash2, Edit3, Search, 
   CheckCircle2, X, Upload, ShieldCheck, ExternalLink, RefreshCw,
   Inbox, MessageSquare, Mail, Phone, Clock, Globe, AlertCircle, Download,
-  Sprout, Bath, Grid3X3, Wrench, Waves, Sparkles
+  Sprout, Bath, Grid3X3, Wrench, Waves, Sparkles, Cloud, Database, Save, Zap, Check, HelpCircle
 } from 'lucide-react';
 import AdminLogin from './AdminLogin';
 import { 
@@ -16,7 +16,8 @@ import {
   getPvcPipeProducts, addPvcPipeProduct, updatePvcPipeProduct, deletePvcPipeProduct,
   getBlogs, addBlog, updateBlog, deleteBlog,
   getCertificates, addCertificate, updateCertificate, deleteCertificate,
-  getEnquiries, updateEnquiryStatus, deleteEnquiry, exportEnquiriesCSV
+  getEnquiries, updateEnquiryStatus, deleteEnquiry, exportEnquiriesCSV,
+  isFirebaseConnected, getFirebaseConfig, saveFirebaseConfig, syncAllToCloud, syncAllFromCloud
 } from '../utils/adminStore';
 
 import { PRODUCT_CATEGORIES } from '../data/products';
@@ -28,9 +29,17 @@ import { PVC_PIPE_CATEGORIES } from '../data/pvcPipeProducts';
 
 export default function AdminPanel() {
   const [authenticated, setAuthenticated] = useState(isAdminLoggedIn());
-  const [mainTab, setMainTab] = useState('catalog'); // 'catalog' | 'product_enquiries' | 'contact_enquiries' | 'blogs' | 'certs'
+  const [mainTab, setMainTab] = useState('catalog'); // 'catalog' | 'product_enquiries' | 'contact_enquiries' | 'blogs' | 'certs' | 'cloud'
   const [selectedCatalog, setSelectedCatalog] = useState('spices'); // 'spices' | 'agro' | 'sanitaryware' | 'tiles' | 'hardware' | 'pvc-pipes'
   const [toast, setToast] = useState('');
+
+  // Cloud Sync (Firebase) State
+  const [firebaseConfigInput, setFirebaseConfigInput] = useState(() => {
+    const cfg = getFirebaseConfig();
+    return cfg ? JSON.stringify(cfg, null, 2) : '';
+  });
+  const [isCloudReady, setIsCloudReady] = useState(isFirebaseConnected());
+  const [isSyncing, setIsSyncing] = useState(false);
 
   // Stores
   const [spicesList, setSpicesList] = useState(getProducts());
@@ -649,6 +658,37 @@ export default function AdminPanel() {
             <Award size={17} />
             <span>Manage Certificates ({certs.length})</span>
           </button>
+
+          <button
+            onClick={() => {
+              setMainTab('cloud');
+              setIsCloudReady(isFirebaseConnected());
+            }}
+            style={{
+              padding: '12px 22px',
+              borderRadius: '100px',
+              backgroundColor: mainTab === 'cloud' ? '#0284C7' : 'transparent',
+              color: mainTab === 'cloud' ? '#FFFFFF' : '#0284C7',
+              border: mainTab === 'cloud' ? 'none' : '1.5px solid #0284C7',
+              fontWeight: 800,
+              fontSize: '14px',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              position: 'relative'
+            }}
+          >
+            <Cloud size={17} />
+            <span>☁️ Cloud Database (Firebase)</span>
+            <span style={{
+              width: '9px',
+              height: '9px',
+              borderRadius: '50%',
+              backgroundColor: isCloudReady ? '#22C55E' : '#F59E0B',
+              boxShadow: isCloudReady ? '0 0 8px #22C55E' : 'none'
+            }} />
+          </button>
         </div>
 
         {/* TAB 1: PRODUCT CATALOG MANAGER WITH 6 CATEGORIES SWITCHER */}
@@ -928,6 +968,262 @@ export default function AdminPanel() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: CLOUD DATABASE (FIREBASE FIRESTORE) */}
+        {mainTab === 'cloud' && (
+          <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+            <div style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: '24px',
+              border: '1.5px solid #CBD5E1',
+              padding: '32px',
+              boxShadow: '0 8px 30px rgba(11, 34, 64, 0.05)',
+              marginBottom: '24px'
+            }}>
+              {/* Header with status badge */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '20px' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: isCloudReady ? '#DCFCE7' : '#FEF3C7', color: isCloudReady ? '#166534' : '#92400E', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Database size={22} />
+                    </div>
+                    <div>
+                      <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0 }}>
+                        Google Firebase Cloud Database
+                      </h3>
+                      <span style={{ fontSize: '13px', color: '#64748B' }}>
+                        Permanent multi-device live sync for all products, categories, enquiries, and media
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '8px 18px',
+                  borderRadius: '100px',
+                  backgroundColor: isCloudReady ? '#DCFCE7' : '#FEF3C7',
+                  border: isCloudReady ? '1.5px solid #86EFAC' : '1.5px solid #FCD34D',
+                  color: isCloudReady ? '#166534' : '#92400E',
+                  fontWeight: 800,
+                  fontSize: '13px'
+                }}>
+                  <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: isCloudReady ? '#16A34A' : '#D97706' }} />
+                  <span>{isCloudReady ? '🟢 Cloud Connected & Live' : '🟡 Offline / Config Needed'}</span>
+                </div>
+              </div>
+
+              {/* Status explanation */}
+              <div style={{
+                backgroundColor: isCloudReady ? '#F0FDF4' : '#FFFBEB',
+                border: isCloudReady ? '1.5px solid #BBF7D0' : '1.5px solid #FDE68A',
+                borderRadius: '16px',
+                padding: '18px 20px',
+                marginBottom: '28px',
+                fontSize: '14px',
+                lineHeight: 1.6,
+                color: isCloudReady ? '#166534' : '#92400E'
+              }}>
+                {isCloudReady ? (
+                  <div>
+                    <strong>✅ Cloud Sync Active:</strong> Aapka Admin Panel Google Cloud Firebase se connected hai. Jab bhi aap koi item add, edit ya delete karenge — wo turant <strong>Sabhi Devices, Mobile Phones, aur Browsers</strong> par permanently update ho jayega!
+                  </div>
+                ) : (
+                  <div>
+                    <strong>⚠️ Local Mode Active:</strong> Abhi changes sirf aapke is computer ke browser me save ho rahe hain. Sabhi devices par permanent live karne ke liye niche apna <strong>Free Google Firebase config</strong> paste karke <em>"Save & Connect"</em> karein.
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+                <button
+                  disabled={!isCloudReady || isSyncing}
+                  onClick={async () => {
+                    setIsSyncing(true);
+                    const res = await syncAllToCloud();
+                    setIsSyncing(false);
+                    showNotification(res.message);
+                  }}
+                  style={{
+                    backgroundColor: '#0B2240',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: '14px',
+                    padding: '16px 20px',
+                    fontWeight: 800,
+                    fontSize: '14px',
+                    cursor: (!isCloudReady || isSyncing) ? 'not-allowed' : 'pointer',
+                    opacity: (!isCloudReady || isSyncing) ? 0.6 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    boxShadow: '0 4px 14px rgba(11, 34, 64, 0.2)'
+                  }}
+                >
+                  <Zap size={18} />
+                  <span>{isSyncing ? 'Uploading Data...' : '📤 Upload All Local Data to Cloud'}</span>
+                </button>
+
+                <button
+                  disabled={!isCloudReady || isSyncing}
+                  onClick={async () => {
+                    setIsSyncing(true);
+                    const res = await syncAllFromCloud();
+                    setIsSyncing(false);
+                    syncStateFromStore();
+                    showNotification(res.message);
+                  }}
+                  style={{
+                    backgroundColor: '#0284C7',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: '14px',
+                    padding: '16px 20px',
+                    fontWeight: 800,
+                    fontSize: '14px',
+                    cursor: (!isCloudReady || isSyncing) ? 'not-allowed' : 'pointer',
+                    opacity: (!isCloudReady || isSyncing) ? 0.6 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    boxShadow: '0 4px 14px rgba(2, 132, 199, 0.2)'
+                  }}
+                >
+                  <RefreshCw size={18} />
+                  <span>{isSyncing ? 'Pulling Data...' : '📥 Pull Latest Data from Cloud'}</span>
+                </button>
+              </div>
+
+              {/* Firebase Config Input Box */}
+              <div style={{ borderTop: '1.5px solid #F1F5F9', paddingTop: '24px' }}>
+                <h4 style={{ fontSize: '16px', fontWeight: 800, color: '#0B2240', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Save size={18} />
+                  <span>Firebase Configuration JSON</span>
+                </h4>
+                <p style={{ fontSize: '13px', color: '#64748B', marginBottom: '14px' }}>
+                  Google Firebase Console se mila hua <code>firebaseConfig</code> JSON code yahan paste karein:
+                </p>
+
+                <textarea
+                  rows={9}
+                  value={firebaseConfigInput}
+                  onChange={(e) => setFirebaseConfigInput(e.target.value)}
+                  placeholder={`{\n  "apiKey": "AIzaSy...",\n  "authDomain": "trishu-impex.firebaseapp.com",\n  "projectId": "trishu-impex",\n  "storageBucket": "trishu-impex.appspot.com",\n  "messagingSenderId": "...",\n  "appId": "..."\n}`}
+                  style={{
+                    width: '100%',
+                    padding: '14px',
+                    borderRadius: '14px',
+                    border: '1.5px solid #CBD5E1',
+                    fontFamily: 'monospace',
+                    fontSize: '13px',
+                    backgroundColor: '#F8FAFC',
+                    color: '#0B2240',
+                    boxSizing: 'border-box',
+                    marginBottom: '16px'
+                  }}
+                />
+
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => {
+                      try {
+                        let parsed = null;
+                        const text = firebaseConfigInput.trim();
+                        if (text) {
+                          if (text.startsWith('{')) {
+                            parsed = JSON.parse(text);
+                          } else if (text.includes('const firebaseConfig = {') || text.includes('{')) {
+                            const start = text.indexOf('{');
+                            const end = text.lastIndexOf('}');
+                            parsed = JSON.parse(text.slice(start, end + 1));
+                          }
+                        }
+
+                        if (!parsed || !parsed.apiKey || !parsed.projectId) {
+                          return alert('Invalid Firebase Config! Please make sure it has "apiKey" and "projectId".');
+                        }
+
+                        saveFirebaseConfig(parsed);
+                        setIsCloudReady(isFirebaseConnected());
+                        showNotification('✅ Firebase configuration saved and connected!');
+                      } catch (err) {
+                        alert('Could not parse Firebase JSON: ' + err.message);
+                      }
+                    }}
+                    style={{
+                      backgroundColor: '#15803D',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      padding: '12px 28px',
+                      borderRadius: '100px',
+                      fontWeight: 800,
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <Check size={16} />
+                    <span>Save & Connect Firebase</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      if (window.confirm('Disconnect Firebase and switch back to local-only mode?')) {
+                        saveFirebaseConfig(null);
+                        setFirebaseConfigInput('');
+                        setIsCloudReady(false);
+                        showNotification('Disconnected from Cloud.');
+                      }
+                    }}
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: '#EF4444',
+                      border: '1.5px solid #FCA5A5',
+                      padding: '12px 24px',
+                      borderRadius: '100px',
+                      fontWeight: 700,
+                      fontSize: '14px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Disconnect
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick 2-minute setup guide */}
+            <div style={{
+              backgroundColor: '#F8FAFC',
+              borderRadius: '24px',
+              border: '1.5px solid #E2E8F0',
+              padding: '28px',
+              fontSize: '14px',
+              lineHeight: 1.7,
+              color: '#334155'
+            }}>
+              <h4 style={{ fontSize: '17px', fontWeight: 900, color: '#0B2240', margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <HelpCircle size={20} style={{ color: '#0284C7' }} />
+                <span>2-Minute Free Firebase Setup Guide (Aasan Steps)</span>
+              </h4>
+              <ol style={{ paddingLeft: '20px', margin: 0 }}>
+                <li><strong><a href="https://console.firebase.google.com" target="_blank" rel="noreferrer" style={{ color: '#0284C7', fontWeight: 700 }}>console.firebase.google.com</a></strong> open karein aur apni Gmail ID se log in karein.</li>
+                <li><strong>"Add Project"</strong> par click karein aur project ka naam <code>trishu-impex</code> daalein.</li>
+                <li>Project banne ke baad Web icon <strong><code>&lt;/&gt;</code></strong> par click karein aur App register karein.</li>
+                <li>Wahan screen par <code>const firebaseConfig = &#123; ... &#125;;</code> dikhega, us poore code ko copy karke upar box me paste karke <strong>"Save & Connect"</strong> dabayein.</li>
+                <li>Firebase console ke left menu me <strong>"Firestore Database"</strong> par click karein &rarr; <strong>"Create Database"</strong> &rarr; <em>"Start in test mode"</em> select karke Enable kar dein.</li>
+                <li>Bas! Fir Admin Panel me <strong>"Upload All Local Data to Cloud"</strong> dabate hi aapka sara data sabhi devices ke liye permanent live ho jayega!</li>
+              </ol>
             </div>
           </div>
         )}
