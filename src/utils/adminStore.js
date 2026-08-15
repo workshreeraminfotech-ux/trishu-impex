@@ -103,16 +103,55 @@ function getInitialList(lsKey, fallback) {
   return fallback;
 }
 
+const INITIAL_PRODUCTS_MAP = new Map(INITIAL_PRODUCTS.map(p => [p.id, p]));
+const INITIAL_CERTS_MAP = new Map(INITIAL_CERTS.map(c => [c.id, c]));
+
+// Resilient Image Normalizer
+function sanitizeProductList(list) {
+  if (!Array.isArray(list) || list.length === 0) return INITIAL_PRODUCTS;
+  return list.map(item => {
+    const defaultItem = INITIAL_PRODUCTS_MAP.get(item.id);
+    let img = item.image || (defaultItem ? defaultItem.image : '');
+    // If image is a broken or stale local dev/vite URL, restore bundled asset
+    if (defaultItem && defaultItem.image) {
+      if (!img || (typeof img === 'string' && (img.startsWith('/@fs') || img.includes('localhost:') || img.startsWith('blob:')))) {
+        img = defaultItem.image;
+      }
+    }
+    return {
+      ...item,
+      image: img
+    };
+  });
+}
+
+function sanitizeCertList(list) {
+  if (!Array.isArray(list) || list.length === 0) return INITIAL_CERTS;
+  return list.map(item => {
+    const defaultItem = INITIAL_CERTS_MAP.get(item.id);
+    let logo = item.logo || (defaultItem ? defaultItem.logo : '');
+    if (defaultItem && defaultItem.logo) {
+      if (!logo || (typeof logo === 'string' && (logo.startsWith('/@fs') || logo.includes('localhost:') || logo.startsWith('blob:')))) {
+        logo = defaultItem.logo;
+      }
+    }
+    return {
+      ...item,
+      logo: logo
+    };
+  });
+}
+
 // IN-MEMORY FAST CACHE (Synchronous access for components)
 const memoryCache = {
-  products: getInitialList('trishu_products', INITIAL_PRODUCTS),
+  products: sanitizeProductList(getInitialList('trishu_products', INITIAL_PRODUCTS)),
   agro: getInitialList('trishu_agro_products', INITIAL_AGRO_PRODUCTS),
   sanitaryware: getInitialList('trishu_sanitaryware_products', INITIAL_SANITARYWARE_PRODUCTS),
   tiles: getInitialList('trishu_tiles_products', INITIAL_TILES_PRODUCTS),
   hardware: getInitialList('trishu_hardware_products', INITIAL_HARDWARE_PRODUCTS),
   pvcpipe: getInitialList('trishu_pvcpipe_products', INITIAL_PVC_PIPE_PRODUCTS),
   blogs: getInitialList('trishu_blogs', INITIAL_BLOGS),
-  certs: getInitialList('trishu_certs', INITIAL_CERTS),
+  certs: sanitizeCertList(getInitialList('trishu_certs', INITIAL_CERTS)),
   enquiries: getInitialList('trishu_enquiries', INITIAL_ENQUIRIES)
 };
 
@@ -322,7 +361,7 @@ export function logoutAdmin() {
 
 // --- PRODUCTS STORE ---
 export function getProducts() {
-  return memoryCache.products;
+  return sanitizeProductList(memoryCache.products);
 }
 
 export function saveProducts(list) {
@@ -561,7 +600,7 @@ export function deleteBlog(id) {
 
 // --- CERTIFICATES STORE ---
 export function getCertificates() {
-  return memoryCache.certs;
+  return sanitizeCertList(memoryCache.certs);
 }
 
 export function saveCertificates(list) {
