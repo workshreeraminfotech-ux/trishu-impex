@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import AdminLogin from './AdminLogin';
 import { 
-  isAdminLoggedIn, logoutAdmin, 
+  isAdminLoggedIn, logoutAdmin, compressImageFile,
   getProducts, addProduct, updateProduct, deleteProduct,
   getAgroProducts, addAgroProduct, updateAgroProduct, deleteAgroProduct,
   getSanitarywareProducts, addSanitarywareProduct, updateSanitarywareProduct, deleteSanitarywareProduct,
@@ -99,15 +99,21 @@ export default function AdminPanel() {
     return <AdminLogin onLoginSuccess={() => setAuthenticated(true)} />;
   }
 
-  // --- IMAGE FILE CONVERTER HELPER ---
-  const handleImageFileChange = (e, callback) => {
+  // --- AUTOMATIC IMAGE OPTIMIZER & CONVERTER HELPER ---
+  const handleImageFileChange = async (e, callback) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        callback(reader.result);
-      };
-      reader.readAsDataURL(file);
+      try {
+        showNotification('Optimizing & compressing image...');
+        const compressedDataUrl = await compressImageFile(file, 700, 700, 0.72);
+        callback(compressedDataUrl);
+        showNotification('Image optimized successfully!');
+      } catch (err) {
+        console.error('Image compression error:', err);
+        const reader = new FileReader();
+        reader.onloadend = () => callback(reader.result);
+        reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -426,6 +432,26 @@ export default function AdminPanel() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <button
+              onClick={() => {
+                if (window.confirm('Reset all custom changes to default initial catalogue? (Useful if storage was full of large uncompressed files)')) {
+                  localStorage.removeItem('trishu_products');
+                  localStorage.removeItem('trishu_agro_products');
+                  localStorage.removeItem('trishu_sanitaryware_products');
+                  localStorage.removeItem('trishu_tiles_products');
+                  localStorage.removeItem('trishu_hardware_products');
+                  localStorage.removeItem('trishu_pvcpipe_products');
+                  localStorage.removeItem('trishu_blogs');
+                  localStorage.removeItem('trishu_certs');
+                  window.location.reload();
+                }
+              }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#FCD34D', border: '1px solid rgba(252, 211, 77, 0.4)', fontSize: '13px', fontWeight: 700, padding: '8px 16px', borderRadius: '100px', background: 'rgba(252, 211, 77, 0.1)', cursor: 'pointer' }}
+            >
+              <RefreshCw size={13} />
+              <span>Reset Data / Free Storage</span>
+            </button>
+
             <button
               onClick={() => {
                 if (window.location.hash) window.location.hash = '';

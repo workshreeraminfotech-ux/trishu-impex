@@ -1,5 +1,5 @@
 // Centralized Dynamic Data & Admin Store — Trishu Impex
-// Persists Products, Blogs, and Certificates dynamically in localStorage
+// Persists Products, Blogs, Certificates, and Enquiries dynamically in localStorage with safe storage and automatic image compression
 
 import { PRODUCTS as INITIAL_PRODUCTS, PRODUCT_CATEGORIES } from '../data/products';
 import { AGRO_PRODUCTS as INITIAL_AGRO_PRODUCTS, AGRO_CATEGORIES } from '../data/agroProducts';
@@ -26,23 +26,23 @@ const INITIAL_CERTS = [
   },
   { 
     id: 'cert-2',
-    name: 'Spice Board of India', 
-    code: 'SPICE BOARD', 
-    tag: 'Ministry of Commerce & Industry, Govt of India',
+    name: 'Spices Board India', 
+    code: 'SPICES BOARD', 
+    tag: 'Ministry of Commerce and Industry, Government of India',
     logo: spicesBoardLogo
   },
   { 
     id: 'cert-3',
     name: 'US FDA Registered Facility', 
     code: 'US FDA', 
-    tag: 'US Food and Drug Administration Registration',
+    tag: 'United States Food and Drug Administration Compliance',
     logo: fdaLogo
   },
   { 
     id: 'cert-4',
-    name: 'ISO 22000 & ISO 9001:2015', 
-    code: 'ISO 22000', 
-    tag: 'Food Safety Management & Quality Control System',
+    name: 'ISO 9001:2015 & HACCP', 
+    code: 'ISO 9001:2015', 
+    tag: 'Certified Quality Management & Food Safety Standards',
     logo: isoLogo
   },
   { 
@@ -60,6 +60,73 @@ const INITIAL_CERTS = [
     logo: halalLogo
   }
 ];
+
+// --- HIGH PERFORMANCE CLIENT-SIDE IMAGE COMPRESSOR ---
+// Automatically downscales large camera photos (e.g. 5MB+) into lightweight WebP/JPEG (approx. 20-40KB)
+export function compressImageFile(file, maxWidth = 700, maxHeight = 700, quality = 0.72) {
+  return new Promise((resolve, reject) => {
+    if (!file) return resolve('');
+    if (!file.type || !file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (readerEvent) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convert to optimized JPEG DataURL
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedDataUrl);
+      };
+      img.onerror = () => resolve(readerEvent.target.result);
+      img.src = readerEvent.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// Safe LocalStorage Set with Quota Handling
+function safeSetItem(key, data) {
+  try {
+    const stringified = JSON.stringify(data);
+    localStorage.setItem(key, stringified);
+    return true;
+  } catch (err) {
+    console.error(`Storage error for key ${key}:`, err);
+    if (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014) {
+      alert('Browser storage is full! Please use smaller images or clear browser cache.');
+    }
+    return false;
+  }
+}
 
 // --- AUTHENTICATION ---
 export function isAdminLoggedIn() {
@@ -92,7 +159,7 @@ export function getProducts() {
 }
 
 export function saveProducts(productsList) {
-  localStorage.setItem('trishu_products', JSON.stringify(productsList));
+  safeSetItem('trishu_products', productsList);
 }
 
 export function addProduct(newProd) {
@@ -134,7 +201,7 @@ export function getAgroProducts() {
 }
 
 export function saveAgroProducts(agroList) {
-  localStorage.setItem('trishu_agro_products', JSON.stringify(agroList));
+  safeSetItem('trishu_agro_products', agroList);
 }
 
 export function addAgroProduct(newAgro) {
@@ -176,7 +243,7 @@ export function getSanitarywareProducts() {
 }
 
 export function saveSanitarywareProducts(list) {
-  localStorage.setItem('trishu_sanitaryware_products', JSON.stringify(list));
+  safeSetItem('trishu_sanitaryware_products', list);
 }
 
 export function addSanitarywareProduct(newProd) {
@@ -218,7 +285,7 @@ export function getTilesProducts() {
 }
 
 export function saveTilesProducts(list) {
-  localStorage.setItem('trishu_tiles_products', JSON.stringify(list));
+  safeSetItem('trishu_tiles_products', list);
 }
 
 export function addTilesProduct(newProd) {
@@ -260,7 +327,7 @@ export function getHardwareProducts() {
 }
 
 export function saveHardwareProducts(list) {
-  localStorage.setItem('trishu_hardware_products', JSON.stringify(list));
+  safeSetItem('trishu_hardware_products', list);
 }
 
 export function addHardwareProduct(newProd) {
@@ -302,7 +369,7 @@ export function getPvcPipeProducts() {
 }
 
 export function savePvcPipeProducts(list) {
-  localStorage.setItem('trishu_pvcpipe_products', JSON.stringify(list));
+  safeSetItem('trishu_pvcpipe_products', list);
 }
 
 export function addPvcPipeProduct(newProd) {
@@ -344,7 +411,7 @@ export function getBlogs() {
 }
 
 export function saveBlogs(blogsList) {
-  localStorage.setItem('trishu_blogs', JSON.stringify(blogsList));
+  safeSetItem('trishu_blogs', blogsList);
 }
 
 export function addBlog(newBlog) {
@@ -387,7 +454,7 @@ export function getCertificates() {
 }
 
 export function saveCertificates(certsList) {
-  localStorage.setItem('trishu_certs', JSON.stringify(certsList));
+  safeSetItem('trishu_certs', certsList);
 }
 
 export function addCertificate(newCert) {
@@ -459,87 +526,82 @@ export function getEnquiries() {
   return INITIAL_ENQUIRIES;
 }
 
-export function saveEnquiries(enquiriesList) {
-  localStorage.setItem('trishu_enquiries', JSON.stringify(enquiriesList));
+export function saveEnquiries(enquiryList) {
+  safeSetItem('trishu_enquiries', enquiryList);
 }
 
 export function addEnquiry(enquiryData) {
   const list = getEnquiries();
-  const newEnquiry = {
+  const newEnq = {
+    ...enquiryData,
     id: `enq-${Date.now()}`,
-    source: enquiryData.source || 'Website Form',
-    name: enquiryData.name || 'Anonymous Buyer',
-    company: enquiryData.company || 'Private Buyer',
-    email: enquiryData.email || 'N/A',
-    phone: enquiryData.phone || 'N/A',
-    product: enquiryData.product || enquiryData.title || 'General Spice Enquiry',
-    quantity: enquiryData.quantity || 'N/A',
-    destinationPort: enquiryData.destinationPort || 'Overseas Port',
-    notes: enquiryData.notes || enquiryData.message || 'Product quote request submitted.',
     status: 'New',
-    date: new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })
+    date: new Date().toLocaleDateString('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric'
+    }) + ' ' + new Date().toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
   };
-  const updated = [newEnquiry, ...list];
+  const updated = [newEnq, ...list];
   saveEnquiries(updated);
   return updated;
 }
 
-export function updateEnquiryStatus(id, status) {
+export function updateEnquiryStatus(id, newStatus) {
   const list = getEnquiries();
-  const updated = list.map(e => (e.id === id ? { ...e, status } : e));
+  const updated = list.map(item => (item.id === id ? { ...item, status: newStatus } : item));
   saveEnquiries(updated);
   return updated;
 }
 
 export function deleteEnquiry(id) {
   const list = getEnquiries();
-  const updated = list.filter(e => e.id !== id);
+  const updated = list.filter(item => item.id !== id);
   saveEnquiries(updated);
   return updated;
 }
 
-export function exportEnquiriesCSV(typeFilter = 'all') {
-  const enquiries = getEnquiries();
-  let filtered = enquiries;
-  let filenamePrefix = 'Trishu_Impex_Customer_Enquiries';
+export function exportEnquiriesCSV(filter = 'all') {
+  const list = getEnquiries();
+  const filtered = list.filter(e => {
+    if (filter === 'all') return true;
+    const source = (e.source || '').toLowerCase();
+    if (filter === 'product_quote') return source.includes('product') || source.includes('quote');
+    if (filter === 'contact_form') return source.includes('contact');
+    return true;
+  });
 
-  if (typeFilter === 'product_quote') {
-    filtered = enquiries.filter(e => (e.source || '').toLowerCase().includes('product') || (e.source || '').toLowerCase().includes('quote'));
-    filenamePrefix = 'Trishu_Impex_Product_Quote_Enquiries';
-  } else if (typeFilter === 'contact_form') {
-    filtered = enquiries.filter(e => (e.source || '').toLowerCase().includes('contact'));
-    filenamePrefix = 'Trishu_Impex_Contact_Us_Enquiries';
-  }
-
-  if (!filtered || filtered.length === 0) {
-    alert('No enquiries available in this category to export.');
+  if (filtered.length === 0) {
+    alert('No enquiry records available to export.');
     return;
   }
 
-  const headers = ['ID', 'Date', 'Source', 'Buyer Name', 'Company Name', 'Email', 'Phone', 'Product', 'Quantity', 'Destination Port', 'Notes/Message', 'Status'];
+  const headers = ['ID', 'Date', 'Type / Source', 'Buyer Name', 'Company', 'Email', 'Phone', 'Product Requested', 'Quantity', 'Destination Port', 'Status', 'Notes'];
   
   const rows = filtered.map(e => [
     `"${e.id || ''}"`,
     `"${e.date || ''}"`,
-    `"${e.source || 'Website Form'}"`,
+    `"${e.source || ''}"`,
     `"${(e.name || '').replace(/"/g, '""')}"`,
     `"${(e.company || '').replace(/"/g, '""')}"`,
-    `"${(e.email || '').replace(/"/g, '""')}"`,
-    `"${(e.phone || '').replace(/"/g, '""')}"`,
+    `"${e.email || ''}"`,
+    `"${e.phone || ''}"`,
     `"${(e.product || '').replace(/"/g, '""')}"`,
     `"${(e.quantity || '').replace(/"/g, '""')}"`,
     `"${(e.destinationPort || '').replace(/"/g, '""')}"`,
-    `"${(e.notes || e.message || '').replace(/"/g, '""')}"`,
-    `"${e.status || 'New'}"`
+    `"${e.status || 'New'}"`,
+    `"${(e.notes || e.message || '').replace(/"/g, '""')}"`
   ]);
 
   const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
-  
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', `${filenamePrefix}_${new Date().toISOString().slice(0, 10)}.csv`);
+  link.setAttribute('download', `trishu_enquiries_export_${new Date().toISOString().split('T')[0]}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
