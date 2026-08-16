@@ -1,5 +1,8 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
+import { 
+  getFirestore, doc, getDoc, setDoc, deleteDoc, 
+  collection, getDocs, writeBatch 
+} from 'firebase/firestore';
 
 const CONFIG_STORAGE_KEY = 'trishu_firebase_config';
 
@@ -50,7 +53,6 @@ export function saveFirebaseConfig(config) {
   } else {
     localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config));
   }
-  // Re-init or reload
   initFirebase();
 }
 
@@ -84,17 +86,42 @@ export function isFirebaseConnected() {
   return !!db;
 }
 
-// Fetch single document or collection snapshot from Firestore
+// Fetch dataset from Firestore (checks granular collection first, then falls back to single doc)
 export async function getCloudData(collectionKey) {
   const db = initFirebase();
   if (!db) return null;
 
   try {
+    // 1. Try fetching from granular multi-document collection (No 1MB document limit)
+    const colName = `trishu_items_${collectionKey}`;
+    const colRef = collection(db, colName);
+    const querySnapshot = await getDocs(colRef);
+
+    if (!querySnapshot.empty) {
+      const items = [];
+      querySnapshot.forEach(docSnap => {
+        const d = docSnap.data();
+        if (d && d.item) {
+          items.push({ ...d.item, _order: d._order ?? items.length });
+        } else if (d) {
+          items.push(d);
+        }
+      });
+      // Sort by original index if preserved
+      items.sort((a, b) => (a._order ?? 0) - (b._order ?? 0));
+      if (items.length > 0) {
+        return items;
+      }
+    }
+
+    // 2. Fallback to legacy single document
     const docRef = doc(db, 'trishu_store', collectionKey);
     const snapshot = await getDoc(docRef);
     if (snapshot.exists()) {
       const data = snapshot.data();
-      return data?.items || null;
+      if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
+        return data.items;
+      }
     }
   } catch (err) {
     console.warn(`Error fetching ${collectionKey} from cloud:`, err);
@@ -102,20 +129,87 @@ export async function getCloudData(collectionKey) {
   return null;
 }
 
-// Save dataset to Firestore
+// Save dataset to Firestore using safe chunked batches
 export async function setCloudData(collectionKey, items) {
   const db = initFirebase();
-  if (!db) return false;
+  if (!db || !Array.isArray(items)) return false;
 
   try {
-    const docRef = doc(db, 'trishu_store', collectionKey);
-    await setDoc(docRef, {
-      items: items,
-      updatedAt: new Date().toISOString()
-    }, { merge: true });
+    const colName = `trishu_items_${collectionKey}`;
+    
+    // Save in batches of 20 to avoid exceeding Firestore limits
+    for (let i = 0; i < items.length; i += 20) {
+      const batch = writeBatch(db);
+      const chunk = items.slice(i, i + 20);
+      
+      chunk.forEach((item, chunkIdx) => {
+        const globalIdx = i + chunkIdx;
+        const itemId = String(item.id || item.code || `item-${globalIdx}`).replace(/[\/\s]/g, '_');
+        const itemDocRef = doc(db, colName, itemId);
+        batch.set(itemDocRef, {
+          _id: itemId,
+          _order: globalIdx,
+          _updatedAt: new Date().toISOString(),
+          item: item
+        });
+      });
+
+      await batch.commit();
+    }
+
+    // Also attempt legacy doc update (best-effort)
+    try {
+      const docRef = doc(db, 'trishu_store', collectionKey);
+      await setDoc(docRef, {
+        items: items,
+        count: items.length,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    } catch (docErr) {
+      // Ignored if document exceeds 1MB since granular collection has all data safely saved
+    }
+
     return true;
   } catch (err) {
     console.warn(`Error saving ${collectionKey} to cloud:`, err);
+    return false;
+  }
+}
+
+// Save single item directly to cloud (instant sync < 100ms)
+export async function setCloudSingleItem(collectionKey, item) {
+  const db = initFirebase();
+  if (!db || !item) return false;
+
+  try {
+    const colName = `trishu_items_${collectionKey}`;
+    const itemId = String(item.id || item.code || Date.now()).replace(/[\/\s]/g, '_');
+    const docRef = doc(db, colName, itemId);
+    await setDoc(docRef, {
+      _id: itemId,
+      _updatedAt: new Date().toISOString(),
+      item: item
+    }, { merge: true });
+    return true;
+  } catch (err) {
+    console.warn(`Error saving single item to ${collectionKey}:`, err);
+    return false;
+  }
+}
+
+// Delete single item from cloud
+export async function deleteCloudSingleItem(collectionKey, itemId) {
+  const db = initFirebase();
+  if (!db || !itemId) return false;
+
+  try {
+    const colName = `trishu_items_${collectionKey}`;
+    const cleanId = String(itemId).replace(/[\/\s]/g, '_');
+    const docRef = doc(db, colName, cleanId);
+    await deleteDoc(docRef);
+    return true;
+  } catch (err) {
+    console.warn(`Error deleting item from ${collectionKey}:`, err);
     return false;
   }
 }
