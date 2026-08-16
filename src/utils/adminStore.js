@@ -252,12 +252,16 @@ export async function syncAllFromCloud() {
 }
 
 // Auto-run bootstrap on module load & auto-sync when page/tab is viewed
+let lastUserActionTime = 0;
+
 if (typeof window !== 'undefined') {
   initIndexedDBStore();
 
   let lastSyncTime = 0;
   const triggerBackgroundSync = () => {
     const now = Date.now();
+    // Do not run background sync if user recently took an action within 15 seconds
+    if (now - lastUserActionTime < 15000) return;
     if (now - lastSyncTime > 8000 && isFirebaseConnected()) {
       lastSyncTime = now;
       initIndexedDBStore();
@@ -272,6 +276,7 @@ if (typeof window !== 'undefined') {
 
 // Universal Persistence Handler
 function persistData(memKey, idbKey, lsKey, data) {
+  lastUserActionTime = Date.now();
   memoryCache[memKey] = data;
 
   // 1. Asynchronously save full dataset to IndexedDB (Instant local speed)
@@ -396,9 +401,9 @@ export function updateProduct(updatedProd) {
 
 export function deleteProduct(id) {
   const list = getProducts();
-  const updated = list.filter(p => p.id !== id);
+  const updated = list.filter(p => String(p.id) !== String(id));
   saveProducts(updated);
-  deleteCloudSingleItem('products', id).catch(() => {});
+  deleteCloudSingleItem('products', id, updated).catch(() => {});
   return updated;
 }
 
@@ -425,7 +430,7 @@ export function addAgroProduct(newAgro) {
 
 export function updateAgroProduct(updatedAgro) {
   const list = getAgroProducts();
-  const updated = list.map(p => (p.id === updatedAgro.id ? { ...p, ...updatedAgro } : p));
+  const updated = list.map(p => (String(p.id) === String(updatedAgro.id) ? { ...p, ...updatedAgro } : p));
   saveAgroProducts(updated);
   setCloudSingleItem('agro', updatedAgro).catch(() => {});
   return updated;
@@ -433,9 +438,9 @@ export function updateAgroProduct(updatedAgro) {
 
 export function deleteAgroProduct(id) {
   const list = getAgroProducts();
-  const updated = list.filter(p => p.id !== id);
+  const updated = list.filter(p => String(p.id) !== String(id));
   saveAgroProducts(updated);
-  deleteCloudSingleItem('agro', id).catch(() => {});
+  deleteCloudSingleItem('agro', id, updated).catch(() => {});
   return updated;
 }
 
@@ -462,7 +467,7 @@ export function addSanitarywareProduct(newProd) {
 
 export function updateSanitarywareProduct(updatedProd) {
   const list = getSanitarywareProducts();
-  const updated = list.map(p => (p.id === updatedProd.id ? { ...p, ...updatedProd } : p));
+  const updated = list.map(p => (String(p.id) === String(updatedProd.id) ? { ...p, ...updatedProd } : p));
   saveSanitarywareProducts(updated);
   setCloudSingleItem('sanitaryware', updatedProd).catch(() => {});
   return updated;
@@ -470,9 +475,9 @@ export function updateSanitarywareProduct(updatedProd) {
 
 export function deleteSanitarywareProduct(id) {
   const list = getSanitarywareProducts();
-  const updated = list.filter(p => p.id !== id);
+  const updated = list.filter(p => String(p.id) !== String(id));
   saveSanitarywareProducts(updated);
-  deleteCloudSingleItem('sanitaryware', id).catch(() => {});
+  deleteCloudSingleItem('sanitaryware', id, updated).catch(() => {});
   return updated;
 }
 
@@ -499,7 +504,7 @@ export function addTilesProduct(newProd) {
 
 export function updateTilesProduct(updatedProd) {
   const list = getTilesProducts();
-  const updated = list.map(p => (p.id === updatedProd.id ? { ...p, ...updatedProd } : p));
+  const updated = list.map(p => (String(p.id) === String(updatedProd.id) ? { ...p, ...updatedProd } : p));
   saveTilesProducts(updated);
   setCloudSingleItem('tiles', updatedProd).catch(() => {});
   return updated;
@@ -507,9 +512,9 @@ export function updateTilesProduct(updatedProd) {
 
 export function deleteTilesProduct(id) {
   const list = getTilesProducts();
-  const updated = list.filter(p => p.id !== id);
+  const updated = list.filter(p => String(p.id) !== String(id));
   saveTilesProducts(updated);
-  deleteCloudSingleItem('tiles', id).catch(() => {});
+  deleteCloudSingleItem('tiles', id, updated).catch(() => {});
   return updated;
 }
 
@@ -536,7 +541,7 @@ export function addHardwareProduct(newProd) {
 
 export function updateHardwareProduct(updatedProd) {
   const list = getHardwareProducts();
-  const updated = list.map(p => (p.id === updatedProd.id ? { ...p, ...updatedProd } : p));
+  const updated = list.map(p => (String(p.id) === String(updatedProd.id) ? { ...p, ...updatedProd } : p));
   saveHardwareProducts(updated);
   setCloudSingleItem('hardware', updatedProd).catch(() => {});
   return updated;
@@ -544,9 +549,9 @@ export function updateHardwareProduct(updatedProd) {
 
 export function deleteHardwareProduct(id) {
   const list = getHardwareProducts();
-  const updated = list.filter(p => p.id !== id);
+  const updated = list.filter(p => String(p.id) !== String(id));
   saveHardwareProducts(updated);
-  deleteCloudSingleItem('hardware', id).catch(() => {});
+  deleteCloudSingleItem('hardware', id, updated).catch(() => {});
   return updated;
 }
 
@@ -573,7 +578,7 @@ export function addPvcPipeProduct(newProd) {
 
 export function updatePvcPipeProduct(updatedProd) {
   const list = getPvcPipeProducts();
-  const updated = list.map(p => (p.id === updatedProd.id ? { ...p, ...updatedProd } : p));
+  const updated = list.map(p => (String(p.id) === String(updatedProd.id) ? { ...p, ...updatedProd } : p));
   savePvcPipeProducts(updated);
   setCloudSingleItem('pvcpipe', updatedProd).catch(() => {});
   return updated;
@@ -581,9 +586,9 @@ export function updatePvcPipeProduct(updatedProd) {
 
 export function deletePvcPipeProduct(id) {
   const list = getPvcPipeProducts();
-  const updated = list.filter(p => p.id !== id);
+  const updated = list.filter(p => String(p.id) !== String(id));
   savePvcPipeProducts(updated);
-  deleteCloudSingleItem('pvcpipe', id).catch(() => {});
+  deleteCloudSingleItem('pvcpipe', id, updated).catch(() => {});
   return updated;
 }
 
@@ -611,7 +616,7 @@ export function addBlog(newBlog) {
 
 export function updateBlog(updatedBlog) {
   const list = getBlogs();
-  const updated = list.map(b => (b.id === updatedBlog.id ? { ...b, ...updatedBlog } : b));
+  const updated = list.map(b => (String(b.id) === String(updatedBlog.id) ? { ...b, ...updatedBlog } : b));
   saveBlogs(updated);
   setCloudSingleItem('blogs', updatedBlog).catch(() => {});
   return updated;
@@ -619,9 +624,9 @@ export function updateBlog(updatedBlog) {
 
 export function deleteBlog(id) {
   const list = getBlogs();
-  const updated = list.filter(b => b.id !== id);
+  const updated = list.filter(b => String(b.id) !== String(id));
   saveBlogs(updated);
-  deleteCloudSingleItem('blogs', id).catch(() => {});
+  deleteCloudSingleItem('blogs', id, updated).catch(() => {});
   return updated;
 }
 
@@ -648,7 +653,7 @@ export function addCertificate(newCert) {
 
 export function updateCertificate(updatedCert) {
   const list = getCertificates();
-  const updated = list.map(c => (c.id === updatedCert.id ? { ...c, ...updatedCert } : c));
+  const updated = list.map(c => (String(c.id) === String(updatedCert.id) ? { ...c, ...updatedCert } : c));
   saveCertificates(updated);
   setCloudSingleItem('certs', updatedCert).catch(() => {});
   return updated;
@@ -656,9 +661,9 @@ export function updateCertificate(updatedCert) {
 
 export function deleteCertificate(id) {
   const list = getCertificates();
-  const updated = list.filter(c => c.id !== id);
+  const updated = list.filter(c => String(c.id) !== String(id));
   saveCertificates(updated);
-  deleteCloudSingleItem('certs', id).catch(() => {});
+  deleteCloudSingleItem('certs', id, updated).catch(() => {});
   return updated;
 }
 
@@ -696,7 +701,7 @@ export function updateEnquiryStatus(id, newStatus) {
   const list = getEnquiries();
   let updatedEnq = null;
   const updated = list.map(item => {
-    if (item.id === id) {
+    if (String(item.id) === String(id)) {
       updatedEnq = { ...item, status: newStatus };
       return updatedEnq;
     }
@@ -711,9 +716,9 @@ export function updateEnquiryStatus(id, newStatus) {
 
 export function deleteEnquiry(id) {
   const list = getEnquiries();
-  const updated = list.filter(item => item.id !== id);
+  const updated = list.filter(item => String(item.id) !== String(id));
   saveEnquiries(updated);
-  deleteCloudSingleItem('enquiries', id).catch(() => {});
+  deleteCloudSingleItem('enquiries', id, updated).catch(() => {});
   return updated;
 }
 

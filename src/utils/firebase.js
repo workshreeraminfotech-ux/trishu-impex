@@ -198,7 +198,7 @@ export async function setCloudSingleItem(collectionKey, item) {
 }
 
 // Delete single item from cloud
-export async function deleteCloudSingleItem(collectionKey, itemId) {
+export async function deleteCloudSingleItem(collectionKey, itemId, remainingList = null) {
   const db = initFirebase();
   if (!db || !itemId) return false;
 
@@ -207,6 +207,19 @@ export async function deleteCloudSingleItem(collectionKey, itemId) {
     const cleanId = String(itemId).replace(/[\/\s]/g, '_');
     const docRef = doc(db, colName, cleanId);
     await deleteDoc(docRef);
+
+    // Also update main document if remaining list is passed
+    if (Array.isArray(remainingList)) {
+      try {
+        const mainDocRef = doc(db, 'trishu_store', collectionKey);
+        await setDoc(mainDocRef, {
+          items: remainingList,
+          count: remainingList.length,
+          updatedAt: new Date().toISOString()
+        });
+      } catch (e) {}
+    }
+
     return true;
   } catch (err) {
     console.warn(`Error deleting item from ${collectionKey}:`, err);
