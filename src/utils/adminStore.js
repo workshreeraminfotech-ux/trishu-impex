@@ -251,9 +251,23 @@ export async function syncAllFromCloud() {
   }
 }
 
-// Auto-run bootstrap on module load
+// Auto-run bootstrap on module load & auto-sync when page/tab is viewed
 if (typeof window !== 'undefined') {
   initIndexedDBStore();
+
+  let lastSyncTime = 0;
+  const triggerBackgroundSync = () => {
+    const now = Date.now();
+    if (now - lastSyncTime > 8000 && isFirebaseConnected()) {
+      lastSyncTime = now;
+      initIndexedDBStore();
+    }
+  };
+
+  window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') triggerBackgroundSync();
+  });
+  window.addEventListener('focus', triggerBackgroundSync);
 }
 
 // Universal Persistence Handler
