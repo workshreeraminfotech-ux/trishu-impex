@@ -854,14 +854,29 @@ export default function AdminPanel() {
                   </tr>
                 </thead>
                 <tbody>
-                  {enquiries
-                    .filter(e => mainTab === 'product_enquiries' ? ((e.source || '').toLowerCase().includes('product') || (e.source || '').toLowerCase().includes('quote')) : (e.source || '').toLowerCase().includes('contact'))
-                    .map((enq, idx) => (
+                  {(() => {
+                    const currentTabList = enquiries.filter(e => {
+                      const isQuote = (e.source || '').toLowerCase().includes('product') || (e.source || '').toLowerCase().includes('quote');
+                      return mainTab === 'product_enquiries' ? isQuote : !isQuote;
+                    });
+
+                    if (currentTabList.length === 0) {
+                      return (
+                        <tr>
+                          <td colSpan={6} style={{ textAlign: 'center', padding: '48px 20px', color: '#64748B' }}>
+                            <div style={{ fontSize: '16px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>No enquiries found</div>
+                            <span style={{ fontSize: '13.5px' }}>Jab bhi koi visitor ya client website par form submit karega, unki details yahan instantly real-time dikhengi.</span>
+                          </td>
+                        </tr>
+                      );
+                    }
+
+                    return currentTabList.map((enq, idx) => (
                       <tr key={enq.id || idx} style={{ borderBottom: '1px solid #E2E8F0' }}>
-                        <td style={{ padding: '16px 20px', fontSize: '13px', color: '#64748B' }}>{enq.date}</td>
+                        <td style={{ padding: '16px 20px', fontSize: '13px', color: '#64748B', whiteSpace: 'nowrap' }}>{enq.date}</td>
                         <td style={{ padding: '16px 20px' }}>
-                          <strong style={{ color: '#0B2240', display: 'block' }}>{enq.name}</strong>
-                          <span style={{ fontSize: '12px', color: '#64748B' }}>{enq.company || enq.email}</span>
+                          <strong style={{ color: '#0B2240', display: 'block' }}>{enq.name || 'Anonymous'}</strong>
+                          <span style={{ fontSize: '12px', color: '#64748B' }}>{enq.company || enq.email || enq.phone}</span>
                         </td>
                         <td style={{ padding: '16px 20px', fontWeight: 600, color: '#0B2240' }}>{enq.product || enq.title || 'General Enquiry'}</td>
                         <td style={{ padding: '16px 20px', color: '#64748B' }}>{enq.destinationPort || '—'}</td>
@@ -876,7 +891,7 @@ export default function AdminPanel() {
                               Details
                             </button>
                             <button onClick={() => handleToggleEnquiryStatus(enq.id, enq.status)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
-                              {enq.status === 'New' ? 'Mark Replied' : 'Mark New'}
+                              {enq.status === 'Replied' ? 'Mark New' : 'Mark Replied'}
                             </button>
                             <button onClick={() => handleDeleteEnquiry(enq.id, enq.name)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
                               <Trash2 size={13} />
@@ -884,7 +899,8 @@ export default function AdminPanel() {
                           </div>
                         </td>
                       </tr>
-                    ))}
+                    ));
+                  })()}
                 </tbody>
               </table>
             </div>

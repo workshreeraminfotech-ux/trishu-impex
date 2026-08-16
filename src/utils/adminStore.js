@@ -688,13 +688,24 @@ export function addEnquiry(enquiryData) {
   };
   const updated = [newEnq, ...list];
   saveEnquiries(updated);
+  setCloudSingleItem('enquiries', newEnq).catch(() => {});
   return updated;
 }
 
 export function updateEnquiryStatus(id, newStatus) {
   const list = getEnquiries();
-  const updated = list.map(item => (item.id === id ? { ...item, status: newStatus } : item));
+  let updatedEnq = null;
+  const updated = list.map(item => {
+    if (item.id === id) {
+      updatedEnq = { ...item, status: newStatus };
+      return updatedEnq;
+    }
+    return item;
+  });
   saveEnquiries(updated);
+  if (updatedEnq) {
+    setCloudSingleItem('enquiries', updatedEnq).catch(() => {});
+  }
   return updated;
 }
 
@@ -702,6 +713,7 @@ export function deleteEnquiry(id) {
   const list = getEnquiries();
   const updated = list.filter(item => item.id !== id);
   saveEnquiries(updated);
+  deleteCloudSingleItem('enquiries', id).catch(() => {});
   return updated;
 }
 

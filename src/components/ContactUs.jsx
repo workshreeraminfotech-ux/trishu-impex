@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Phone, Mail, MapPin, Send, CheckCircle2 } from 'lucide-react';
+import { addEnquiry } from '../utils/adminStore';
 
 export default function ContactUs() {
   const [submitted, setSubmitted] = useState(false);
@@ -18,6 +19,16 @@ export default function ContactUs() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    addEnquiry({
+      source: 'Contact Us Form',
+      name: formData.fullName,
+      company: formData.company,
+      email: formData.email,
+      phone: `${formData.countryCode} ${formData.phone}`,
+      product: 'General Export Enquiry',
+      quantity: 'N/A',
+      notes: formData.message
+    });
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
