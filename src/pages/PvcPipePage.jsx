@@ -1,14 +1,26 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ArrowRight, Eye, Sparkles, Filter, CheckCircle2, Waves } from 'lucide-react';
-import { PVC_PIPE_CATEGORIES } from '../data/pvcPipeProducts';
-import { getPvcPipeProducts } from '../utils/adminStore';
+import { getPvcPipeProducts, getCategories } from '../utils/adminStore';
 
 export default function PvcPipePage({ onSelectProduct, onOpenQuote }) {
   const [activeTab, setActiveTab] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const [categories, setCategories] = useState(getCategories('pvcpipe'));
 
   const productsList = getPvcPipeProducts();
+
+  useEffect(() => {
+    const handleSync = () => {
+      setCategories(getCategories('pvcpipe'));
+    };
+    window.addEventListener('trishu_store_sync', handleSync);
+    window.addEventListener('trishu_store_updated', handleSync);
+    return () => {
+      window.removeEventListener('trishu_store_sync', handleSync);
+      window.removeEventListener('trishu_store_updated', handleSync);
+    };
+  }, []);
 
   // Filter logic
   const filteredProducts = useMemo(() => {
@@ -221,7 +233,7 @@ export default function PvcPipePage({ onSelectProduct, onOpenQuote }) {
               <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--navy)', display: 'flex', alignItems: 'center', gap: '6px', marginRight: '6px' }}>
                 <Filter size={14} style={{ color: 'var(--gold)' }} /> Categories:
               </span>
-              {PVC_PIPE_CATEGORIES.map((cat) => {
+              {categories.map((cat) => {
                 const isActive = activeTab === cat;
                 const count = categoryCounts[cat] || 0;
 

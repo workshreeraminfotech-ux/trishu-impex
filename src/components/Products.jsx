@@ -1,15 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Eye } from 'lucide-react';
 import ProductModal from './ProductModal';
-import { PRODUCT_CATEGORIES } from '../data/products';
-import { getProducts } from '../utils/adminStore';
+import { getProducts, getCategories } from '../utils/adminStore';
 
 export default function Products() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [categories, setCategories] = useState(getCategories('spices'));
 
   const productsList = getProducts();
+
+  useEffect(() => {
+    const handleSync = () => {
+      setCategories(getCategories('spices'));
+    };
+    window.addEventListener('trishu_store_sync', handleSync);
+    window.addEventListener('trishu_store_updated', handleSync);
+    return () => {
+      window.removeEventListener('trishu_store_sync', handleSync);
+      window.removeEventListener('trishu_store_updated', handleSync);
+    };
+  }, []);
 
   const filteredProducts = productsList.filter(item => {
     const matchesCategory = activeCategory === 'All' || item.category === activeCategory || item.cat === activeCategory;
@@ -41,7 +53,7 @@ export default function Products() {
           </div>
 
           <div className="filter-pills">
-            {PRODUCT_CATEGORIES.map((cat, idx) => (
+            {categories.map((cat, idx) => (
               <button 
                 key={idx}
                 className={`filter-pill ${activeCategory === cat ? 'active' : ''}`}

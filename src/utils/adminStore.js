@@ -138,6 +138,37 @@ function sanitizeCertList(list) {
   });
 }
 
+export const INITIAL_CATEGORIES = {
+  spices: PRODUCT_CATEGORIES,
+  agro: AGRO_CATEGORIES,
+  sanitaryware: SANITARYWARE_CATEGORIES,
+  tiles: TILES_CATEGORIES,
+  hardware: HARDWARE_CATEGORIES,
+  pvcpipe: PVC_PIPE_CATEGORIES
+};
+
+function getInitialCategories() {
+  const fallback = { ...INITIAL_CATEGORIES };
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = localStorage.getItem('trishu_categories');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        return {
+          spices: Array.isArray(parsed.spices) ? parsed.spices : INITIAL_CATEGORIES.spices,
+          agro: Array.isArray(parsed.agro) ? parsed.agro : INITIAL_CATEGORIES.agro,
+          sanitaryware: Array.isArray(parsed.sanitaryware) ? parsed.sanitaryware : INITIAL_CATEGORIES.sanitaryware,
+          tiles: Array.isArray(parsed.tiles) ? parsed.tiles : INITIAL_CATEGORIES.tiles,
+          hardware: Array.isArray(parsed.hardware) ? parsed.hardware : INITIAL_CATEGORIES.hardware,
+          pvcpipe: Array.isArray(parsed.pvcpipe) ? parsed.pvcpipe : INITIAL_CATEGORIES.pvcpipe,
+        };
+      }
+    }
+  } catch (e) {}
+  return fallback;
+}
+
 // IN-MEMORY FAST CACHE (Synchronous access for components)
 const memoryCache = {
   products: sanitizeProductList(getInitialList('trishu_products', INITIAL_PRODUCTS)),
@@ -148,7 +179,8 @@ const memoryCache = {
   pvcpipe: getInitialList('trishu_pvcpipe_products', INITIAL_PVC_PIPE_PRODUCTS),
   blogs: getInitialList('trishu_blogs', INITIAL_BLOGS),
   certs: sanitizeCertList(getInitialList('trishu_certs', INITIAL_CERTS)),
-  enquiries: getInitialList('trishu_enquiries', INITIAL_ENQUIRIES)
+  enquiries: getInitialList('trishu_enquiries', INITIAL_ENQUIRIES),
+  categories: getInitialCategories()
 };
 
 import { 
@@ -185,6 +217,15 @@ async function initIndexedDBStore() {
     }
   }
 
+  // Load custom categories from IndexedDB
+  const categoriesFromIdb = await idbGet('categories');
+  if (categoriesFromIdb && typeof categoriesFromIdb === 'object') {
+    memoryCache.categories = { ...memoryCache.categories, ...categoriesFromIdb };
+    hasUpdates = true;
+  } else {
+    await idbSet('categories', memoryCache.categories);
+  }
+
   if (hasUpdates && typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('trishu_store_sync'));
   }
@@ -202,6 +243,22 @@ async function initIndexedDBStore() {
           cloudUpdated = true;
         }
       }));
+
+      // Cloud sync categories
+      const cloudCats = await getCloudData('categories');
+      if (cloudCats && Array.isArray(cloudCats) && cloudCats.length > 0) {
+        const catMap = { ...memoryCache.categories };
+        cloudCats.forEach(item => {
+          if (item && item.id && Array.isArray(item.categories)) {
+            catMap[item.id] = item.categories;
+          }
+        });
+        memoryCache.categories = catMap;
+        await idbSet('categories', catMap);
+        try { localStorage.setItem('trishu_categories', JSON.stringify(catMap)); } catch (e) {}
+        cloudUpdated = true;
+      }
+
       if (cloudUpdated && typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('trishu_store_sync'));
       }
@@ -219,6 +276,15 @@ export async function syncAllToCloud() {
 
   try {
     await Promise.all(STORE_KEYS.map(k => setCloudData(k.idbKey, memoryCache[k.memKey])));
+    
+    // Sync categories
+    const cloudCats = Object.keys(memoryCache.categories).map(k => ({
+      id: k,
+      domain: k,
+      categories: memoryCache.categories[k]
+    }));
+    await setCloudData('categories', cloudCats);
+
     return { success: true, message: 'All catalogue data successfully synchronized to Cloud in ultra-fast mode!' };
   } catch (err) {
     return { success: false, message: err.message || 'Failed to sync to cloud.' };
@@ -242,6 +308,21 @@ export async function syncAllFromCloud() {
         count++;
       }
     }));
+
+    const cloudCats = await getCloudData('categories');
+    if (cloudCats && Array.isArray(cloudCats) && cloudCats.length > 0) {
+      const catMap = { ...memoryCache.categories };
+      cloudCats.forEach(item => {
+        if (item && item.id && Array.isArray(item.categories)) {
+          catMap[item.id] = item.categories;
+        }
+      });
+      memoryCache.categories = catMap;
+      await idbSet('categories', catMap);
+      try { localStorage.setItem('trishu_categories', JSON.stringify(catMap)); } catch (e) {}
+      count++;
+    }
+
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('trishu_store_sync'));
     }
@@ -765,6 +846,150 @@ export function exportEnquiriesCSV(filter = 'all') {
   document.body.removeChild(link);
 }
 
+// --- CATEGORY & SUBCATEGORY STORE ---
+function normalizeDomainKey(domain) {
+  if (!domain) return 'spices';
+  const d = String(domain).toLowerCase().trim();
+  if (d === 'pvc-pipes' || d === 'pvc' || d === 'pvcpipe' || d === 'pvc_pipe') return 'pvcpipe';
+  return d;
+}
+
+export function getCategories(domain) {
+  const normKey = normalizeDomainKey(domain);
+  const list = (memoryCache.categories && memoryCache.categories[normKey]) || INITIAL_CATEGORIES[normKey] || ['All'];
+  if (!list.includes('All')) {
+    return ['All', ...list];
+  }
+  return list;
+}
+
+export function getAllCategories() {
+  return { ...memoryCache.categories };
+}
+
+function persistCategories(catMap) {
+  lastUserActionTime = Date.now();
+  memoryCache.categories = { ...catMap };
+  idbSet('categories', catMap).catch(() => {});
+  try {
+    localStorage.setItem('trishu_categories', JSON.stringify(catMap));
+  } catch (e) {}
+
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('trishu_store_updated', { detail: { key: 'categories', data: catMap } }));
+  }
+
+  // Cloud sync
+  const cloudList = Object.keys(catMap).map(k => ({
+    id: k,
+    domain: k,
+    categories: catMap[k]
+  }));
+  setCloudData('categories', cloudList).catch(() => {});
+}
+
+export function addCategory(domain, categoryName) {
+  const normKey = normalizeDomainKey(domain);
+  const trimmed = (categoryName || '').trim();
+  if (!trimmed) return getCategories(normKey);
+
+  const current = [...getCategories(normKey)];
+  if (current.some(c => c.toLowerCase() === trimmed.toLowerCase())) {
+    return current;
+  }
+
+  const updated = [...current, trimmed];
+  const all = {
+    ...memoryCache.categories,
+    [normKey]: updated
+  };
+  persistCategories(all);
+  return updated;
+}
+
+export function updateCategory(domain, oldName, newName) {
+  const normKey = normalizeDomainKey(domain);
+  const oldTrimmed = (oldName || '').trim();
+  const newTrimmed = (newName || '').trim();
+
+  if (!oldTrimmed || !newTrimmed || oldTrimmed === 'All' || newTrimmed === 'All' || oldTrimmed === newTrimmed) {
+    return getCategories(normKey);
+  }
+
+  const current = [...getCategories(normKey)];
+  const updated = current.map(c => c === oldTrimmed ? newTrimmed : c);
+  const all = {
+    ...memoryCache.categories,
+    [normKey]: updated
+  };
+  persistCategories(all);
+
+  // Re-tag products in that domain
+  if (normKey === 'spices') {
+    const prods = getProducts().map(p => (p.category === oldTrimmed || p.cat === oldTrimmed) ? { ...p, category: newTrimmed, cat: newTrimmed } : p);
+    saveProducts(prods);
+  } else if (normKey === 'agro') {
+    const prods = getAgroProducts().map(p => (p.category === oldTrimmed || p.cat === oldTrimmed) ? { ...p, category: newTrimmed, cat: newTrimmed } : p);
+    saveAgroProducts(prods);
+  } else if (normKey === 'sanitaryware') {
+    const prods = getSanitarywareProducts().map(p => (p.category === oldTrimmed || p.cat === oldTrimmed) ? { ...p, category: newTrimmed, cat: newTrimmed } : p);
+    saveSanitarywareProducts(prods);
+  } else if (normKey === 'tiles') {
+    const prods = getTilesProducts().map(p => (p.category === oldTrimmed || p.cat === oldTrimmed) ? { ...p, category: newTrimmed, cat: newTrimmed } : p);
+    saveTilesProducts(prods);
+  } else if (normKey === 'hardware') {
+    const prods = getHardwareProducts().map(p => (p.category === oldTrimmed || p.cat === oldTrimmed) ? { ...p, category: newTrimmed, cat: newTrimmed } : p);
+    saveHardwareProducts(prods);
+  } else if (normKey === 'pvcpipe') {
+    const prods = getPvcPipeProducts().map(p => (p.category === oldTrimmed || p.cat === oldTrimmed) ? { ...p, category: newTrimmed, cat: newTrimmed } : p);
+    savePvcPipeProducts(prods);
+  }
+
+  return updated;
+}
+
+export function deleteCategory(domain, categoryName) {
+  const normKey = normalizeDomainKey(domain);
+  const trimmed = (categoryName || '').trim();
+
+  if (!trimmed || trimmed === 'All') {
+    return getCategories(normKey);
+  }
+
+  const current = [...getCategories(normKey)];
+  const updated = current.filter(c => c !== trimmed);
+  const all = {
+    ...memoryCache.categories,
+    [normKey]: updated
+  };
+  persistCategories(all);
+
+  const fallbackCat = updated.find(c => c !== 'All') || 'General';
+
+  // Re-assign orphaned products to fallbackCat
+  if (normKey === 'spices') {
+    const prods = getProducts().map(p => (p.category === trimmed || p.cat === trimmed) ? { ...p, category: fallbackCat, cat: fallbackCat } : p);
+    saveProducts(prods);
+  } else if (normKey === 'agro') {
+    const prods = getAgroProducts().map(p => (p.category === trimmed || p.cat === trimmed) ? { ...p, category: fallbackCat, cat: fallbackCat } : p);
+    saveAgroProducts(prods);
+  } else if (normKey === 'sanitaryware') {
+    const prods = getSanitarywareProducts().map(p => (p.category === trimmed || p.cat === trimmed) ? { ...p, category: fallbackCat, cat: fallbackCat } : p);
+    saveSanitarywareProducts(prods);
+  } else if (normKey === 'tiles') {
+    const prods = getTilesProducts().map(p => (p.category === trimmed || p.cat === trimmed) ? { ...p, category: fallbackCat, cat: fallbackCat } : p);
+    saveTilesProducts(prods);
+  } else if (normKey === 'hardware') {
+    const prods = getHardwareProducts().map(p => (p.category === trimmed || p.cat === trimmed) ? { ...p, category: fallbackCat, cat: fallbackCat } : p);
+    saveHardwareProducts(prods);
+  } else if (normKey === 'pvcpipe') {
+    const prods = getPvcPipeProducts().map(p => (p.category === trimmed || p.cat === trimmed) ? { ...p, category: fallbackCat, cat: fallbackCat } : p);
+    savePvcPipeProducts(prods);
+  }
+
+  return updated;
+}
+
 // Reset everything in IndexedDB and LocalStorage
 export async function resetAllCustomData() {
   await idbClear();
@@ -777,5 +1002,6 @@ export async function resetAllCustomData() {
   localStorage.removeItem('trishu_blogs');
   localStorage.removeItem('trishu_certs');
   localStorage.removeItem('trishu_enquiries');
+  localStorage.removeItem('trishu_categories');
   window.location.reload();
 }

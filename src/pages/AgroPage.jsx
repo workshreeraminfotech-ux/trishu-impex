@@ -1,14 +1,26 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ArrowRight, Eye, Sparkles, Filter, CheckCircle2, Sprout } from 'lucide-react';
-import { AGRO_CATEGORIES } from '../data/agroProducts';
-import { getAgroProducts } from '../utils/adminStore';
+import { getAgroProducts, getCategories } from '../utils/adminStore';
 
 export default function AgroPage({ onSelectProduct, onOpenQuote }) {
   const [activeTab, setActiveTab] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const [categories, setCategories] = useState(getCategories('agro'));
 
   const productsList = getAgroProducts();
+
+  useEffect(() => {
+    const handleSync = () => {
+      setCategories(getCategories('agro'));
+    };
+    window.addEventListener('trishu_store_sync', handleSync);
+    window.addEventListener('trishu_store_updated', handleSync);
+    return () => {
+      window.removeEventListener('trishu_store_sync', handleSync);
+      window.removeEventListener('trishu_store_updated', handleSync);
+    };
+  }, []);
 
   // Filter logic
   const filteredProducts = useMemo(() => {
@@ -221,7 +233,7 @@ export default function AgroPage({ onSelectProduct, onOpenQuote }) {
               <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--navy)', display: 'flex', alignItems: 'center', gap: '6px', marginRight: '6px' }}>
                 <Filter size={14} style={{ color: 'var(--gold)' }} /> Categories:
               </span>
-              {AGRO_CATEGORIES.map((cat) => {
+              {categories.map((cat) => {
                 const isActive = activeTab === cat;
                 const count = categoryCounts[cat] || 0;
 

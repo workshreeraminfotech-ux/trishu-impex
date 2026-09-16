@@ -3,7 +3,8 @@ import {
   Package, FileText, Award, LogOut, Plus, Trash2, Edit3, Search, 
   CheckCircle2, X, Upload, ShieldCheck, ExternalLink, RefreshCw,
   Inbox, MessageSquare, Mail, Phone, Clock, Globe, AlertCircle, Download,
-  Sprout, Bath, Grid3X3, Wrench, Waves, Sparkles, Cloud, Database, Save, Zap, Check, HelpCircle
+  Sprout, Bath, Grid3X3, Wrench, Waves, Sparkles, Cloud, Database, Save, Zap, Check, HelpCircle,
+  Tag, Layers, FolderPlus
 } from 'lucide-react';
 import AdminLogin from './AdminLogin';
 import { 
@@ -17,7 +18,8 @@ import {
   getBlogs, addBlog, updateBlog, deleteBlog,
   getCertificates, addCertificate, updateCertificate, deleteCertificate,
   getEnquiries, updateEnquiryStatus, deleteEnquiry, exportEnquiriesCSV,
-  isFirebaseConnected, getFirebaseConfig, saveFirebaseConfig, syncAllToCloud, syncAllFromCloud
+  isFirebaseConnected, getFirebaseConfig, saveFirebaseConfig, syncAllToCloud, syncAllFromCloud,
+  getCategories, getAllCategories, addCategory, updateCategory, deleteCategory
 } from '../utils/adminStore';
 
 import { PRODUCT_CATEGORIES } from '../data/products';
@@ -29,9 +31,16 @@ import { PVC_PIPE_CATEGORIES } from '../data/pvcPipeProducts';
 
 export default function AdminPanel() {
   const [authenticated, setAuthenticated] = useState(isAdminLoggedIn());
-  const [mainTab, setMainTab] = useState('catalog'); // 'catalog' | 'product_enquiries' | 'contact_enquiries' | 'blogs' | 'certs' | 'cloud'
+  const [mainTab, setMainTab] = useState('catalog'); // 'catalog' | 'product_enquiries' | 'contact_enquiries' | 'certs'
   const [selectedCatalog, setSelectedCatalog] = useState('spices'); // 'spices' | 'agro' | 'sanitaryware' | 'tiles' | 'hardware' | 'pvc-pipes'
   const [toast, setToast] = useState('');
+
+  // Category & Subcategory Management State
+  const [categoriesMap, setCategoriesMap] = useState(getAllCategories());
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [newCatInput, setNewCatInput] = useState('');
+  const [editingCatOldName, setEditingCatOldName] = useState(null);
+  const [editingCatNewName, setEditingCatNewName] = useState('');
 
   // Cloud Sync (Firebase) State
   const [firebaseConfigInput, setFirebaseConfigInput] = useState(() => {
@@ -92,6 +101,7 @@ export default function AdminPanel() {
     setBlogsState([...getBlogs()]);
     setCertsState([...getCertificates()]);
     setEnquiriesState([...getEnquiries()]);
+    setCategoriesMap({ ...getAllCategories() });
   };
 
   // Sync state on load and on IndexedDB bootstrap sync
@@ -142,13 +152,14 @@ export default function AdminPanel() {
   // --- CATALOG CONFIGURATION MAPPING ---
   const catalogConfigs = {
     spices: {
+      key: 'spices',
       name: 'Spices & Seasonings',
       icon: Sparkles,
       color: '#ED6C1B',
       list: spicesList,
       setList: setSpicesList,
-      categories: PRODUCT_CATEGORIES,
-      defaultCategory: 'Ground Spices',
+      categories: getCategories('spices'),
+      defaultCategory: getCategories('spices').find(c => c !== 'All') || 'Ground Spices',
       defaultHs: 'HS 0910',
       defaultPack: '25kg / 50kg PP Bags',
       addFn: addProduct,
@@ -156,13 +167,14 @@ export default function AdminPanel() {
       deleteFn: deleteProduct
     },
     agro: {
+      key: 'agro',
       name: 'Agro Commodities',
       icon: Sprout,
       color: '#166534',
       list: agroList,
       setList: setAgroList,
-      categories: AGRO_CATEGORIES,
-      defaultCategory: 'Rice & Basmati',
+      categories: getCategories('agro'),
+      defaultCategory: getCategories('agro').find(c => c !== 'All') || 'Rice & Basmati',
       defaultHs: 'HS 1006',
       defaultPack: '25kg / 50kg PP Bags / Bulk FCL',
       addFn: addAgroProduct,
@@ -170,13 +182,14 @@ export default function AdminPanel() {
       deleteFn: deleteAgroProduct
     },
     sanitaryware: {
+      key: 'sanitaryware',
       name: 'Sanitaryware',
       icon: Bath,
       color: '#0369A1',
       list: sanitaryList,
       setList: setSanitaryList,
-      categories: SANITARYWARE_CATEGORIES,
-      defaultCategory: 'Water Closets & Toilets',
+      categories: getCategories('sanitaryware'),
+      defaultCategory: getCategories('sanitaryware').find(c => c !== 'All') || 'Water Closets & Toilets',
       defaultHs: 'HS 69101000',
       defaultPack: '5-Ply Export Carton / Wooden Pallets',
       addFn: addSanitarywareProduct,
@@ -184,13 +197,14 @@ export default function AdminPanel() {
       deleteFn: deleteSanitarywareProduct
     },
     tiles: {
+      key: 'tiles',
       name: 'Tiles & Ceramics',
       icon: Grid3X3,
       color: '#854D0E',
       list: tilesList,
       setList: setTilesList,
-      categories: TILES_CATEGORIES,
-      defaultCategory: 'GVT / PGVT Vitrified Tiles',
+      categories: getCategories('tiles'),
+      defaultCategory: getCategories('tiles').find(c => c !== 'All') || 'GVT / PGVT Vitrified Tiles',
       defaultHs: 'HS 69072100',
       defaultPack: 'Export Box on Euro Pallets',
       addFn: addTilesProduct,
@@ -198,13 +212,14 @@ export default function AdminPanel() {
       deleteFn: deleteTilesProduct
     },
     hardware: {
+      key: 'hardware',
       name: 'Architectural Hardware',
       icon: Wrench,
       color: '#475569',
       list: hardwareList,
       setList: setHardwareList,
-      categories: HARDWARE_CATEGORIES,
-      defaultCategory: 'Door Handles & Locks',
+      categories: getCategories('hardware'),
+      defaultCategory: getCategories('hardware').find(c => c !== 'All') || 'Door Handles & Locks',
       defaultHs: 'HS 83024110',
       defaultPack: 'Box with Fixings / Master Export Carton',
       addFn: addHardwareProduct,
@@ -212,13 +227,14 @@ export default function AdminPanel() {
       deleteFn: deleteHardwareProduct
     },
     'pvc-pipes': {
+      key: 'pvcpipe',
       name: 'PVC & CPVC Pipes',
       icon: Waves,
       color: '#0284C7',
       list: pvcList,
       setList: setPvcList,
-      categories: PVC_PIPE_CATEGORIES,
-      defaultCategory: 'UPVC Plumbing Pipes & Fittings',
+      categories: getCategories('pvcpipe'),
+      defaultCategory: getCategories('pvcpipe').find(c => c !== 'All') || 'UPVC Plumbing Pipes & Fittings',
       defaultHs: 'HS 39172300',
       defaultPack: 'Polywrap Bundles / Container Nested',
       addFn: addPvcPipeProduct,
@@ -235,6 +251,49 @@ export default function AdminPanel() {
     const matchesQuery = catalogSearch.trim() === '' || item.title.toLowerCase().includes(catalogSearch.toLowerCase());
     return matchesCat && matchesQuery;
   });
+
+  // --- CATEGORY & SUBCATEGORY ACTIONS ---
+  const handleAddNewCategory = (e) => {
+    e.preventDefault();
+    const trimmed = newCatInput.trim();
+    if (!trimmed) return;
+    const catDomain = currentConfig.key || selectedCatalog;
+    addCategory(catDomain, trimmed);
+    syncStateFromStore();
+    setNewCatInput('');
+    showNotification(`Subcategory "${trimmed}" added to ${currentConfig.name}!`);
+  };
+
+  const handleStartEditCategory = (catName) => {
+    setEditingCatOldName(catName);
+    setEditingCatNewName(catName);
+  };
+
+  const handleSaveEditCategory = (catDomain) => {
+    const trimmed = editingCatNewName.trim();
+    if (!trimmed || trimmed === editingCatOldName) {
+      setEditingCatOldName(null);
+      return;
+    }
+    updateCategory(catDomain, editingCatOldName, trimmed);
+    syncStateFromStore();
+    setEditingCatOldName(null);
+    setEditingCatNewName('');
+    showNotification(`Subcategory updated to "${trimmed}" and products updated!`);
+  };
+
+  const handleDeleteCategory = (catDomain, catName) => {
+    if (catName === 'All') return;
+    const remaining = currentConfig.categories.filter(c => c !== 'All' && c !== catName);
+    const fallback = remaining[0] || 'General';
+
+    if (window.confirm(`Delete subcategory "${catName}" from ${currentConfig.name}?\n\nAny existing products in this subcategory will be assigned to "${fallback}".`)) {
+      deleteCategory(catDomain, catName);
+      syncStateFromStore();
+      if (selectedSubCat === catName) setSelectedSubCat('All');
+      showNotification(`Subcategory "${catName}" deleted.`);
+    }
+  };
 
   // --- CATALOG ITEM ACTIONS ---
   const openAddItem = () => {
@@ -911,10 +970,10 @@ export default function AdminPanel() {
               })}
             </div>
 
-            {/* Catalog Controls: Search, Sub-category filter, and Add Item button */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
-              <div style={{ display: 'flex', gap: '12px', flex: 1, maxWidth: '640px' }}>
-                <div style={{ position: 'relative', flex: 1 }}>
+            {/* Catalog Controls: Search, Sub-category filter, Manage Subcategories, and Add Item button */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '14px' }}>
+              <div style={{ display: 'flex', gap: '12px', flex: '1 1 380px', maxWidth: '640px', flexWrap: 'wrap' }}>
+                <div style={{ position: 'relative', flex: '1 1 200px' }}>
                   <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#8C96A0' }} />
                   <input
                     type="text"
@@ -927,19 +986,43 @@ export default function AdminPanel() {
                 <select
                   value={selectedSubCat}
                   onChange={(e) => setSelectedSubCat(e.target.value)}
-                  style={{ padding: '12px 20px', borderRadius: '100px', border: '1.5px solid #CBD5E1', fontSize: '14px', fontWeight: 700, outline: 'none', backgroundColor: '#FFFFFF' }}
+                  style={{ padding: '12px 20px', borderRadius: '100px', border: '1.5px solid #CBD5E1', fontSize: '14px', fontWeight: 700, outline: 'none', backgroundColor: '#FFFFFF', cursor: 'pointer' }}
                 >
                   {currentConfig.categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                 </select>
               </div>
 
-              <button
-                onClick={openAddItem}
-                style={{ backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(11, 34, 64, 0.15)' }}
-              >
-                <Plus size={18} />
-                <span>Add in {currentConfig.name}</span>
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => setShowCategoryModal(true)}
+                  style={{ 
+                    backgroundColor: '#F8FAFC', 
+                    color: '#0B2240', 
+                    border: '1.5px solid #CBD5E1', 
+                    padding: '11px 18px', 
+                    borderRadius: '100px', 
+                    fontWeight: 800, 
+                    fontSize: '13.5px', 
+                    cursor: 'pointer', 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    gap: '8px',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+                  }}
+                  title="Add, Rename, or Delete Subcategories for this product domain"
+                >
+                  <Tag size={16} style={{ color: currentConfig.color }} />
+                  <span>🏷️ Manage Subcategories ({currentConfig.categories.filter(c => c !== 'All').length})</span>
+                </button>
+
+                <button
+                  onClick={openAddItem}
+                  style={{ backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(11, 34, 64, 0.15)' }}
+                >
+                  <Plus size={18} />
+                  <span>Add in {currentConfig.name}</span>
+                </button>
+              </div>
             </div>
 
             {/* Products Table */}
@@ -1245,6 +1328,211 @@ export default function AdminPanel() {
                 <button type="submit" style={{ padding: '12px 32px', borderRadius: '100px', backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer' }}>Save Product</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* --- SUBCATEGORY & CATEGORY MANAGER MODAL --- */}
+      {showCategoryModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(7,23,44,0.75)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(4px)' }}>
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '28px', padding: '32px', width: '100%', maxWidth: '650px', maxHeight: '90vh', overflowY: 'auto', border: '1.5px solid #CBD5E1', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
+            
+            {/* Modal Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '16px' }}>
+              <div>
+                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Tag size={22} style={{ color: currentConfig.color }} />
+                  <span>Manage Subcategories</span>
+                </h3>
+                <span style={{ fontSize: '13px', color: '#64748B', marginTop: '3px', display: 'block' }}>
+                  Active Catalog: <strong style={{ color: currentConfig.color }}>{currentConfig.name}</strong>
+                </span>
+              </div>
+              <button 
+                onClick={() => {
+                  setShowCategoryModal(false);
+                  setEditingCatOldName(null);
+                }} 
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Add New Subcategory Box */}
+            <form onSubmit={handleAddNewCategory} style={{ marginBottom: '24px', backgroundColor: '#F8FAFC', border: '1.5px solid #E2E8F0', borderRadius: '16px', padding: '16px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 800, color: '#0B2240', marginBottom: '8px' }}>
+                ➕ Add New Subcategory in {currentConfig.name}
+              </label>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <input
+                  type="text"
+                  placeholder="e.g. Organic Herbal Powders, Porcelain Slabs..."
+                  value={newCatInput}
+                  onChange={(e) => setNewCatInput(e.target.value)}
+                  style={{ flex: 1, padding: '10px 16px', borderRadius: '10px', border: '1.5px solid #CBD5E1', fontSize: '14px', outline: 'none' }}
+                />
+                <button
+                  type="submit"
+                  style={{
+                    backgroundColor: '#0B2240',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '10px',
+                    fontWeight: 800,
+                    fontSize: '13.5px',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  + Add Subcategory
+                </button>
+              </div>
+            </form>
+
+            {/* Existing Subcategories List */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <span style={{ fontSize: '13px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Existing Subcategories ({currentConfig.categories.filter(c => c !== 'All').length})
+                </span>
+                <span style={{ fontSize: '12px', color: '#94A3B8' }}>Edit / Rename or Delete</span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {currentConfig.categories.filter(c => c !== 'All').map((catName) => {
+                  const isEditing = editingCatOldName === catName;
+                  const countInCat = currentConfig.list.filter(p => p.category === catName || p.cat === catName).length;
+                  const catDomain = currentConfig.key || selectedCatalog;
+
+                  return (
+                    <div
+                      key={catName}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        border: '1.5px solid #E2E8F0',
+                        backgroundColor: '#FFFFFF',
+                        gap: '12px'
+                      }}
+                    >
+                      {isEditing ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                          <input
+                            type="text"
+                            value={editingCatNewName}
+                            onChange={(e) => setEditingCatNewName(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleSaveEditCategory(catDomain);
+                              if (e.key === 'Escape') setEditingCatOldName(null);
+                            }}
+                            autoFocus
+                            style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1.5px solid #0284C7', fontSize: '14px', fontWeight: 700 }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleSaveEditCategory(catDomain)}
+                            style={{ backgroundColor: '#16A34A', color: '#FFFFFF', border: 'none', padding: '8px 14px', borderRadius: '8px', fontWeight: 700, fontSize: '12.5px', cursor: 'pointer' }}
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditingCatOldName(null)}
+                            style={{ backgroundColor: '#F1F5F9', color: '#475569', border: '1px solid #CBD5E1', padding: '8px 12px', borderRadius: '8px', fontWeight: 700, fontSize: '12.5px', cursor: 'pointer' }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: currentConfig.color }} />
+                            <strong style={{ fontSize: '14.5px', color: '#0B2240' }}>{catName}</strong>
+                            <span style={{ fontSize: '12px', fontWeight: 700, padding: '2px 8px', borderRadius: '100px', backgroundColor: '#F1F5F9', color: '#64748B' }}>
+                              {countInCat} {countInCat === 1 ? 'Product' : 'Products'}
+                            </span>
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleStartEditCategory(catName)}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                backgroundColor: '#F1F5F9',
+                                border: '1px solid #CBD5E1',
+                                color: '#0B2240',
+                                padding: '6px 12px',
+                                borderRadius: '8px',
+                                fontWeight: 700,
+                                fontSize: '12px',
+                                cursor: 'pointer'
+                              }}
+                              title="Rename this subcategory across all products"
+                            >
+                              <Edit3 size={13} />
+                              <span>Rename</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteCategory(catDomain, catName)}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                backgroundColor: '#FEF2F2',
+                                border: '1px solid #FCA5A5',
+                                color: '#991B1B',
+                                padding: '6px 10px',
+                                borderRadius: '8px',
+                                fontWeight: 700,
+                                fontSize: '12px',
+                                cursor: 'pointer'
+                              }}
+                              title="Delete subcategory"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '24px', paddingTop: '16px', borderTop: '1.5px solid #F1F5F9' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowCategoryModal(false);
+                  setEditingCatOldName(null);
+                }}
+                style={{
+                  padding: '10px 24px',
+                  borderRadius: '100px',
+                  backgroundColor: '#0B2240',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  fontWeight: 800,
+                  fontSize: '13.5px',
+                  cursor: 'pointer'
+                }}
+              >
+                Done
+              </button>
+            </div>
+
           </div>
         </div>
       )}
