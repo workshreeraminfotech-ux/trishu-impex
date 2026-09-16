@@ -136,8 +136,29 @@ export async function setCloudData(collectionKey, items) {
 
   try {
     const colName = `trishu_items_${collectionKey}`;
+    const colRef = collection(db, colName);
     
-    // Save in batches of 20 to avoid exceeding Firestore limits
+    // 1. Fetch existing doc IDs to delete any items that were removed
+    try {
+      const existingSnap = await getDocs(colRef);
+      const newIdSet = new Set(items.map((item, idx) => String(item.id || item.code || `item-${idx}`).replace(/[\/\s]/g, '_')));
+      
+      const deleteBatch = writeBatch(db);
+      let deleteCount = 0;
+      existingSnap.forEach(docSnap => {
+        if (!newIdSet.has(docSnap.id)) {
+          deleteBatch.delete(docSnap.ref);
+          deleteCount++;
+        }
+      });
+      if (deleteCount > 0) {
+        await deleteBatch.commit();
+      }
+    } catch (e) {
+      console.warn(`Clean-up batch for ${collectionKey} error:`, e);
+    }
+    
+    // 2. Save in batches of 20 to avoid exceeding Firestore limits
     for (let i = 0; i < items.length; i += 20) {
       const batch = writeBatch(db);
       const chunk = items.slice(i, i + 20);
@@ -157,14 +178,14 @@ export async function setCloudData(collectionKey, items) {
       await batch.commit();
     }
 
-    // Also attempt legacy doc update (best-effort)
+    // 3. Also update legacy single doc
     try {
       const docRef = doc(db, 'trishu_store', collectionKey);
       await setDoc(docRef, {
         items: items,
         count: items.length,
         updatedAt: new Date().toISOString()
-      }, { merge: true });
+      });
     } catch (docErr) {
       // Ignored if document exceeds 1MB since granular collection has all data safely saved
     }

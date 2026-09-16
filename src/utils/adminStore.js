@@ -181,21 +181,17 @@ export const INITIAL_CATEGORIES = {
 };
 
 function getInitialCategories() {
-  const fallback = { ...INITIAL_CATEGORIES };
-  if (typeof window === 'undefined') return fallback;
+  if (typeof window === 'undefined') return INITIAL_CATEGORIES;
   try {
     const raw = localStorage.getItem('trishu_categories');
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === 'object') {
-        return {
-          ...fallback,
-          ...parsed
-        };
+      if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+        return parsed;
       }
     }
   } catch (e) {}
-  return fallback;
+  return INITIAL_CATEGORIES;
 }
 
 // IN-MEMORY FAST CACHE (Synchronous access for components)
@@ -252,8 +248,8 @@ async function initIndexedDBStore() {
 
   // Load custom categories from IndexedDB
   const categoriesFromIdb = await idbGet('categories');
-  if (categoriesFromIdb && typeof categoriesFromIdb === 'object') {
-    memoryCache.categories = { ...memoryCache.categories, ...categoriesFromIdb };
+  if (categoriesFromIdb && typeof categoriesFromIdb === 'object' && Object.keys(categoriesFromIdb).length > 0) {
+    memoryCache.categories = categoriesFromIdb;
     hasUpdates = true;
   } else {
     await idbSet('categories', memoryCache.categories);
@@ -280,16 +276,18 @@ async function initIndexedDBStore() {
       // Cloud sync categories
       const cloudCats = await getCloudData('categories');
       if (cloudCats && Array.isArray(cloudCats) && cloudCats.length > 0) {
-        const catMap = { ...memoryCache.categories };
+        const catMap = {};
         cloudCats.forEach(item => {
           if (item && item.id && Array.isArray(item.categories)) {
             catMap[item.id] = item.categories;
           }
         });
-        memoryCache.categories = catMap;
-        await idbSet('categories', catMap);
-        try { localStorage.setItem('trishu_categories', JSON.stringify(catMap)); } catch (e) {}
-        cloudUpdated = true;
+        if (Object.keys(catMap).length > 0) {
+          memoryCache.categories = catMap;
+          await idbSet('categories', catMap);
+          try { localStorage.setItem('trishu_categories', JSON.stringify(catMap)); } catch (e) {}
+          cloudUpdated = true;
+        }
       }
 
       if (cloudUpdated && typeof window !== 'undefined') {
@@ -344,16 +342,18 @@ export async function syncAllFromCloud() {
 
     const cloudCats = await getCloudData('categories');
     if (cloudCats && Array.isArray(cloudCats) && cloudCats.length > 0) {
-      const catMap = { ...memoryCache.categories };
+      const catMap = {};
       cloudCats.forEach(item => {
         if (item && item.id && Array.isArray(item.categories)) {
           catMap[item.id] = item.categories;
         }
       });
-      memoryCache.categories = catMap;
-      await idbSet('categories', catMap);
-      try { localStorage.setItem('trishu_categories', JSON.stringify(catMap)); } catch (e) {}
-      count++;
+      if (Object.keys(catMap).length > 0) {
+        memoryCache.categories = catMap;
+        await idbSet('categories', catMap);
+        try { localStorage.setItem('trishu_categories', JSON.stringify(catMap)); } catch (e) {}
+        count++;
+      }
     }
 
     if (typeof window !== 'undefined') {
@@ -1086,6 +1086,7 @@ export function updateMainCategory(id, updatedFields) {
 }
 
 export function deleteMainCategory(id) {
+  lastUserActionTime = Date.now();
   const list = [...getMainCategories()];
   if (list.length <= 1) {
     alert('At least one category must remain.');
@@ -1093,17 +1094,20 @@ export function deleteMainCategory(id) {
   }
   const updated = list.filter(c => c.id !== id);
   saveMainCategories(updated);
+  deleteCloudSingleItem('main_categories', id, updated).catch(() => {});
 
   // Clean up subcategories
   const allCats = { ...memoryCache.categories };
   delete allCats[id];
   persistCategories(allCats);
+  deleteCloudSingleItem('categories', id).catch(() => {});
 
   // Clean up custom products if any
   if (memoryCache.customProducts && memoryCache.customProducts[id]) {
     const updatedCustom = { ...memoryCache.customProducts };
     delete updatedCustom[id];
     persistData('customProducts', 'custom_products', 'trishu_custom_products', updatedCustom);
+    deleteCloudSingleItem('custom_products', id).catch(() => {});
   }
 
   return updated;
