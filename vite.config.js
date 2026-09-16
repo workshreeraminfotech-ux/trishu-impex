@@ -10,7 +10,9 @@ export default defineConfig({
   },
   build: {
     cssCodeSplit: true,
-    chunkSizeWarningLimit: 800,
+    assetsInlineLimit: 4096,
+    sourcemap: false,
+    chunkSizeWarningLimit: 1200,
     rollupOptions: {
       output: {
         manualChunks: {

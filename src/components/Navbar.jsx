@@ -1,15 +1,35 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Menu, X, ArrowRight, MapPin, Mail, Phone, ChevronDown, ChevronRight,
-  Sparkles, Sprout, Bath, Grid3X3, Wrench, Waves 
+  Sparkles, Sprout, Bath, Grid3X3, Wrench, Waves,
+  Package, Box, Leaf, Layers, ShieldCheck, Factory, Truck, Flame, Globe
 } from 'lucide-react';
 import logoImg from '../assets/logo.webp';
+import { getMainCategories } from '../utils/adminStore';
+
+const ICON_MAP = {
+  Sparkles, Sprout, Bath, Grid3X3, Wrench, Waves,
+  Package, Box, Leaf, Layers, ShieldCheck, Factory, Truck, Flame, Globe
+};
 
 export default function Navbar({ activePage, onNavigate }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(true);
+  const [mainCats, setMainCats] = useState(getMainCategories());
   const dropdownTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setMainCats([...getMainCategories()]);
+    };
+    window.addEventListener('trishu_store_sync', handleUpdate);
+    window.addEventListener('trishu_store_updated', handleUpdate);
+    return () => {
+      window.removeEventListener('trishu_store_sync', handleUpdate);
+      window.removeEventListener('trishu_store_updated', handleUpdate);
+    };
+  }, []);
 
   const handleNav = (id) => {
     onNavigate(id);
@@ -31,78 +51,26 @@ export default function Navbar({ activePage, onNavigate }) {
     }, 200);
   };
 
+  const dynamicIds = mainCats.map(c => c.id === 'spices' ? 'products' : (c.id === 'pvcpipe' ? 'pvc-pipes' : c.id));
   const isProductsActive = [
-    'products', 'spices', 'agro', 'sanitaryware', 'tiles', 'hardware', 'pvc-pipes'
+    'products', 'spices', 'agro', 'sanitaryware', 'tiles', 'hardware', 'pvc-pipes', ...dynamicIds
   ].includes(activePage);
 
-  const categories = [
-    {
-      id: 'products',
-      title: 'Spices & Seasonings',
-      tag: '38 Items',
-      tagColor: '#ED6C1B',
-      tagBg: 'rgba(237, 108, 27, 0.12)',
-      desc: 'Ground, Whole, Seed & Blended Spices',
-      icon: Sparkles,
-      iconColor: '#ED6C1B',
-      iconBg: '#FFF7ED'
-    },
-    {
-      id: 'agro',
-      title: 'Agro Commodities',
-      tag: 'Grains & Pulses',
-      tagColor: '#166534',
-      tagBg: '#DCFCE7',
-      desc: 'Rice, Wheat, Corn, Barley & Millets',
-      icon: Sprout,
-      iconColor: '#166534',
-      iconBg: '#F0FDF4'
-    },
-    {
-      id: 'sanitaryware',
-      title: 'Sanitaryware',
-      tag: 'Vitreous China',
-      tagColor: '#0369A1',
-      tagBg: '#E0F2FE',
-      desc: 'Toilets, Wash Basins & Vanity Sinks',
-      icon: Bath,
-      iconColor: '#0369A1',
-      iconBg: '#F0F9FF'
-    },
-    {
-      id: 'tiles',
-      title: 'Tiles & Ceramics',
-      tag: 'Vitrified Slabs',
-      tagColor: '#854D0E',
-      tagBg: '#FEF9C3',
-      desc: 'PGVT/GVT, Wall & Parking Pavers',
-      icon: Grid3X3,
-      iconColor: '#854D0E',
-      iconBg: '#FEFCE8'
-    },
-    {
-      id: 'hardware',
-      title: 'Architectural Hardware',
-      tag: 'SS 304 / Brass',
-      tagColor: '#475569',
-      tagBg: '#F1F5F9',
-      desc: 'Door Handles, SS Hinges & Drawer Slides',
-      icon: Wrench,
-      iconColor: '#475569',
-      iconBg: '#F8FAFC'
-    },
-    {
-      id: 'pvc-pipes',
-      title: 'PVC & CPVC Pipes',
-      tag: 'ASTM / IS Class',
-      tagColor: '#0284C7',
-      tagBg: '#E0F2FE',
-      desc: 'UPVC, CPVC, SWR & Agri Piping',
-      icon: Waves,
-      iconColor: '#0284C7',
-      iconBg: '#F0F9FF'
-    }
-  ];
+  const categories = mainCats.map(cat => {
+    const IconC = ICON_MAP[cat.icon] || Package;
+    const navId = cat.id === 'spices' ? 'products' : (cat.id === 'pvcpipe' ? 'pvc-pipes' : cat.id);
+    return {
+      id: navId,
+      title: cat.name,
+      tag: cat.defaultHs || 'Certified Export',
+      tagColor: cat.color || '#ED6C1B',
+      tagBg: `${cat.color || '#ED6C1B'}18`,
+      desc: cat.defaultPack || 'Export Standard Packing',
+      icon: IconC,
+      iconColor: cat.color || '#ED6C1B',
+      iconBg: `${cat.color || '#ED6C1B'}12`
+    };
+  });
 
   return (
     <>

@@ -138,6 +138,39 @@ function sanitizeCertList(list) {
   });
 }
 
+export const DEFAULT_MAIN_CATEGORIES = [
+  { id: 'spices', name: 'Spices & Seasonings', icon: 'Sparkles', color: '#ED6C1B', defaultHs: 'HS 0910', defaultPack: '25kg / 50kg PP Bags' },
+  { id: 'agro', name: 'Agro Commodities', icon: 'Sprout', color: '#166534', defaultHs: 'HS 1006', defaultPack: '25kg / 50kg PP Bags / Bulk FCL' },
+  { id: 'sanitaryware', name: 'Sanitaryware', icon: 'Bath', color: '#0369A1', defaultHs: 'HS 69101000', defaultPack: '5-Ply Export Carton / Wooden Pallets' },
+  { id: 'tiles', name: 'Tiles & Ceramics', icon: 'Grid3X3', color: '#854D0E', defaultHs: 'HS 69072100', defaultPack: 'Export Box on Euro Pallets' },
+  { id: 'hardware', name: 'Architectural Hardware', icon: 'Wrench', color: '#475569', defaultHs: 'HS 83024110', defaultPack: 'Box with Fixings / Master Export Carton' },
+  { id: 'pvcpipe', name: 'PVC & CPVC Pipes', icon: 'Waves', color: '#0284C7', defaultHs: 'HS 39172300', defaultPack: 'Polywrap Bundles / Container Nested' }
+];
+
+function getInitialMainCategories() {
+  if (typeof window === 'undefined') return DEFAULT_MAIN_CATEGORIES;
+  try {
+    const raw = localStorage.getItem('trishu_main_categories');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {}
+  return DEFAULT_MAIN_CATEGORIES;
+}
+
+function getInitialCustomProducts() {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem('trishu_custom_products');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') return parsed;
+    }
+  } catch (e) {}
+  return {};
+}
+
 export const INITIAL_CATEGORIES = {
   spices: PRODUCT_CATEGORIES,
   agro: AGRO_CATEGORIES,
@@ -156,12 +189,8 @@ function getInitialCategories() {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') {
         return {
-          spices: Array.isArray(parsed.spices) ? parsed.spices : INITIAL_CATEGORIES.spices,
-          agro: Array.isArray(parsed.agro) ? parsed.agro : INITIAL_CATEGORIES.agro,
-          sanitaryware: Array.isArray(parsed.sanitaryware) ? parsed.sanitaryware : INITIAL_CATEGORIES.sanitaryware,
-          tiles: Array.isArray(parsed.tiles) ? parsed.tiles : INITIAL_CATEGORIES.tiles,
-          hardware: Array.isArray(parsed.hardware) ? parsed.hardware : INITIAL_CATEGORIES.hardware,
-          pvcpipe: Array.isArray(parsed.pvcpipe) ? parsed.pvcpipe : INITIAL_CATEGORIES.pvcpipe,
+          ...fallback,
+          ...parsed
         };
       }
     }
@@ -180,7 +209,9 @@ const memoryCache = {
   blogs: getInitialList('trishu_blogs', INITIAL_BLOGS),
   certs: sanitizeCertList(getInitialList('trishu_certs', INITIAL_CERTS)),
   enquiries: getInitialList('trishu_enquiries', INITIAL_ENQUIRIES),
-  categories: getInitialCategories()
+  categories: getInitialCategories(),
+  mainCategories: getInitialMainCategories(),
+  customProducts: getInitialCustomProducts()
 };
 
 import { 
@@ -200,7 +231,9 @@ const STORE_KEYS = [
   { idbKey: 'pvcpipe', memKey: 'pvcpipe', lsKey: 'trishu_pvcpipe_products' },
   { idbKey: 'blogs', memKey: 'blogs', lsKey: 'trishu_blogs' },
   { idbKey: 'certs', memKey: 'certs', lsKey: 'trishu_certs' },
-  { idbKey: 'enquiries', memKey: 'enquiries', lsKey: 'trishu_enquiries' }
+  { idbKey: 'enquiries', memKey: 'enquiries', lsKey: 'trishu_enquiries' },
+  { idbKey: 'main_categories', memKey: 'mainCategories', lsKey: 'trishu_main_categories' },
+  { idbKey: 'custom_products', memKey: 'customProducts', lsKey: 'trishu_custom_products' }
 ];
 
 async function initIndexedDBStore() {
@@ -990,6 +1023,165 @@ export function deleteCategory(domain, categoryName) {
   return updated;
 }
 
+// --- MAIN CATEGORY (CATALOG) CRUD ---
+export function getMainCategories() {
+  const list = memoryCache.mainCategories;
+  if (Array.isArray(list) && list.length > 0) return list;
+  return DEFAULT_MAIN_CATEGORIES;
+}
+
+export function saveMainCategories(list) {
+  persistData('mainCategories', 'main_categories', 'trishu_main_categories', list);
+  setCloudData('main_categories', list).catch(() => {});
+}
+
+export function addMainCategory({ name, color = '#8B5CF6', icon = 'Package', defaultHs = 'HS 0000', defaultPack = 'Export Standard Packing', subcategories = [] }) {
+  const trimmed = (name || '').trim();
+  if (!trimmed) return getMainCategories();
+
+  const list = [...getMainCategories()];
+  const slug = trimmed.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const id = slug && !list.some(c => c.id === slug) ? slug : `cat_${Date.now()}`;
+
+  const newCat = {
+    id,
+    name: trimmed,
+    icon: icon || 'Package',
+    color: color || '#8B5CF6',
+    defaultHs: defaultHs || 'HS Standard',
+    defaultPack: defaultPack || 'Standard Export Packing'
+  };
+
+  const updated = [...list, newCat];
+  saveMainCategories(updated);
+
+  // Initialize subcategories for this new main category
+  const initialSubs = Array.isArray(subcategories) && subcategories.length > 0 
+    ? (subcategories.includes('All') ? subcategories : ['All', ...subcategories])
+    : ['All', 'General'];
+  
+  const allCats = {
+    ...memoryCache.categories,
+    [id]: initialSubs
+  };
+  persistCategories(allCats);
+
+  return updated;
+}
+
+export function updateMainCategory(id, updatedFields) {
+  const list = [...getMainCategories()];
+  const updated = list.map(c => {
+    if (c.id === id) {
+      return {
+        ...c,
+        ...updatedFields,
+        name: updatedFields.name !== undefined ? updatedFields.name.trim() : c.name
+      };
+    }
+    return c;
+  });
+  saveMainCategories(updated);
+  return updated;
+}
+
+export function deleteMainCategory(id) {
+  const list = [...getMainCategories()];
+  if (list.length <= 1) {
+    alert('At least one category must remain.');
+    return list;
+  }
+  const updated = list.filter(c => c.id !== id);
+  saveMainCategories(updated);
+
+  // Clean up subcategories
+  const allCats = { ...memoryCache.categories };
+  delete allCats[id];
+  persistCategories(allCats);
+
+  // Clean up custom products if any
+  if (memoryCache.customProducts && memoryCache.customProducts[id]) {
+    const updatedCustom = { ...memoryCache.customProducts };
+    delete updatedCustom[id];
+    persistData('customProducts', 'custom_products', 'trishu_custom_products', updatedCustom);
+  }
+
+  return updated;
+}
+
+// Universal Domain Products Getter / Setter
+export function getDomainProducts(domainId) {
+  const normKey = normalizeDomainKey(domainId);
+  if (normKey === 'spices') return getProducts();
+  if (normKey === 'agro') return getAgroProducts();
+  if (normKey === 'sanitaryware') return getSanitarywareProducts();
+  if (normKey === 'tiles') return getTilesProducts();
+  if (normKey === 'hardware') return getHardwareProducts();
+  if (normKey === 'pvcpipe') return getPvcPipeProducts();
+  return (memoryCache.customProducts && memoryCache.customProducts[normKey]) || [];
+}
+
+export function addDomainProduct(domainId, product) {
+  const normKey = normalizeDomainKey(domainId);
+  if (normKey === 'spices') return addProduct(product);
+  if (normKey === 'agro') return addAgroProduct(product);
+  if (normKey === 'sanitaryware') return addSanitarywareProduct(product);
+  if (normKey === 'tiles') return addTilesProduct(product);
+  if (normKey === 'hardware') return addHardwareProduct(product);
+  if (normKey === 'pvcpipe') return addPvcPipeProduct(product);
+
+  const current = getDomainProducts(normKey);
+  const prodWithId = {
+    ...product,
+    id: product.id || `custom_${normKey}_${Date.now()}`
+  };
+  const updated = [prodWithId, ...current];
+  const allCustom = {
+    ...(memoryCache.customProducts || {}),
+    [normKey]: updated
+  };
+  persistData('customProducts', 'custom_products', 'trishu_custom_products', allCustom);
+  return updated;
+}
+
+export function updateDomainProduct(domainId, product) {
+  const normKey = normalizeDomainKey(domainId);
+  if (normKey === 'spices') return updateProduct(product);
+  if (normKey === 'agro') return updateAgroProduct(product);
+  if (normKey === 'sanitaryware') return updateSanitarywareProduct(product);
+  if (normKey === 'tiles') return updateTilesProduct(product);
+  if (normKey === 'hardware') return updateHardwareProduct(product);
+  if (normKey === 'pvcpipe') return updatePvcPipeProduct(product);
+
+  const current = getDomainProducts(normKey);
+  const updated = current.map(p => (String(p.id) === String(product.id) ? { ...p, ...product } : p));
+  const allCustom = {
+    ...(memoryCache.customProducts || {}),
+    [normKey]: updated
+  };
+  persistData('customProducts', 'custom_products', 'trishu_custom_products', allCustom);
+  return updated;
+}
+
+export function deleteDomainProduct(domainId, productId) {
+  const normKey = normalizeDomainKey(domainId);
+  if (normKey === 'spices') return deleteProduct(productId);
+  if (normKey === 'agro') return deleteAgroProduct(productId);
+  if (normKey === 'sanitaryware') return deleteSanitarywareProduct(productId);
+  if (normKey === 'tiles') return deleteTilesProduct(productId);
+  if (normKey === 'hardware') return deleteHardwareProduct(productId);
+  if (normKey === 'pvcpipe') return deletePvcPipeProduct(productId);
+
+  const current = getDomainProducts(normKey);
+  const updated = current.filter(p => String(p.id) !== String(productId));
+  const allCustom = {
+    ...(memoryCache.customProducts || {}),
+    [normKey]: updated
+  };
+  persistData('customProducts', 'custom_products', 'trishu_custom_products', allCustom);
+  return updated;
+}
+
 // Reset everything in IndexedDB and LocalStorage
 export async function resetAllCustomData() {
   await idbClear();
@@ -1003,5 +1195,7 @@ export async function resetAllCustomData() {
   localStorage.removeItem('trishu_certs');
   localStorage.removeItem('trishu_enquiries');
   localStorage.removeItem('trishu_categories');
+  localStorage.removeItem('trishu_main_categories');
+  localStorage.removeItem('trishu_custom_products');
   window.location.reload();
 }
