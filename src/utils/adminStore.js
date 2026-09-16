@@ -790,6 +790,102 @@ export function saveEnquiries(list) {
   persistData('enquiries', 'enquiries', 'trishu_enquiries', list);
 }
 
+// --- EMAIL NOTIFICATION SETTINGS & SERVICE ---
+const DEFAULT_EMAIL_CONFIG = {
+  recipientEmail: 'sales@trishuimpex.com',
+  enabled: true,
+  web3FormsKey: ''
+};
+
+export function getEnquiryEmailConfig() {
+  try {
+    const raw = localStorage.getItem('trishu_email_config');
+    if (raw) return { ...DEFAULT_EMAIL_CONFIG, ...JSON.parse(raw) };
+  } catch (e) {}
+  return { ...DEFAULT_EMAIL_CONFIG };
+}
+
+export function saveEnquiryEmailConfig(config) {
+  const merged = { ...DEFAULT_EMAIL_CONFIG, ...config };
+  try {
+    localStorage.setItem('trishu_email_config', JSON.stringify(merged));
+  } catch (e) {}
+  setCloudSingleItem('settings', { id: 'email_config', ...merged }).catch(() => {});
+  return merged;
+}
+
+export async function sendEnquiryEmail(enquiryData) {
+  const config = getEnquiryEmailConfig();
+  if (!config.enabled) return { success: false, message: 'Email alerts disabled' };
+
+  const recipient = (config.recipientEmail || 'sales@trishuimpex.com').trim();
+  if (!recipient) return { success: false, message: 'No recipient email configured' };
+
+  const subject = `🚨 New Enquiry from ${enquiryData.name || 'Website Visitor'} (${enquiryData.product || enquiryData.source || 'General'}) - Trishu Impex`;
+
+  // 1. Web3Forms priority if configured
+  if (config.web3FormsKey && config.web3FormsKey.trim()) {
+    try {
+      const resp = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: config.web3FormsKey.trim(),
+          subject: subject,
+          from_name: 'Trishu Impex Website',
+          name: enquiryData.name || 'Not Provided',
+          email: enquiryData.email || 'Not Provided',
+          phone: enquiryData.phone || 'Not Provided',
+          company: enquiryData.company || 'Not Provided',
+          product: enquiryData.product || enquiryData.title || 'General Enquiry',
+          quantity: enquiryData.quantity || 'N/A',
+          destination_port: enquiryData.destinationPort || 'N/A',
+          notes: enquiryData.notes || enquiryData.message || 'N/A',
+          source: enquiryData.source || 'Website Form',
+          date: enquiryData.date || new Date().toLocaleString()
+        })
+      });
+      const data = await resp.json();
+      return { success: resp.ok, data };
+    } catch (err) {
+      console.warn('Web3Forms dispatch error, falling back to FormSubmit:', err);
+    }
+  }
+
+  // 2. FormSubmit AJAX API (Delivers clean HTML table directly to recipient mailbox)
+  try {
+    const resp = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(recipient)}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        _subject: subject,
+        _template: 'table',
+        _captcha: 'false',
+        'Buyer Name': enquiryData.name || 'Not Provided',
+        'Company': enquiryData.company || 'Not Provided',
+        'Email Address': enquiryData.email || 'Not Provided',
+        'Phone / WhatsApp': enquiryData.phone || 'Not Provided',
+        'Product / Requirement': enquiryData.product || enquiryData.title || 'General Enquiry',
+        'Quantity': enquiryData.quantity || 'N/A',
+        'Destination Port': enquiryData.destinationPort || 'N/A',
+        'Incoterm': enquiryData.incoterm || 'N/A',
+        'Packaging': enquiryData.packaging || 'N/A',
+        'Buyer Message / Notes': enquiryData.notes || enquiryData.message || 'N/A',
+        'Enquiry Source': enquiryData.source || 'Website Form',
+        'Submitted At': enquiryData.date || new Date().toLocaleString()
+      })
+    });
+    const data = await resp.json();
+    return { success: resp.ok, data };
+  } catch (err) {
+    console.warn('FormSubmit dispatch error:', err);
+    return { success: false, error: err.message };
+  }
+}
+
 export function addEnquiry(enquiryData) {
   const list = getEnquiries();
   const newEnq = {
@@ -808,6 +904,8 @@ export function addEnquiry(enquiryData) {
   const updated = [newEnq, ...list];
   saveEnquiries(updated);
   setCloudSingleItem('enquiries', newEnq).catch(() => {});
+  // Automatically trigger email dispatch to client inbox
+  sendEnquiryEmail(newEnq).catch(() => {});
   return updated;
 }
 

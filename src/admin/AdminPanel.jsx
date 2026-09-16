@@ -18,6 +18,7 @@ import {
   getBlogs, addBlog, updateBlog, deleteBlog,
   getCertificates, addCertificate, updateCertificate, deleteCertificate,
   getEnquiries, updateEnquiryStatus, deleteEnquiry, exportEnquiriesCSV,
+  getEnquiryEmailConfig, saveEnquiryEmailConfig, sendEnquiryEmail,
   isFirebaseConnected, getFirebaseConfig, saveFirebaseConfig, syncAllToCloud, syncAllFromCloud,
   getCategories, getAllCategories, addCategory, updateCategory, deleteCategory,
   getMainCategories, addMainCategory, updateMainCategory, deleteMainCategory,
@@ -97,6 +98,8 @@ export default function AdminPanel() {
   const [certs, setCertsState] = useState(getCertificates());
   const [enquiries, setEnquiriesState] = useState(getEnquiries());
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
+  const [emailConfig, setEmailConfig] = useState(() => getEnquiryEmailConfig());
+  const [isSendingTest, setIsSendingTest] = useState(false);
 
   // Search & Filter State for Catalog
   const [catalogSearch, setCatalogSearch] = useState('');
@@ -423,6 +426,43 @@ export default function AdminPanel() {
       const updated = deleteEnquiry(id);
       setEnquiriesState(updated);
       showNotification(`Enquiry deleted.`);
+    }
+  };
+
+  const handleSaveEmailConfig = () => {
+    const trimmed = (emailConfig.recipientEmail || '').trim();
+    if (!trimmed) return alert('Please enter recipient email address');
+    const updated = saveEnquiryEmailConfig({ ...emailConfig, recipientEmail: trimmed });
+    setEmailConfig(updated);
+    showNotification(`Enquiry notifications destination set to "${trimmed}"!`);
+  };
+
+  const handleSendTestEmail = async () => {
+    setIsSendingTest(true);
+    const testPayload = {
+      source: 'Admin Panel Test Alert',
+      name: 'Website Tester (Trishu Impex Admin)',
+      company: 'Trishu Impex International Test',
+      email: emailConfig.recipientEmail || 'sales@trishuimpex.com',
+      phone: '+91 98765 43210',
+      product: 'Indian Spices & Agricultural Produce',
+      quantity: '25 Metric Tons',
+      destinationPort: 'Jebel Ali / Rotterdam',
+      incoterm: 'CIF',
+      packaging: '50 Kg PP Bags',
+      notes: 'This is a test notification confirming that customer website enquiries are successfully routed to your email address.'
+    };
+    try {
+      const res = await sendEnquiryEmail(testPayload);
+      if (res && res.success !== false) {
+        showNotification(`✅ Test email dispatched to ${emailConfig.recipientEmail}! Check your inbox.`);
+      } else {
+        showNotification(`Test email triggered for ${emailConfig.recipientEmail}!`);
+      }
+    } catch (e) {
+      alert('Notice: ' + e.message);
+    } finally {
+      setIsSendingTest(false);
     }
   };
 
@@ -1611,6 +1651,73 @@ export default function AdminPanel() {
         {/* TAB 3 & 4: ENQUIRIES */}
         {(mainTab === 'product_enquiries' || mainTab === 'contact_enquiries') && (
           <div>
+            {/* EMAIL ALERTS CONFIGURATION BAR */}
+            <div style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: '20px',
+              border: '1.5px solid #CBD5E1',
+              padding: '20px 24px',
+              marginBottom: '20px',
+              boxShadow: '0 4px 16px rgba(11, 34, 64, 0.03)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '16px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  backgroundColor: '#EFF6FF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#2563EB',
+                  flexShrink: 0
+                }}>
+                  <Mail size={22} />
+                </div>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <strong style={{ fontSize: '15px', color: '#0B2240' }}>Instant Enquiry Alerts on Email</strong>
+                    <span style={{ fontSize: '11px', fontWeight: 800, padding: '2px 8px', borderRadius: '100px', backgroundColor: emailConfig.enabled ? '#DCFCE7' : '#FEE2E2', color: emailConfig.enabled ? '#166534' : '#991B1B' }}>
+                      {emailConfig.enabled ? '● Alerts Active' : '○ Paused'}
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '13px', color: '#64748B' }}>
+                    Website par koi bhi product quote ya contact form submit karega to direct is mail par details jayengi.
+                  </span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                <input
+                  type="email"
+                  placeholder="sales@trishuimpex.com"
+                  value={emailConfig.recipientEmail}
+                  onChange={(e) => setEmailConfig({ ...emailConfig, recipientEmail: e.target.value })}
+                  style={{ padding: '9px 14px', borderRadius: '10px', border: '1.5px solid #CBD5E1', fontSize: '13.5px', fontWeight: 600, minWidth: '230px' }}
+                />
+                <button
+                  type="button"
+                  onClick={handleSaveEmailConfig}
+                  style={{ backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', padding: '9px 18px', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: 'pointer' }}
+                >
+                  Save Email
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSendTestEmail}
+                  disabled={isSendingTest}
+                  style={{ backgroundColor: '#F8FAFC', color: '#0369A1', border: '1.5px solid #BAE6FD', padding: '9px 16px', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: 'pointer' }}
+                >
+                  {isSendingTest ? 'Sending...' : '📨 Send Test Mail'}
+                </button>
+              </div>
+            </div>
+
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
               <div>
                 <h3 style={{ fontSize: '20px', fontWeight: 900, color: '#0B2240', margin: 0 }}>
