@@ -413,7 +413,7 @@ export default function AdminPanel() {
   const contactFormCount = enquiries.filter(e => (e.source || '').toLowerCase().includes('contact')).length;
 
   return (
-    <div style={{ backgroundColor: '#F8FAFC', minHeight: '100vh', fontFamily: 'var(--font-b, Inter, sans-serif)' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F1F5F9', fontFamily: 'var(--font-b, "Inter", sans-serif)' }}>
       
       {/* Toast Notification */}
       {toast && (
@@ -421,275 +421,568 @@ export default function AdminPanel() {
           position: 'fixed',
           bottom: '24px',
           right: '24px',
+          zIndex: 99999,
           backgroundColor: '#0B2240',
           color: '#FFFFFF',
           padding: '14px 24px',
           borderRadius: '16px',
-          boxShadow: '0 12px 30px rgba(11, 34, 64, 0.3)',
-          zIndex: 4000,
+          boxShadow: '0 12px 30px rgba(11, 34, 64, 0.25)',
           display: 'flex',
           alignItems: 'center',
           gap: '10px',
           fontSize: '14px',
           fontWeight: 700
         }}>
-          <CheckCircle2 size={18} style={{ color: '#CBD5E1' }} />
+          <CheckCircle2 size={18} style={{ color: '#22C55E' }} />
           <span>{toast}</span>
         </div>
       )}
 
-      {/* Admin Header */}
-      <header style={{ backgroundColor: '#0B2240', color: '#FFFFFF', padding: '16px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#07172C', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.2)' }}>
-              <ShieldCheck size={22} />
-            </div>
-            <div>
-              <h2 style={{ fontSize: '18px', fontWeight: 900, margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
-                Trishu Impex Admin Panel
-              </h2>
-              <span style={{ fontSize: '12px', color: '#CBD5E1' }}>Complete 6-Category Export Management Suite</span>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <button
-              onClick={async () => {
-                if (window.confirm('Reset all custom changes to default initial catalogue? This will clear local database and reset to initial state.')) {
-                  await resetAllCustomData();
-                }
-              }}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#FCD34D', border: '1px solid rgba(252, 211, 77, 0.4)', fontSize: '13px', fontWeight: 700, padding: '8px 16px', borderRadius: '100px', background: 'rgba(252, 211, 77, 0.1)', cursor: 'pointer' }}
-            >
-              <RefreshCw size={13} />
-              <span>Reset Data / Free Storage</span>
-            </button>
-
-            <button
-              onClick={() => {
-                if (window.location.hash) window.location.hash = '';
-                if (window.location.search) window.location.search = '';
-                window.location.reload();
-              }}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#CBD5E1', border: 'none', fontSize: '13.5px', fontWeight: 600, padding: '8px 16px', borderRadius: '100px', background: 'rgba(255,255,255,0.1)', cursor: 'pointer' }}
-            >
-              <span>View Main Site</span>
-              <ExternalLink size={14} />
-            </button>
-
-            <button
-              onClick={handleLogout}
-              style={{
-                backgroundColor: 'rgba(239, 68, 68, 0.2)',
-                color: '#FCA5A5',
-                border: '1px solid rgba(239, 68, 68, 0.4)',
-                padding: '8px 16px',
-                borderRadius: '100px',
-                fontSize: '13.5px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}
-            >
-              <LogOut size={15} />
-              <span>Log Out</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Container */}
-      <div className="container" style={{ padding: '36px 24px 80px' }}>
+      {/* LEFT SIDEBAR PANEL */}
+      <aside style={{
+        width: '290px',
+        flexShrink: 0,
+        backgroundColor: '#07182E',
+        color: '#FFFFFF',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'sticky',
+        top: 0,
+        height: '100vh',
+        boxSizing: 'border-box',
+        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+        zIndex: 100
+      }}>
         
-        {/* Dashboard Stats Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#0B2240', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Package size={20} />
+        {/* Sidebar Header / Brand */}
+        <div style={{
+          padding: '24px 20px 20px',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+            <div style={{
+              width: '42px',
+              height: '42px',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #ED6C1B 0%, #D95D10 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(237, 108, 27, 0.35)'
+            }}>
+              <ShieldCheck size={24} color="#FFFFFF" />
             </div>
             <div>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Products</span>
-              <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{totalProductsCount}</h3>
+              <h2 style={{ fontSize: '18px', fontWeight: 900, margin: 0, color: '#FFFFFF', letterSpacing: '-0.3px', fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
+                Trishu Impex
+              </h2>
+              <span style={{ fontSize: '11.5px', color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.6px' }}>
+                Admin Control Desk
+              </span>
             </div>
           </div>
-
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#0369A1', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Inbox size={20} />
-            </div>
-            <div>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Product Quotes</span>
-              <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#0369A1', margin: 0 }}>{productQuotesCount}</h3>
-            </div>
-          </div>
-
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#15803D', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Mail size={20} />
-            </div>
-            <div>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Contact Form</span>
-              <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#15803D', margin: 0 }}>{contactFormCount}</h3>
-            </div>
-          </div>
-
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#0B2240', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <FileText size={20} />
-            </div>
-            <div>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Blogs</span>
-              <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{blogs.length}</h3>
-            </div>
-          </div>
-
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1.5px solid #CBD5E1', boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#0B2240', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Award size={20} />
-            </div>
-            <div>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: '#8C96A0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Certificates</span>
-              <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{certs.length}</h3>
-            </div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: 'rgba(34, 197, 94, 0.12)', padding: '3px 10px', borderRadius: '100px', fontSize: '11px', fontWeight: 700, color: '#4ADE80' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#22C55E', boxShadow: '0 0 8px #22C55E' }} />
+            <span>Admin Active • Online</span>
           </div>
         </div>
 
-        {/* Main Tab Controls */}
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '24px', borderBottom: '2px solid #E2E8F0', paddingBottom: '12px', flexWrap: 'wrap' }}>
+        {/* Sidebar Navigation Menu */}
+        <nav style={{
+          flex: 1,
+          padding: '20px 14px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          overflowY: 'auto'
+        }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.8px', padding: '0 10px', marginBottom: '4px' }}>
+            Main Navigation
+          </div>
+
+          {/* 1. Manage Products & Categories */}
           <button
             onClick={() => setMainTab('catalog')}
             style={{
-              padding: '12px 22px',
-              borderRadius: '100px',
-              backgroundColor: mainTab === 'catalog' ? '#0B2240' : 'transparent',
-              color: mainTab === 'catalog' ? '#FFFFFF' : '#0B2240',
-              border: mainTab === 'catalog' ? 'none' : '1.5px solid #CBD5E1',
-              fontWeight: 800,
-              fontSize: '14px',
+              width: '100%',
+              textAlign: 'left',
+              padding: '12px 14px',
+              borderRadius: '12px',
+              backgroundColor: mainTab === 'catalog' ? '#ED6C1B' : 'transparent',
+              color: mainTab === 'catalog' ? '#FFFFFF' : '#CBD5E1',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '13.5px',
               cursor: 'pointer',
-              display: 'inline-flex',
+              display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              justifyContent: 'space-between',
+              transition: 'all 0.2s ease',
+              boxShadow: mainTab === 'catalog' ? '0 4px 14px rgba(237, 108, 27, 0.35)' : 'none'
             }}
           >
-            <Package size={17} />
-            <span>📦 Manage Products & Categories ({totalProductsCount})</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Package size={18} />
+              <span>📦 Manage Products & Categories</span>
+            </div>
+            <span style={{
+              backgroundColor: mainTab === 'catalog' ? 'rgba(255, 255, 255, 0.25)' : '#0F2744',
+              color: '#FFFFFF',
+              fontSize: '11.5px',
+              fontWeight: 800,
+              padding: '2px 8px',
+              borderRadius: '100px'
+            }}>
+              {totalProductsCount}
+            </span>
           </button>
 
+          {/* 2. Product Quote Enquiries */}
           <button
             onClick={() => setMainTab('product_enquiries')}
             style={{
-              padding: '12px 22px',
-              borderRadius: '100px',
-              backgroundColor: mainTab === 'product_enquiries' ? '#0369A1' : 'transparent',
-              color: mainTab === 'product_enquiries' ? '#FFFFFF' : '#0B2240',
-              border: mainTab === 'product_enquiries' ? 'none' : '1.5px solid #CBD5E1',
-              fontWeight: 800,
-              fontSize: '14px',
+              width: '100%',
+              textAlign: 'left',
+              padding: '12px 14px',
+              borderRadius: '12px',
+              backgroundColor: mainTab === 'product_enquiries' ? '#0284C7' : 'transparent',
+              color: mainTab === 'product_enquiries' ? '#FFFFFF' : '#CBD5E1',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '13.5px',
               cursor: 'pointer',
-              display: 'inline-flex',
+              display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              justifyContent: 'space-between',
+              transition: 'all 0.2s ease',
+              boxShadow: mainTab === 'product_enquiries' ? '0 4px 14px rgba(2, 132, 199, 0.35)' : 'none'
             }}
           >
-            <Inbox size={17} />
-            <span>Product Quote Enquiries ({productQuotesCount})</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Inbox size={18} />
+              <span>Product Quote Enquiries</span>
+            </div>
+            <span style={{
+              backgroundColor: mainTab === 'product_enquiries' ? 'rgba(255, 255, 255, 0.25)' : '#0F2744',
+              color: '#FFFFFF',
+              fontSize: '11.5px',
+              fontWeight: 800,
+              padding: '2px 8px',
+              borderRadius: '100px'
+            }}>
+              {productQuotesCount}
+            </span>
           </button>
 
+          {/* 3. Contact Us Enquiries */}
           <button
             onClick={() => setMainTab('contact_enquiries')}
             style={{
-              padding: '12px 22px',
-              borderRadius: '100px',
-              backgroundColor: mainTab === 'contact_enquiries' ? '#15803D' : 'transparent',
-              color: mainTab === 'contact_enquiries' ? '#FFFFFF' : '#0B2240',
-              border: mainTab === 'contact_enquiries' ? 'none' : '1.5px solid #CBD5E1',
-              fontWeight: 800,
-              fontSize: '14px',
+              width: '100%',
+              textAlign: 'left',
+              padding: '12px 14px',
+              borderRadius: '12px',
+              backgroundColor: mainTab === 'contact_enquiries' ? '#16A34A' : 'transparent',
+              color: mainTab === 'contact_enquiries' ? '#FFFFFF' : '#CBD5E1',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '13.5px',
               cursor: 'pointer',
-              display: 'inline-flex',
+              display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              justifyContent: 'space-between',
+              transition: 'all 0.2s ease',
+              boxShadow: mainTab === 'contact_enquiries' ? '0 4px 14px rgba(22, 163, 74, 0.35)' : 'none'
             }}
           >
-            <Mail size={17} />
-            <span>Contact Us Enquiries ({contactFormCount})</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Mail size={18} />
+              <span>Contact Us Enquiries</span>
+            </div>
+            <span style={{
+              backgroundColor: mainTab === 'contact_enquiries' ? 'rgba(255, 255, 255, 0.25)' : '#0F2744',
+              color: '#FFFFFF',
+              fontSize: '11.5px',
+              fontWeight: 800,
+              padding: '2px 8px',
+              borderRadius: '100px'
+            }}>
+              {contactFormCount}
+            </span>
           </button>
 
+          {/* 4. Manage Blogs */}
           <button
             onClick={() => setMainTab('blogs')}
             style={{
-              padding: '12px 22px',
-              borderRadius: '100px',
-              backgroundColor: mainTab === 'blogs' ? '#0B2240' : 'transparent',
-              color: mainTab === 'blogs' ? '#FFFFFF' : '#0B2240',
-              border: mainTab === 'blogs' ? 'none' : '1.5px solid #CBD5E1',
-              fontWeight: 800,
-              fontSize: '14px',
+              width: '100%',
+              textAlign: 'left',
+              padding: '12px 14px',
+              borderRadius: '12px',
+              backgroundColor: mainTab === 'blogs' ? '#6366F1' : 'transparent',
+              color: mainTab === 'blogs' ? '#FFFFFF' : '#CBD5E1',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '13.5px',
               cursor: 'pointer',
-              display: 'inline-flex',
+              display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              justifyContent: 'space-between',
+              transition: 'all 0.2s ease',
+              boxShadow: mainTab === 'blogs' ? '0 4px 14px rgba(99, 102, 241, 0.35)' : 'none'
             }}
           >
-            <FileText size={17} />
-            <span>Manage Blogs ({blogs.length})</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <FileText size={18} />
+              <span>Manage Blogs</span>
+            </div>
+            <span style={{
+              backgroundColor: mainTab === 'blogs' ? 'rgba(255, 255, 255, 0.25)' : '#0F2744',
+              color: '#FFFFFF',
+              fontSize: '11.5px',
+              fontWeight: 800,
+              padding: '2px 8px',
+              borderRadius: '100px'
+            }}>
+              {blogs.length}
+            </span>
           </button>
 
+          {/* 5. Manage Certificates (6) */}
           <button
             onClick={() => setMainTab('certs')}
             style={{
-              padding: '12px 22px',
-              borderRadius: '100px',
-              backgroundColor: mainTab === 'certs' ? '#0B2240' : 'transparent',
-              color: mainTab === 'certs' ? '#FFFFFF' : '#0B2240',
-              border: mainTab === 'certs' ? 'none' : '1.5px solid #CBD5E1',
-              fontWeight: 800,
-              fontSize: '14px',
+              width: '100%',
+              textAlign: 'left',
+              padding: '12px 14px',
+              borderRadius: '12px',
+              backgroundColor: mainTab === 'certs' ? '#D97706' : 'transparent',
+              color: mainTab === 'certs' ? '#FFFFFF' : '#CBD5E1',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '13.5px',
               cursor: 'pointer',
-              display: 'inline-flex',
+              display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              justifyContent: 'space-between',
+              transition: 'all 0.2s ease',
+              boxShadow: mainTab === 'certs' ? '0 4px 14px rgba(217, 119, 6, 0.35)' : 'none'
             }}
           >
-            <Award size={17} />
-            <span>Manage Certificates ({certs.length})</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Award size={18} />
+              <span>Manage Certificates (6)</span>
+            </div>
+            <span style={{
+              backgroundColor: mainTab === 'certs' ? 'rgba(255, 255, 255, 0.25)' : '#0F2744',
+              color: '#FFFFFF',
+              fontSize: '11.5px',
+              fontWeight: 800,
+              padding: '2px 8px',
+              borderRadius: '100px'
+            }}>
+              {certs.length}
+            </span>
           </button>
 
+          {/* 6. Cloud Database (Firebase) */}
           <button
             onClick={() => {
               setMainTab('cloud');
               setIsCloudReady(isFirebaseConnected());
             }}
             style={{
-              padding: '12px 22px',
-              borderRadius: '100px',
-              backgroundColor: mainTab === 'cloud' ? '#0284C7' : 'transparent',
-              color: mainTab === 'cloud' ? '#FFFFFF' : '#0284C7',
-              border: mainTab === 'cloud' ? 'none' : '1.5px solid #0284C7',
-              fontWeight: 800,
-              fontSize: '14px',
+              width: '100%',
+              textAlign: 'left',
+              padding: '12px 14px',
+              borderRadius: '12px',
+              backgroundColor: mainTab === 'cloud' ? '#0F766E' : 'transparent',
+              color: mainTab === 'cloud' ? '#FFFFFF' : '#94A3B8',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '13px',
               cursor: 'pointer',
-              display: 'inline-flex',
+              display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              position: 'relative'
+              justifyContent: 'space-between',
+              marginTop: '10px',
+              transition: 'all 0.2s ease'
             }}
           >
-            <Cloud size={17} />
-            <span>☁️ Cloud Database (Firebase)</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Cloud size={17} />
+              <span>☁️ Cloud Database</span>
+            </div>
             <span style={{
-              width: '9px',
-              height: '9px',
+              width: '8px',
+              height: '8px',
               borderRadius: '50%',
               backgroundColor: isCloudReady ? '#22C55E' : '#F59E0B',
-              boxShadow: isCloudReady ? '0 0 8px #22C55E' : 'none'
+              boxShadow: isCloudReady ? '0 0 6px #22C55E' : 'none'
             }} />
           </button>
+        </nav>
+
+        {/* Sidebar Footer Actions */}
+        <div style={{
+          padding: '16px 14px',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px'
+        }}>
+          <button
+            onClick={async () => {
+              if (window.confirm('Reset all custom changes to default initial catalogue? This will clear local database and reset to initial state.')) {
+                await resetAllCustomData();
+              }
+            }}
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              color: '#FCD34D',
+              border: '1px solid rgba(252, 211, 77, 0.25)',
+              fontSize: '12px',
+              fontWeight: 700,
+              padding: '8px 12px',
+              borderRadius: '8px',
+              background: 'rgba(252, 211, 77, 0.06)',
+              cursor: 'pointer'
+            }}
+          >
+            <RefreshCw size={13} />
+            <span>Reset Data / Storage</span>
+          </button>
+
+          <button
+            onClick={() => {
+              if (window.location.hash) window.location.hash = '';
+              if (window.location.search) window.location.search = '';
+              window.location.reload();
+            }}
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              color: '#CBD5E1',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              fontSize: '12.5px',
+              fontWeight: 600,
+              padding: '8px 12px',
+              borderRadius: '8px',
+              background: 'rgba(255, 255, 255, 0.04)',
+              cursor: 'pointer'
+            }}
+          >
+            <span>View Main Site</span>
+            <ExternalLink size={13} />
+          </button>
+
+          <button
+            onClick={handleLogout}
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              backgroundColor: 'rgba(239, 68, 68, 0.15)',
+              color: '#FCA5A5',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              padding: '9px 12px',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontWeight: 700,
+              cursor: 'pointer'
+            }}
+          >
+            <LogOut size={14} />
+            <span>Log Out</span>
+          </button>
         </div>
+      </aside>
+
+      {/* RIGHT MAIN CONTENT AREA */}
+      <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        
+        {/* Top Navbar */}
+        <header style={{
+          backgroundColor: '#FFFFFF',
+          borderBottom: '1.5px solid #E2E8F0',
+          padding: '16px 32px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          position: 'sticky',
+          top: 0,
+          zIndex: 90,
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.02)'
+        }}>
+          <div>
+            <h1 style={{ fontSize: '20px', fontWeight: 900, color: '#0B2240', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
+              {mainTab === 'catalog' && '📦 Manage Products & Categories'}
+              {mainTab === 'product_enquiries' && '📥 Product Quote Enquiries'}
+              {mainTab === 'contact_enquiries' && '✉️ Contact Us Enquiries'}
+              {mainTab === 'blogs' && '✍️ Manage Export Knowledge Blogs'}
+              {mainTab === 'certs' && '🏆 Manage Government Certificates (6)'}
+              {mainTab === 'cloud' && '☁️ Cloud Database & Cross-Device Sync'}
+            </h1>
+            <p style={{ fontSize: '13px', color: '#64748B', margin: '2px 0 0', fontWeight: 500 }}>
+              {mainTab === 'catalog' && 'Add, edit, delete products across all 6 export commodity categories with real-time updates.'}
+              {mainTab === 'product_enquiries' && 'Review incoming container rate & product quotation requests from overseas buyers.'}
+              {mainTab === 'contact_enquiries' && 'Manage business inquiries submitted via the Contact Us form.'}
+              {mainTab === 'blogs' && 'Publish and edit export articles, trade knowledge, and spice guides.'}
+              {mainTab === 'certs' && 'Update official ISO, APEDA, FSSAI, Spices Board, FDA & Halal export credentials.'}
+              {mainTab === 'cloud' && 'Synchronize all products and enquiries to Firebase Firestore database.'}
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <button
+              onClick={() => {
+                if (window.location.hash) window.location.hash = '';
+                if (window.location.search) window.location.search = '';
+                window.location.reload();
+              }}
+              className="btn btn-outline"
+              style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 700, borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            >
+              <span>Preview Site</span>
+              <ExternalLink size={14} />
+            </button>
+          </div>
+        </header>
+
+        {/* Content Container */}
+        <div style={{ padding: '28px 32px 60px', flex: 1 }}>
+          
+          {/* Dashboard Stats Row */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '14px', marginBottom: '28px' }}>
+            
+            <div 
+              onClick={() => setMainTab('catalog')}
+              style={{ 
+                backgroundColor: '#FFFFFF', 
+                borderRadius: '16px', 
+                padding: '16px', 
+                border: mainTab === 'catalog' ? '2px solid #ED6C1B' : '1.5px solid #E2E8F0', 
+                boxShadow: '0 2px 10px rgba(11, 34, 64, 0.03)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#0B2240', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Package size={20} />
+              </div>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Products</span>
+                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{totalProductsCount}</h3>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => setMainTab('product_enquiries')}
+              style={{ 
+                backgroundColor: '#FFFFFF', 
+                borderRadius: '16px', 
+                padding: '16px', 
+                border: mainTab === 'product_enquiries' ? '2px solid #0284C7' : '1.5px solid #E2E8F0', 
+                boxShadow: '0 2px 10px rgba(11, 34, 64, 0.03)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#0284C7', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Inbox size={20} />
+              </div>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Product Quotes</span>
+                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0284C7', margin: 0 }}>{productQuotesCount}</h3>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => setMainTab('contact_enquiries')}
+              style={{ 
+                backgroundColor: '#FFFFFF', 
+                borderRadius: '16px', 
+                padding: '16px', 
+                border: mainTab === 'contact_enquiries' ? '2px solid #16A34A' : '1.5px solid #E2E8F0', 
+                boxShadow: '0 2px 10px rgba(11, 34, 64, 0.03)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#16A34A', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Mail size={20} />
+              </div>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Contact Form</span>
+                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#16A34A', margin: 0 }}>{contactFormCount}</h3>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => setMainTab('blogs')}
+              style={{ 
+                backgroundColor: '#FFFFFF', 
+                borderRadius: '16px', 
+                padding: '16px', 
+                border: mainTab === 'blogs' ? '2px solid #6366F1' : '1.5px solid #E2E8F0', 
+                boxShadow: '0 2px 10px rgba(11, 34, 64, 0.03)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#6366F1', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <FileText size={20} />
+              </div>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Blogs</span>
+                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#6366F1', margin: 0 }}>{blogs.length}</h3>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => setMainTab('certs')}
+              style={{ 
+                backgroundColor: '#FFFFFF', 
+                borderRadius: '16px', 
+                padding: '16px', 
+                border: mainTab === 'certs' ? '2px solid #D97706' : '1.5px solid #E2E8F0', 
+                boxShadow: '0 2px 10px rgba(11, 34, 64, 0.03)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#D97706', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Award size={20} />
+              </div>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Certificates</span>
+                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#D97706', margin: 0 }}>{certs.length}</h3>
+              </div>
+            </div>
+
+          </div>
 
         {/* TAB 1: PRODUCT CATALOG MANAGER WITH 6 CATEGORIES SWITCHER */}
         {mainTab === 'catalog' && (
@@ -1243,7 +1536,8 @@ export default function AdminPanel() {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      </main>
 
       {/* --- UNIVERSAL MODAL: ADD / EDIT PRODUCT IN CURRENT CATEGORY --- */}
       {showItemModal && (
