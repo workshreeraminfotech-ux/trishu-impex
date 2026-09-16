@@ -470,6 +470,9 @@ export default function AdminPanel() {
   const totalProductsCount = spicesList.length + agroList.length + sanitaryList.length + tilesList.length + hardwareList.length + pvcList.length;
   const productQuotesCount = enquiries.filter(e => (e.source || '').toLowerCase().includes('product') || (e.source || '').toLowerCase().includes('quote')).length;
   const contactFormCount = enquiries.filter(e => (e.source || '').toLowerCase().includes('contact')).length;
+  const totalCategoriesCount = Object.keys(catalogConfigs).reduce((acc, k) => {
+    return acc + (catalogConfigs[k].categories.filter(c => c !== 'All').length);
+  }, 0);
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F1F5F9', fontFamily: 'var(--font-b, "Inter", sans-serif)' }}>
@@ -559,7 +562,7 @@ export default function AdminPanel() {
             Main Navigation
           </div>
 
-          {/* 1. Manage Products & Categories */}
+          {/* 1. Manage Products */}
           <button
             onClick={() => setMainTab('catalog')}
             style={{
@@ -582,7 +585,7 @@ export default function AdminPanel() {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <Package size={18} />
-              <span>📦 Manage Products & Categories</span>
+              <span>📦 Manage Products</span>
             </div>
             <span style={{
               backgroundColor: mainTab === 'catalog' ? 'rgba(255, 255, 255, 0.25)' : '#0F2744',
@@ -596,7 +599,44 @@ export default function AdminPanel() {
             </span>
           </button>
 
-          {/* 2. Product Quote Enquiries */}
+          {/* 2. Manage Categories & Subcategories */}
+          <button
+            onClick={() => setMainTab('categories')}
+            style={{
+              width: '100%',
+              textAlign: 'left',
+              padding: '12px 14px',
+              borderRadius: '12px',
+              backgroundColor: mainTab === 'categories' ? '#8B5CF6' : 'transparent',
+              color: mainTab === 'categories' ? '#FFFFFF' : '#CBD5E1',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '13.5px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              transition: 'all 0.2s ease',
+              boxShadow: mainTab === 'categories' ? '0 4px 14px rgba(139, 92, 246, 0.35)' : 'none'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Tag size={18} />
+              <span>🏷️ Manage Categories & Subcategories</span>
+            </div>
+            <span style={{
+              backgroundColor: mainTab === 'categories' ? 'rgba(255, 255, 255, 0.25)' : '#0F2744',
+              color: '#FFFFFF',
+              fontSize: '11.5px',
+              fontWeight: 800,
+              padding: '2px 8px',
+              borderRadius: '100px'
+            }}>
+              {totalCategoriesCount}
+            </span>
+          </button>
+
+          {/* 3. Product Quote Enquiries */}
           <button
             onClick={() => setMainTab('product_enquiries')}
             style={{
@@ -633,7 +673,7 @@ export default function AdminPanel() {
             </span>
           </button>
 
-          {/* 3. Contact Us Enquiries */}
+          {/* 4. Contact Us Enquiries */}
           <button
             onClick={() => setMainTab('contact_enquiries')}
             style={{
@@ -669,7 +709,6 @@ export default function AdminPanel() {
               {contactFormCount}
             </span>
           </button>
-
 
           {/* 5. Manage Certificates (6) */}
           <button
@@ -707,7 +746,6 @@ export default function AdminPanel() {
               {certs.length}
             </span>
           </button>
-
         </nav>
 
         {/* Sidebar Footer Actions */}
@@ -786,13 +824,15 @@ export default function AdminPanel() {
         }}>
           <div>
             <h1 style={{ fontSize: '20px', fontWeight: 900, color: '#0B2240', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
-              {mainTab === 'catalog' && '📦 Manage Products & Categories'}
+              {mainTab === 'catalog' && '📦 Manage Products'}
+              {mainTab === 'categories' && '🏷️ Manage Categories & Subcategories'}
               {mainTab === 'product_enquiries' && '📥 Product Quote Enquiries'}
               {mainTab === 'contact_enquiries' && '✉️ Contact Us Enquiries'}
               {mainTab === 'certs' && '🏆 Manage Government Certificates (6)'}
             </h1>
             <p style={{ fontSize: '13px', color: '#64748B', margin: '2px 0 0', fontWeight: 500 }}>
               {mainTab === 'catalog' && 'Add, edit, delete products across all 6 export commodity categories with real-time updates.'}
+              {mainTab === 'categories' && 'Add, edit, rename, or delete subcategories for all product categories. Changes sync automatically.'}
               {mainTab === 'product_enquiries' && 'Review incoming container rate & product quotation requests from overseas buyers.'}
               {mainTab === 'contact_enquiries' && 'Manage business inquiries submitted via the Contact Us form.'}
               {mainTab === 'certs' && 'Update official ISO, APEDA, FSSAI, Spices Board, FDA & Halal export credentials.'}
@@ -842,6 +882,30 @@ export default function AdminPanel() {
               <div>
                 <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Products</span>
                 <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0 }}>{totalProductsCount}</h3>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => setMainTab('categories')}
+              style={{ 
+                backgroundColor: '#FFFFFF', 
+                borderRadius: '16px', 
+                padding: '16px', 
+                border: mainTab === 'categories' ? '2px solid #8B5CF6' : '1.5px solid #E2E8F0', 
+                boxShadow: '0 2px 10px rgba(11, 34, 64, 0.03)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#8B5CF6', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Tag size={20} />
+              </div>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Subcategories</span>
+                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#8B5CF6', margin: 0 }}>{totalCategoriesCount}</h3>
               </div>
             </div>
 
@@ -1076,7 +1140,296 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* TAB 2 & 3: ENQUIRIES */}
+        {/* TAB 2: DEDICATED CATEGORIES & SUBCATEGORIES MANAGEMENT CENTER */}
+        {mainTab === 'categories' && (
+          <div>
+            {/* 6 Product Line Switcher Buttons */}
+            <div style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: '20px',
+              padding: '12px',
+              border: '1.5px solid #CBD5E1',
+              marginBottom: '24px',
+              display: 'flex',
+              gap: '8px',
+              flexWrap: 'wrap'
+            }}>
+              {Object.keys(catalogConfigs).map((catKey) => {
+                const cfg = catalogConfigs[catKey];
+                const IconC = cfg.icon;
+                const isSelected = selectedCatalog === catKey;
+                const subCatCount = cfg.categories.filter(c => c !== 'All').length;
+
+                return (
+                  <button
+                    key={catKey}
+                    onClick={() => {
+                      setSelectedCatalog(catKey);
+                      setEditingCatOldName(null);
+                    }}
+                    style={{
+                      padding: '10px 18px',
+                      borderRadius: '12px',
+                      backgroundColor: isSelected ? '#8B5CF6' : '#F8FAFC',
+                      color: isSelected ? '#FFFFFF' : '#0B2240',
+                      border: isSelected ? '1px solid #8B5CF6' : '1px solid #E2E8F0',
+                      fontWeight: 800,
+                      fontSize: '13.5px',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      transition: 'all 0.2s ease',
+                      flex: '1 1 auto',
+                      justifyContent: 'center',
+                      boxShadow: isSelected ? '0 4px 14px rgba(139, 92, 246, 0.3)' : 'none'
+                    }}
+                  >
+                    <IconC size={16} style={{ color: isSelected ? '#FFFFFF' : cfg.color }} />
+                    <span>{cfg.name}</span>
+                    <span style={{
+                      backgroundColor: isSelected ? 'rgba(255, 255, 255, 0.25)' : 'rgba(11, 34, 64, 0.08)',
+                      color: isSelected ? '#FFFFFF' : '#64748B',
+                      fontSize: '11px',
+                      fontWeight: 800,
+                      padding: '2px 8px',
+                      borderRadius: '100px'
+                    }}>
+                      {subCatCount}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Active Category Header & Add Subcategory Card */}
+            <div style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: '24px',
+              border: '1.5px solid #CBD5E1',
+              padding: '24px',
+              marginBottom: '24px',
+              boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '14px',
+                    backgroundColor: 'rgba(139, 92, 246, 0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Tag size={22} style={{ color: '#8B5CF6' }} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '20px', fontWeight: 900, color: '#0B2240', margin: 0 }}>
+                      Subcategories for <span style={{ color: currentConfig.color }}>{currentConfig.name}</span>
+                    </h3>
+                    <span style={{ fontSize: '13px', color: '#64748B' }}>
+                      Add, rename, or remove subcategories. Renaming a subcategory automatically re-tags all associated products instantly.
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <span style={{ padding: '6px 14px', borderRadius: '100px', backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', fontSize: '13px', fontWeight: 800, color: '#0B2240' }}>
+                    📦 {currentConfig.list.length} Total Products
+                  </span>
+                  <span style={{ padding: '6px 14px', borderRadius: '100px', backgroundColor: '#EDE9FE', border: '1px solid #DDD6FE', fontSize: '13px', fontWeight: 800, color: '#7C3AED' }}>
+                    🏷️ {currentConfig.categories.filter(c => c !== 'All').length} Subcategories
+                  </span>
+                </div>
+              </div>
+
+              {/* Add Subcategory Form */}
+              <form onSubmit={handleAddNewCategory} style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '16px', border: '1.5px solid #E2E8F0' }}>
+                <div style={{ flex: '1 1 300px' }}>
+                  <input
+                    type="text"
+                    placeholder={`Enter new subcategory for ${currentConfig.name} (e.g. Organic Herbal Powders)...`}
+                    value={newCatInput}
+                    onChange={(e) => setNewCatInput(e.target.value)}
+                    style={{ width: '100%', padding: '12px 18px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  style={{
+                    backgroundColor: '#8B5CF6',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: '12px',
+                    fontWeight: 800,
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)'
+                  }}
+                >
+                  <Plus size={16} />
+                  <span>Add Subcategory</span>
+                </button>
+              </form>
+            </div>
+
+            {/* Subcategories List Table */}
+            <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden', boxShadow: '0 8px 24px rgba(11, 34, 64, 0.04)' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#F1F5F9', borderBottom: '1.5px solid #CBD5E1', color: '#0B2240', fontWeight: 800 }}>
+                    <th style={{ padding: '16px 24px', width: '50px' }}>#</th>
+                    <th style={{ padding: '16px 24px' }}>Subcategory Name</th>
+                    <th style={{ padding: '16px 24px' }}>Products Linked</th>
+                    <th style={{ padding: '16px 24px' }}>Status</th>
+                    <th style={{ padding: '16px 24px', textAlign: 'right' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentConfig.categories.filter(c => c !== 'All').map((catName, idx) => {
+                    const isEditing = editingCatOldName === catName;
+                    const countInCat = currentConfig.list.filter(p => p.category === catName || p.cat === catName).length;
+                    const catDomain = currentConfig.key || selectedCatalog;
+
+                    return (
+                      <tr key={catName} style={{ borderBottom: '1px solid #E2E8F0', backgroundColor: isEditing ? '#FAF5FF' : '#FFFFFF' }}>
+                        <td style={{ padding: '16px 24px', color: '#94A3B8', fontWeight: 700, fontSize: '13px' }}>
+                          {idx + 1}
+                        </td>
+                        
+                        <td style={{ padding: '16px 24px' }}>
+                          {isEditing ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', maxWidth: '400px' }}>
+                              <input
+                                type="text"
+                                value={editingCatNewName}
+                                onChange={(e) => setEditingCatNewName(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') handleSaveEditCategory(catDomain);
+                                  if (e.key === 'Escape') setEditingCatOldName(null);
+                                }}
+                                autoFocus
+                                style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1.5px solid #8B5CF6', fontSize: '14px', fontWeight: 700, outline: 'none' }}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleSaveEditCategory(catDomain)}
+                                style={{ backgroundColor: '#16A34A', color: '#FFFFFF', border: 'none', padding: '8px 14px', borderRadius: '8px', fontWeight: 700, fontSize: '12.5px', cursor: 'pointer' }}
+                              >
+                                Save
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingCatOldName(null)}
+                                style={{ backgroundColor: '#F1F5F9', color: '#475569', border: '1px solid #CBD5E1', padding: '8px 12px', borderRadius: '8px', fontWeight: 700, fontSize: '12.5px', cursor: 'pointer' }}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: currentConfig.color, display: 'inline-block' }} />
+                              <strong style={{ fontSize: '15px', color: '#0B2240' }}>{catName}</strong>
+                            </div>
+                          )}
+                        </td>
+
+                        <td style={{ padding: '16px 24px' }}>
+                          <span style={{
+                            padding: '4px 12px',
+                            borderRadius: '100px',
+                            fontSize: '12.5px',
+                            fontWeight: 800,
+                            backgroundColor: countInCat > 0 ? 'rgba(237, 108, 27, 0.1)' : '#F1F5F9',
+                            color: countInCat > 0 ? '#ED6C1B' : '#64748B',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}>
+                            {countInCat} {countInCat === 1 ? 'Product' : 'Products'}
+                          </span>
+                        </td>
+
+                        <td style={{ padding: '16px 24px' }}>
+                          <span style={{
+                            padding: '3px 10px',
+                            borderRadius: '100px',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            backgroundColor: '#DCFCE7',
+                            color: '#166534',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}>
+                            <CheckCircle2 size={12} /> Active in Catalog & Site
+                          </span>
+                        </td>
+
+                        <td style={{ padding: '16px 24px', textAlign: 'right' }}>
+                          {!isEditing && (
+                            <div style={{ display: 'inline-flex', gap: '8px' }}>
+                              <button
+                                type="button"
+                                onClick={() => handleStartEditCategory(catName)}
+                                style={{
+                                  backgroundColor: '#F1F5F9',
+                                  border: '1px solid #CBD5E1',
+                                  color: '#0B2240',
+                                  padding: '7px 14px',
+                                  borderRadius: '8px',
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  fontWeight: 700,
+                                  fontSize: '12.5px'
+                                }}
+                                title="Rename subcategory and update all linked products"
+                              >
+                                <Edit3 size={13} />
+                                <span>Rename</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteCategory(catDomain, catName)}
+                                style={{
+                                  backgroundColor: '#FEF2F2',
+                                  border: '1px solid #FCA5A5',
+                                  color: '#991B1B',
+                                  padding: '7px 12px',
+                                  borderRadius: '8px',
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  fontWeight: 700,
+                                  fontSize: '12.5px'
+                                }}
+                                title="Delete subcategory"
+                              >
+                                <Trash2 size={13} />
+                                <span>Delete</span>
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3 & 4: ENQUIRIES */}
         {(mainTab === 'product_enquiries' || mainTab === 'contact_enquiries') && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
