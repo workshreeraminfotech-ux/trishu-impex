@@ -659,30 +659,6 @@ export default function AdminPanel() {
           flexDirection: 'column',
           gap: '8px'
         }}>
-          <button
-            onClick={async () => {
-              if (window.confirm('Reset all custom changes to default initial catalogue? This will clear local database and reset to initial state.')) {
-                await resetAllCustomData();
-              }
-            }}
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              color: '#FCD34D',
-              border: '1px solid rgba(252, 211, 77, 0.25)',
-              fontSize: '12px',
-              fontWeight: 700,
-              padding: '8px 12px',
-              borderRadius: '8px',
-              background: 'rgba(252, 211, 77, 0.06)',
-              cursor: 'pointer'
-            }}
-          >
-            <RefreshCw size={13} />
-            <span>Reset Data / Storage</span>
-          </button>
 
           <button
             onClick={() => {
