@@ -1123,16 +1123,14 @@ export default function AdminPanel() {
                 <thead>
                   <tr style={{ backgroundColor: '#F1F5F9', borderBottom: '1.5px solid #CBD5E1', color: '#0B2240', fontWeight: 800 }}>
                     <th style={{ padding: '16px 20px' }}>Product</th>
-                    <th style={{ padding: '16px 20px' }}>Category</th>
-                    <th style={{ padding: '16px 20px' }}>Origin</th>
-                    <th style={{ padding: '16px 20px' }}>HS Code</th>
+                    <th style={{ padding: '16px 20px' }}>Subcategory</th>
                     <th style={{ padding: '16px 20px', textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredCatalogItems.length === 0 ? (
                     <tr>
-                      <td colSpan={5} style={{ padding: '40px 20px', textAlign: 'center', color: '#64748B', fontWeight: 600 }}>
+                      <td colSpan={3} style={{ padding: '40px 20px', textAlign: 'center', color: '#64748B', fontWeight: 600 }}>
                         No items found in {currentConfig.name}. Click "Add in {currentConfig.name}" to add new products.
                       </td>
                     </tr>
@@ -1143,12 +1141,10 @@ export default function AdminPanel() {
                           <img src={p.image} alt={p.title} style={{ width: '48px', height: '48px', objectFit: 'contain', borderRadius: '10px', backgroundColor: '#F8FAFC', padding: '4px', border: '1px solid #E2E8F0' }} />
                           <div>
                             <strong style={{ fontSize: '15px', color: '#0B2240', display: 'block' }}>{p.title}</strong>
-                            <span style={{ fontSize: '12px', color: '#475569' }}>{p.description ? p.description.substring(0, 50) + '...' : (p.desc ? p.desc.substring(0, 50) + '...' : '')}</span>
+                            <span style={{ fontSize: '12px', color: '#475569' }}>{p.description ? p.description.substring(0, 70) + (p.description.length > 70 ? '...' : '') : (p.desc ? p.desc.substring(0, 70) + (p.desc.length > 70 ? '...' : '') : '')}</span>
                           </div>
                         </td>
                         <td style={{ padding: '16px 20px', fontWeight: 600, color: '#0B2240' }}>{p.category || p.cat}</td>
-                        <td style={{ padding: '16px 20px', color: '#475569' }}>{p.origin}</td>
-                        <td style={{ padding: '16px 20px', color: '#475569', fontWeight: 600 }}>{p.hsCode || '—'}</td>
                         <td style={{ padding: '16px 20px', textAlign: 'right' }}>
                           <div style={{ display: 'inline-flex', gap: '8px' }}>
                             <button onClick={() => openEditItem(p)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '12.5px' }}>
@@ -1783,40 +1779,6 @@ export default function AdminPanel() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Origin / Hub</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Gujarat, India"
-                    value={itemForm.origin}
-                    onChange={(e) => setItemForm({ ...itemForm, origin: e.target.value })}
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>HS Code</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. HS Code"
-                    value={itemForm.hsCode}
-                    onChange={(e) => setItemForm({ ...itemForm, hsCode: e.target.value })}
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Export Packaging</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Export Packaging details"
-                  value={itemForm.packaging}
-                  onChange={(e) => setItemForm({ ...itemForm, packaging: e.target.value })}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
-                />
-              </div>
-
               <div>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Product Image (URL or Upload)</label>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
@@ -1838,21 +1800,10 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Specifications & Technical Parameters</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Dimensions, Grade, Purity, Material..."
-                  value={itemForm.specs}
-                  onChange={(e) => setItemForm({ ...itemForm, specs: e.target.value })}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Export Description</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Product Description</label>
                 <textarea
-                  rows={3}
-                  placeholder="Detailed description for global buyers and freight tenders..."
+                  rows={4}
+                  placeholder="Enter product description, highlights, details..."
                   value={itemForm.description}
                   onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })}
                   style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
