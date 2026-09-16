@@ -36,16 +36,8 @@ export default function CtaBanner({ onOpenQuote, onNavigate }) {
                 Partner with Trishu Impex for premium spices, oil seeds, herbs, and agricultural produce delivered to your port with guaranteed purity and complete export compliance.
               </p>
 
-              <div className="cta-features-pill-row">
-                <span className="cta-pill-item">
-                  <ShieldCheck size={14} color="#ED6C1B" />
-                  <span>ISO & APEDA Certified</span>
-                </span>
-                <span className="cta-pill-item">
-                  <ShieldCheck size={14} color="#ED6C1B" />
-                  <span>Worldwide Port Dispatch</span>
-                </span>
-              </div>
+
+
 
               <div className="cta-actions-row">
                 <button 

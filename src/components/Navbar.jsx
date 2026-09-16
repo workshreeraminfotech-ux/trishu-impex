@@ -131,7 +131,7 @@ export default function Navbar({ activePage, onNavigate }) {
               <a
                 href="#"
                 onClick={(e) => { e.preventDefault(); handleNav('home'); }}
-                style={{ fontWeight: 700, fontSize: '17px', color: activePage === 'home' ? 'var(--gold)' : 'var(--navy)', textDecoration: 'none', transition: 'color 0.2s' }}
+                style={{ fontWeight: 700, fontSize: '18px', color: activePage === 'home' ? 'var(--gold)' : 'var(--navy)', textDecoration: 'none', transition: 'color 0.2s' }}
               >
                 Home
               </a>
@@ -139,7 +139,7 @@ export default function Navbar({ activePage, onNavigate }) {
               <a
                 href="#"
                 onClick={(e) => { e.preventDefault(); handleNav('about'); }}
-                style={{ fontWeight: 700, fontSize: '17px', color: activePage === 'about' ? 'var(--gold)' : 'var(--navy)', textDecoration: 'none', transition: 'color 0.2s' }}
+                style={{ fontWeight: 700, fontSize: '18px', color: activePage === 'about' ? 'var(--gold)' : 'var(--navy)', textDecoration: 'none', transition: 'color 0.2s' }}
               >
                 About Us
               </a>
@@ -161,7 +161,7 @@ export default function Navbar({ activePage, onNavigate }) {
                     padding: '12px 0',
                     fontFamily: 'inherit',
                     fontWeight: 700,
-                    fontSize: '17px',
+                    fontSize: '18px',
                     color: isProductsActive ? 'var(--gold)' : 'var(--navy)',
                     textDecoration: 'none',
                     transition: 'color 0.2s',
@@ -270,18 +270,12 @@ export default function Navbar({ activePage, onNavigate }) {
                 )}
               </div>
 
-              <a
-                href="#"
-                onClick={(e) => { e.preventDefault(); handleNav('blog'); }}
-                style={{ fontWeight: 700, fontSize: '17px', color: activePage === 'blog' ? 'var(--gold)' : 'var(--navy)', textDecoration: 'none', transition: 'color 0.2s' }}
-              >
-                Blogs
-              </a>
+
 
               <a
                 href="#"
                 onClick={(e) => { e.preventDefault(); handleNav('contact'); }}
-                style={{ fontWeight: 700, fontSize: '17px', color: activePage === 'contact' ? 'var(--gold)' : 'var(--navy)', textDecoration: 'none', transition: 'color 0.2s' }}
+                style={{ fontWeight: 700, fontSize: '18px', color: activePage === 'contact' ? 'var(--gold)' : 'var(--navy)', textDecoration: 'none', transition: 'color 0.2s' }}
               >
                 Contact Us
               </a>
@@ -294,7 +288,7 @@ export default function Navbar({ activePage, onNavigate }) {
                 onClick={() => handleNav('contact')}
                 style={{ fontSize: '15px', padding: '12px 24px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
               >
-                <span>Freight Quote</span>
+                <span>Request Quote</span>
                 <ArrowRight size={16} />
               </button>
 
@@ -371,7 +365,7 @@ export default function Navbar({ activePage, onNavigate }) {
                 )}
               </div>
 
-              <a href="#" onClick={(e) => { e.preventDefault(); handleNav('blog'); }} style={{ fontWeight: 700, fontSize: '17px', color: activePage === 'blog' ? '#ED6C1B' : 'var(--navy)', textDecoration: 'none', padding: '4px 0' }}>Blogs</a>
+
               <a href="#" onClick={(e) => { e.preventDefault(); handleNav('contact'); }} style={{ fontWeight: 700, fontSize: '17px', color: activePage === 'contact' ? '#ED6C1B' : 'var(--navy)', textDecoration: 'none', padding: '4px 0' }}>Contact Us</a>
             </div>
 

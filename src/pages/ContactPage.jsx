@@ -263,10 +263,11 @@ export default function ContactPage() {
                 style={{ minHeight: 300 }}
               >
                 <iframe
-                  src="https://maps.google.com/maps?q=Dayima+Complex,+Paliyad+Road,+Sayla,+Gujarat+363430&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3672.0!2d71.483521!3d22.5329231!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395917dd25064cbd%3A0xdf9758c9c0114820!2sTrishu%20Impex!5e0!3m2!1sen!2sin!4v1694000000000!5m2!1sen!2sin"
                   title="Trishu Impex Location - Sayla, Gujarat"
                   allowFullScreen
                   loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
                 />
               </motion.div>
 

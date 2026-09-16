@@ -16,16 +16,16 @@ export default function FooterSection({ onNavigate }) {
               <img src={logoImg} alt="Trishu Impex" />
             </div>
             <p className="footer-bio-text">
-              Trishu Impex is a premier Indian exporter of high-grade food & agricultural products. Delivering trust, exporting excellence directly to global markets.
+              Trishu Impex is a trusted Indian merchant exporter of Spices, Agro Commodities, Sanitaryware, Tiles & Ceramics, Architectural Hardware, and PVC & CPVC Pipes. Delivering trust, exporting excellence globally.
             </p>
             <div className="footer-social-row">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+              <a href="https://www.facebook.com/61592710711493/mentions/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                 <Facebook size={16} />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <a href="https://www.instagram.com/trishuimpex/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                 <Instagram size={16} />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+              <a href="https://www.linkedin.com/company/trishu-impex/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
                 <Linkedin size={16} />
               </a>
             </div>
@@ -53,11 +53,6 @@ export default function FooterSection({ onNavigate }) {
               <li>
                 <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('agro'); }}>
                   <ChevronRight size={14} className="link-arrow" /> Agro Commodities
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('blog'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> Blogs
                 </a>
               </li>
               <li>

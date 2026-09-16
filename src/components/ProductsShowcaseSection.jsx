@@ -109,19 +109,10 @@ export default function ProductsShowcaseSection({ onSelectProduct, onOpenQuote, 
                   <button
                     onClick={() => onOpenQuote ? onOpenQuote(item.title) : null}
                     className="btn btn-primary"
-                    style={{ flex: 1, padding: '12px 18px', fontSize: '13.5px', justifyContent: 'center' }}
+                    style={{ width: '100%', padding: '12px 18px', fontSize: '13.5px', justifyContent: 'center' }}
                   >
                     <span>Request Quote</span>
                     <ArrowRight size={15} />
-                  </button>
-                  
-                  <button
-                    onClick={() => onSelectProduct ? onSelectProduct(item) : null}
-                    className="btn btn-outline"
-                    style={{ padding: '12px 18px', fontSize: '13.5px' }}
-                  >
-                    <Eye size={15} />
-                    <span>View</span>
                   </button>
                 </div>
               </div>

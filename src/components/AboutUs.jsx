@@ -87,7 +87,7 @@ export default function AboutUs() {
             {/* Intro Lead Block */}
             <div className="about-intro-lead-block">
               <span className="eyebrow" style={{ marginBottom: '14px' }}>
-                TRISHU IMPEX • PREMIER INDIAN AGRO EXPORTS
+                TRISHU IMPEX • PREMIER INDIAN MERCHANT EXPORTER
               </span>
 
               <h2 style={{ fontSize: 'clamp(28px, 3.8vw, 38px)', fontWeight: 900, color: 'var(--navy)', lineHeight: 1.2, margin: '12px 0 16px', fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
@@ -95,47 +95,20 @@ export default function AboutUs() {
               </h2>
 
               <p style={{ fontSize: '16px', color: '#475569', lineHeight: 1.65, marginBottom: '20px', fontWeight: 500 }}>
-                <strong>Trishu Impex</strong> is a premier Indian merchant exporter based in <strong>Gujarat, India</strong>. We specialize in end-to-end sourcing, quality testing, lab certification, and international container freight logistics.
+                <strong>Trishu Impex</strong> is a trusted Indian merchant exporter based in <strong>Gujarat, India</strong>, specializing in the global export of a diverse product portfolio — including <strong>Spices, Agro Commodities, Sanitaryware & Toilets, Tiles & Ceramics, Architectural Hardware,</strong> and <strong>PVC & CPVC Pipes</strong>. We bridge Indian manufacturers with international buyers through end-to-end sourcing, rigorous quality inspection, and seamless export logistics.
               </p>
             </div>
 
             {/* Mobile Injected Photo Slot (Visible only on phone) */}
             <div className="about-mobile-photo-placement" />
 
-            {/* Malaysia Shipment Milestone Highlight Card */}
-            <div style={{ background: 'linear-gradient(135deg, #2A1D08 0%, #4D3508 100%)', padding: '20px 22px', borderRadius: '18px', borderLeft: '5px solid #ED6C1B', borderTop: '1px solid rgba(245, 197, 66, 0.3)', marginBottom: '20px', color: '#fff', boxShadow: '0 8px 25px rgba(237, 108, 27, 0.15)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '15px', fontWeight: 800, color: '#ED6C1B', marginBottom: '6px' }}>
-                <Truck size={22} color="#ED6C1B" />
-                <span>Recent Milestone: Successful Malaysia Container Export 🚢🇲🇾</span>
-              </div>
-              <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.92)', margin: 0, lineHeight: 1.55 }}>
-                Trishu Impex has recently completed and dispatched a full container shipment of premium agricultural commodities straight to <strong>Malaysia</strong> with 100% custom compliance, zero inspection delays, and guaranteed quality.
-              </p>
-            </div>
+
 
             <p style={{ fontSize: '15px', color: 'var(--gray)', lineHeight: 1.6, marginBottom: '24px' }}>
-              With our dedicated export management and direct supply chain network, our international clients benefit from rapid decision-making, direct accountability, transparent pricing, and seamless shipping execution.
+              As a merchant exporter, we connect India's finest manufacturers and producers with global markets. Our clients benefit from competitive pricing, consolidated multi-product shipments, transparent documentation, and reliable on-time delivery across all product categories.
             </p>
 
-            {/* Corporate Highlights Grid */}
-            <div className="about-highlights-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '28px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13.5px', fontWeight: 700, color: 'var(--black)', background: '#FFFDF7', padding: '12px 14px', borderRadius: '14px', border: '1px solid var(--border)' }}>
-                <ShieldCheck size={18} style={{ color: 'var(--gold)', flexShrink: 0 }} />
-                <span>ISO & APEDA Certified</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13.5px', fontWeight: 700, color: 'var(--black)', background: '#FFFDF7', padding: '12px 14px', borderRadius: '14px', border: '1px solid var(--border)' }}>
-                <Globe2 size={18} style={{ color: 'var(--gold)', flexShrink: 0 }} />
-                <span>Malaysia & Global Dispatch</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13.5px', fontWeight: 700, color: 'var(--black)', background: '#FFFDF7', padding: '12px 14px', borderRadius: '14px', border: '1px solid var(--border)' }}>
-                <Award size={18} style={{ color: 'var(--gold)', flexShrink: 0 }} />
-                <span>APEDA & FSSAI Certified</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13.5px', fontWeight: 700, color: 'var(--black)', background: '#FFFDF7', padding: '12px 14px', borderRadius: '14px', border: '1px solid var(--border)' }}>
-                <Truck size={18} style={{ color: 'var(--gold)', flexShrink: 0 }} />
-                <span>Full Container Dispatch (FCL)</span>
-              </div>
-            </div>
+
 
             {/* Action CTA */}
             <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>

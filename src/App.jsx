@@ -20,7 +20,7 @@ import SanitarywarePage from './pages/SanitarywarePage';
 import TilesPage from './pages/TilesPage';
 import HardwarePage from './pages/HardwarePage';
 import PvcPipePage from './pages/PvcPipePage';
-import BlogPage from './pages/BlogPage';
+
 import ContactPage from './pages/ContactPage';
 
 export default function App() {
@@ -137,9 +137,7 @@ export default function App() {
             onOpenQuote={(prod) => handleOpenQuote(prod)} 
           />
         )}
-        {activePage === 'blog' && (
-          <BlogPage />
-        )}
+
         {activePage === 'contact' && (
           <ContactPage 
             onOpenQuote={() => handleOpenQuote()} 

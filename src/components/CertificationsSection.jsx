@@ -10,7 +10,7 @@ export default function CertificationsSection({ bgColor = '#F8FAFC' }) {
   const marqueeCerts = [...certs, ...certs, ...certs, ...certs];
 
   return (
-    <section className="py-50 certs-marquee-section" id="certifications" style={{ background: bgColor, borderTop: '1px solid #E2E8F0', borderBottom: '1px solid #E2E8F0', padding: '56px 0 62px', overflow: 'hidden' }}>
+    <section className="py-50 certs-marquee-section" id="certifications" style={{ background: 'var(--cream)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '56px 0 62px', overflow: 'hidden' }}>
       <div className="container">
         
         {/* Header */}

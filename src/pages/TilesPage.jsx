@@ -427,7 +427,7 @@ export default function TilesPage({ onSelectProduct, onOpenQuote }) {
                       }}
                       className="btn btn-primary"
                       style={{
-                        flex: 1,
+                        width: '100%',
                         padding: '11px 16px',
                         fontSize: '13.5px',
                         justifyContent: 'center'
@@ -435,22 +435,6 @@ export default function TilesPage({ onSelectProduct, onOpenQuote }) {
                     >
                       <span>Request Quote</span>
                       <ArrowRight size={14} />
-                    </button>
-                    
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (onSelectProduct) onSelectProduct(product);
-                      }}
-                      className="btn btn-outline"
-                      style={{
-                        padding: '11px 16px',
-                        fontSize: '13.5px',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      <Eye size={14} />
-                      <span>Details</span>
                     </button>
                   </div>
                 </div>

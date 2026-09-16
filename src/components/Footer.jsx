@@ -12,16 +12,16 @@ export default function Footer() {
               <img src={logoImg} alt="Trishu Impex Logo" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
             </div>
             <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.75)', margin: '16px 0 20px', lineHeight: 1.6 }}>
-              Trishu Impex is a premier Indian exporter of high-grade agro commodities, spices, seeds, and food products. Delivering trust, exporting excellence globally.
+              Trishu Impex is a trusted Indian merchant exporter of Spices, Agro Commodities, Sanitaryware, Tiles & Ceramics, Architectural Hardware, and PVC & CPVC Pipes. Delivering trust, exporting excellence globally.
             </p>
             <div className="social-links">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-icon" title="Instagram">
+              <a href="https://www.instagram.com/trishuimpex/" target="_blank" rel="noopener noreferrer" className="social-icon" title="Instagram">
                 <Instagram size={15} />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-icon" title="LinkedIn">
+              <a href="https://www.linkedin.com/company/trishu-impex/" target="_blank" rel="noopener noreferrer" className="social-icon" title="LinkedIn">
                 <Linkedin size={15} />
               </a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-icon" title="Facebook">
+              <a href="https://www.facebook.com/61592710711493/mentions/" target="_blank" rel="noopener noreferrer" className="social-icon" title="Facebook">
                 <Facebook size={15} />
               </a>
               <a href="https://api.whatsapp.com/send?phone=919898522905&text=Hi%20Trishu%20Impex!" target="_blank" rel="noopener noreferrer" className="social-icon" title="Business WhatsApp">
@@ -35,7 +35,6 @@ export default function Footer() {
             <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px' }}>
               <li><a href="#about" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>About Us</a></li>
               <li><a href="#products" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>Products</a></li>
-              <li><a href="#blog" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>Blog</a></li>
               <li><a href="#faq" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>FAQ</a></li>
               <li><a href="#contact" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>Contact Us</a></li>
             </ul>

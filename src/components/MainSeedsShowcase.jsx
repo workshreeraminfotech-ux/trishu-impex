@@ -65,13 +65,13 @@ export default function MainSeedsShowcase({ onSelectProduct, onOpenQuote, onNavi
     <section 
       className="main-seeds-showcase-section" 
       style={{ 
-        background: 'linear-gradient(180deg, #FBF8F1 0%, #F5EFE0 50%, #EFE8D6 100%)', 
+        background: 'var(--cream)', 
         color: 'var(--navy)',
         padding: '68px 0 72px',
         position: 'relative',
         overflow: 'hidden',
-        borderBottom: '1px solid #E5DBC7',
-        borderTop: '1px solid #EFE4D0'
+        borderBottom: '1px solid var(--border)',
+        borderTop: '1px solid var(--border)'
       }}
     >
       <div className="container">
@@ -185,20 +185,10 @@ export default function MainSeedsShowcase({ onSelectProduct, onOpenQuote, onNavi
                   <button
                     onClick={() => onOpenQuote ? onOpenQuote(item.title) : null}
                     className="btn btn-primary"
-                    style={{ flex: 1, padding: '10px 14px', fontSize: '13.5px', fontWeight: 700, justifyContent: 'center', borderRadius: '8px' }}
+                    style={{ width: '100%', padding: '11px 14px', fontSize: '13.5px', fontWeight: 700, justifyContent: 'center', borderRadius: '8px' }}
                   >
-                    <span>Quote</span>
+                    <span>Request Quote</span>
                     <ArrowRight size={15} />
-                  </button>
-                  
-                  <button
-                    onClick={() => onSelectProduct ? onSelectProduct(item) : null}
-                    className="btn btn-outline"
-                    style={{ padding: '10px 14px', fontSize: '13.5px', borderRadius: '8px', background: '#FFFFFF' }}
-                    title="Quick View Details"
-                  >
-                    <Eye size={15} />
-                    <span>View</span>
                   </button>
                 </div>
               </div>

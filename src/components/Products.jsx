@@ -63,10 +63,6 @@ export default function Products() {
               <div className="card-content">
                 <h3>{item.title}</h3>
                 <p>{item.description || item.desc}</p>
-                <div className="card-foot">
-                  <span>View Details</span>
-                  <Eye size={16} />
-                </div>
               </div>
             </div>
           ))}

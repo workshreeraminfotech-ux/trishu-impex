@@ -31,7 +31,7 @@ export default function WorkProcess() {
   ];
 
   return (
-    <section style={{ padding: '54px 0', background: 'var(--cream)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }} id="process">
+    <section style={{ padding: '54px 0', background: '#FFFFFF', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }} id="process">
       <div className="container">
         
         {/* Header */}

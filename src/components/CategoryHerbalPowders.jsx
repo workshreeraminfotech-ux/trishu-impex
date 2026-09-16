@@ -75,12 +75,6 @@ export default function CategoryHerbalPowders({ onSelectProduct }) {
                     <h4>{item.title}</h4>
                     <p>{item.subtitle}</p>
                   </div>
-                  <div className="arrow-link-black">
-                    <a href="#contact-us" onClick={(e) => { e.preventDefault(); onSelectProduct(item); }}>
-                      <span>Quick View</span>
-                      <ArrowRight size={14} />
-                    </a>
-                  </div>
                 </div>
               ))}
             </div>

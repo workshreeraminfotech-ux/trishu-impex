@@ -40,12 +40,6 @@ export default function CategoryWholeSpices({ onSelectProduct }) {
                     <h4>{item.title}</h4>
                     <p>{item.desc || item.description}</p>
                   </div>
-                  <div className="arrow-link-black">
-                    <a href="#contact-us" onClick={(e) => { e.preventDefault(); if (onSelectProduct) onSelectProduct(item); }}>
-                      <span>Quick View</span>
-                      <ArrowRight size={14} />
-                    </a>
-                  </div>
                 </div>
               ))}
             </div>
