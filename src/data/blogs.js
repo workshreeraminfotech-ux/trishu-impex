@@ -1,12 +1,12 @@
 // Central Blog Dataset for Trishu Impex
 // Featuring authentic products & real product photos from src/assets/products
 
-import turmericPowder from '../assets/products/Turmeric Powder.png';
-import chilliPowder from '../assets/products/Chilli Powder.png';
-import cuminSeeds from '../assets/products/Cumin Seeds.png';
-import blackPepper from '../assets/products/Black Pepper.png';
-import garamMasala from '../assets/products/Garam Masala.png';
-import kashmiriSaffron from '../assets/products/Kashmiri Saffron.png';
+import turmericPowder from '../assets/products/Turmeric Powder.webp';
+import chilliPowder from '../assets/products/Chilli Powder.webp';
+import cuminSeeds from '../assets/products/Cumin Seeds.webp';
+import blackPepper from '../assets/products/Black Pepper.webp';
+import garamMasala from '../assets/products/Garam Masala.webp';
+import kashmiriSaffron from '../assets/products/Kashmiri Saffron.webp';
 
 export const BLOGS = [
   {

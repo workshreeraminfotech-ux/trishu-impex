@@ -10,12 +10,12 @@ import { PVC_PIPE_PRODUCTS as INITIAL_PVC_PIPE_PRODUCTS, PVC_PIPE_CATEGORIES } f
 import { BLOGS as INITIAL_BLOGS } from '../data/blogs';
 import { idbGet, idbSet, idbDel, idbClear } from './idbStore';
 
-import apedaLogo from '../assets/certificate/apeda.png';
-import spicesBoardLogo from '../assets/certificate/spices board.png';
-import fdaLogo from '../assets/certificate/fda.png';
-import isoLogo from '../assets/certificate/iso.png';
-import fssaiLogo from '../assets/certificate/fssai.png';
-import halalLogo from '../assets/certificate/halal.png';
+import apedaLogo from '../assets/certificate/apeda.webp';
+import spicesBoardLogo from '../assets/certificate/spices board.webp';
+import fdaLogo from '../assets/certificate/fda.webp';
+import isoLogo from '../assets/certificate/iso.webp';
+import fssaiLogo from '../assets/certificate/fssai.webp';
+import halalLogo from '../assets/certificate/halal.webp';
 
 const INITIAL_CERTS = [
   { 

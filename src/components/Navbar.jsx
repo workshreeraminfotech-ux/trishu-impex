@@ -3,7 +3,7 @@ import {
   Menu, X, ArrowRight, MapPin, Mail, Phone, ChevronDown, ChevronRight,
   Sparkles, Sprout, Bath, Grid3X3, Wrench, Waves 
 } from 'lucide-react';
-import logoImg from '../assets/logo.png';
+import logoImg from '../assets/logo.webp';
 
 export default function Navbar({ activePage, onNavigate }) {
   const [mobileOpen, setMobileOpen] = useState(false);

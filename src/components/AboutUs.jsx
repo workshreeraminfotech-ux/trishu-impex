@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowRight, Award, Globe2, Truck, CheckCircle2, Building2, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AnimatedCounter from './AnimatedCounter';
-import aboutUsImg from '../assets/about us.png';
+import aboutUsImg from '../assets/about us.webp';
 
 export default function AboutUs() {
   return (

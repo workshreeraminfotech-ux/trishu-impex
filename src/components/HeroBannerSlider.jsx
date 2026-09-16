@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 import heroBgVideo from '../assets/hero-bg.mp4';
+import heroPoster from '../assets/hero-poster.webp';
 
 export default function HeroBannerSlider({ onOpenQuote, onNavigate }) {
   return (
@@ -26,6 +27,7 @@ export default function HeroBannerSlider({ onOpenQuote, onNavigate }) {
         loop 
         muted 
         playsInline
+        poster={heroPoster}
         style={{ 
           position: 'absolute', 
           top: 0, 

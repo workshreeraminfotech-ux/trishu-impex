@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, CheckCircle2, Globe2 } from 'lucide-react';
 import heroBgVideo from '../assets/hero-bg.mp4';
+import heroPoster from '../assets/hero-poster.webp';
 
 export default function HeroSection() {
   return (
@@ -12,6 +13,7 @@ export default function HeroSection() {
         loop 
         muted 
         playsInline 
+        poster={heroPoster}
       >
         <source src={heroBgVideo} type="video/mp4" />
       </video>

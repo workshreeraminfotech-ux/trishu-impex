@@ -1,6 +1,6 @@
 import React from 'react';
 import { Instagram, Linkedin, Facebook, MessageCircle } from 'lucide-react';
-import logoImg from '../assets/logo.png';
+import logoImg from '../assets/logo.webp';
 
 export default function Footer() {
   return (
