@@ -611,42 +611,6 @@ export default function AdminPanel() {
             </span>
           </button>
 
-          {/* 4. Manage Blogs */}
-          <button
-            onClick={() => setMainTab('blogs')}
-            style={{
-              width: '100%',
-              textAlign: 'left',
-              padding: '12px 14px',
-              borderRadius: '12px',
-              backgroundColor: mainTab === 'blogs' ? '#6366F1' : 'transparent',
-              color: mainTab === 'blogs' ? '#FFFFFF' : '#CBD5E1',
-              border: 'none',
-              fontWeight: 700,
-              fontSize: '13.5px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              transition: 'all 0.2s ease',
-              boxShadow: mainTab === 'blogs' ? '0 4px 14px rgba(99, 102, 241, 0.35)' : 'none'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <FileText size={18} />
-              <span>Manage Blogs</span>
-            </div>
-            <span style={{
-              backgroundColor: mainTab === 'blogs' ? 'rgba(255, 255, 255, 0.25)' : '#0F2744',
-              color: '#FFFFFF',
-              fontSize: '11.5px',
-              fontWeight: 800,
-              padding: '2px 8px',
-              borderRadius: '100px'
-            }}>
-              {blogs.length}
-            </span>
-          </button>
 
           {/* 5. Manage Certificates (6) */}
           <button
@@ -826,7 +790,6 @@ export default function AdminPanel() {
               {mainTab === 'catalog' && '📦 Manage Products & Categories'}
               {mainTab === 'product_enquiries' && '📥 Product Quote Enquiries'}
               {mainTab === 'contact_enquiries' && '✉️ Contact Us Enquiries'}
-              {mainTab === 'blogs' && '✍️ Manage Export Knowledge Blogs'}
               {mainTab === 'certs' && '🏆 Manage Government Certificates (6)'}
               {mainTab === 'cloud' && '☁️ Cloud Database & Cross-Device Sync'}
             </h1>
@@ -834,7 +797,6 @@ export default function AdminPanel() {
               {mainTab === 'catalog' && 'Add, edit, delete products across all 6 export commodity categories with real-time updates.'}
               {mainTab === 'product_enquiries' && 'Review incoming container rate & product quotation requests from overseas buyers.'}
               {mainTab === 'contact_enquiries' && 'Manage business inquiries submitted via the Contact Us form.'}
-              {mainTab === 'blogs' && 'Publish and edit export articles, trade knowledge, and spice guides.'}
               {mainTab === 'certs' && 'Update official ISO, APEDA, FSSAI, Spices Board, FDA & Halal export credentials.'}
               {mainTab === 'cloud' && 'Synchronize all products and enquiries to Firebase Firestore database.'}
             </p>
@@ -931,30 +893,6 @@ export default function AdminPanel() {
               <div>
                 <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Contact Form</span>
                 <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#16A34A', margin: 0 }}>{contactFormCount}</h3>
-              </div>
-            </div>
-
-            <div 
-              onClick={() => setMainTab('blogs')}
-              style={{ 
-                backgroundColor: '#FFFFFF', 
-                borderRadius: '16px', 
-                padding: '16px', 
-                border: mainTab === 'blogs' ? '2px solid #6366F1' : '1.5px solid #E2E8F0', 
-                boxShadow: '0 2px 10px rgba(11, 34, 64, 0.03)', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '12px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#6366F1', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <FileText size={20} />
-              </div>
-              <div>
-                <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Blogs</span>
-                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#6366F1', margin: 0 }}>{blogs.length}</h3>
               </div>
             </div>
 
@@ -1200,43 +1138,6 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* TAB 4: BLOGS MANAGER */}
-        {mainTab === 'blogs' && (
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-              <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0B2240', margin: 0 }}>Articles Database</h3>
-              <button
-                onClick={openAddBlog}
-                style={{ backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
-              >
-                <Plus size={18} />
-                <span>Add New Blog</span>
-              </button>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
-              {blogs.map((b, idx) => (
-                <div key={b.id || idx} style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  {b.image && (
-                    <img src={b.image} alt={b.title} style={{ width: '100%', height: '160px', objectFit: 'cover', borderRadius: '14px' }} />
-                  )}
-                  <div>
-                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#0B2240', backgroundColor: '#F1F5F9', padding: '4px 12px', borderRadius: '100px' }}>{b.cat}</span>
-                    <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0B2240', margin: '10px 0 6px' }}>{b.title}</h4>
-                    <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: 1.5, margin: 0 }}>{b.excerpt}</p>
-                  </div>
-                  <div style={{ marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '12px', color: '#8C96A0' }}>{b.read}</span>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button onClick={() => openEditBlog(b)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>Edit</button>
-                      <button onClick={() => handleDeleteBlog(b.id, b.title)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>Delete</button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* TAB 5: CERTIFICATES MANAGER */}
         {mainTab === 'certs' && (
@@ -1697,102 +1598,6 @@ export default function AdminPanel() {
         </div>
       )}
 
-      {/* --- MODAL: ADD / EDIT BLOG --- */}
-      {showBlogModal && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(7,23,44,0.75)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(4px)' }}>
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '28px', padding: '32px', width: '100%', maxWidth: '640px', maxHeight: '90vh', overflowY: 'auto', border: '1.5px solid #CBD5E1' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '16px' }}>
-              <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0 }}>
-                {editingBlog ? 'Edit Blog Article' : 'Publish New Blog'}
-              </h3>
-              <button onClick={() => setShowBlogModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}>
-                <X size={24} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveBlog} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Article Title *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Sourcing High-Quality Indian Ceramic Tiles"
-                  value={blogForm.title}
-                  onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Category</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Product Guide"
-                    value={blogForm.cat}
-                    onChange={(e) => setBlogForm({ ...blogForm, cat: e.target.value })}
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Read Time</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 5 min read"
-                    value={blogForm.read}
-                    onChange={(e) => setBlogForm({ ...blogForm, read: e.target.value })}
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Cover Image (URL or Upload)</label>
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                  <input
-                    type="text"
-                    placeholder="Paste Image URL or select file"
-                    value={blogForm.image}
-                    onChange={(e) => setBlogForm({ ...blogForm, image: e.target.value })}
-                    style={{ flex: 1, padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px' }}
-                  />
-                  <label style={{ backgroundColor: '#F1F5F9', border: '1.5px solid #CBD5E1', padding: '10px 16px', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '13px', color: '#0B2240', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                    <Upload size={15} /> Upload
-                    <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageFileChange(e, (url) => setBlogForm({ ...blogForm, image: url }))} />
-                  </label>
-                </div>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Excerpt (Short Summary)</label>
-                <textarea
-                  rows={2}
-                  placeholder="Short brief of article for blog card preview..."
-                  value={blogForm.excerpt}
-                  onChange={(e) => setBlogForm({ ...blogForm, excerpt: e.target.value })}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Full Article Body</label>
-                <textarea
-                  rows={6}
-                  placeholder="Full markdown/text content of blog article..."
-                  value={blogForm.body}
-                  onChange={(e) => setBlogForm({ ...blogForm, body: e.target.value })}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
-                <button type="button" onClick={() => setShowBlogModal(false)} style={{ padding: '12px 24px', borderRadius: '100px', border: '1.5px solid #CBD5E1', backgroundColor: 'transparent', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '12px 32px', borderRadius: '100px', backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer' }}>Publish Blog</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* --- MODAL: ADD / EDIT CERTIFICATE --- */}
       {showCertModal && (
