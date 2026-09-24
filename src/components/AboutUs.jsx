@@ -108,7 +108,7 @@ export default function AboutUs({ onNavigate }) {
               </h2>
 
               <p style={{ fontSize: '16px', color: '#475569', lineHeight: 1.65, marginBottom: '20px', fontWeight: 500 }}>
-                <strong>Trishu Impex</strong> is a trusted Indian merchant exporter based in <strong>Gujarat, India</strong>, specializing in the global export of a diverse product portfolio — including <strong>Spices, Agro Commodities, Sanitaryware & Toilets, Tiles & Ceramics, Architectural Hardware,</strong> and <strong>PVC & CPVC Pipes</strong>. We bridge Indian manufacturers with international buyers through end-to-end sourcing, rigorous quality inspection, and seamless export logistics.
+                <strong>Trishu Impex</strong> is a trusted Indian merchant exporter based in <strong>Gujarat, India</strong>, specializing in the global export of a diverse product portfolio — including <strong>Spices, Agro Commodities, Sanitaryware, Tiles & Ceramics, Architectural Hardware,</strong> and <strong>PVC & CPVC Pipes</strong>. We bridge Indian manufacturers with international buyers through end-to-end sourcing, rigorous quality inspection, and seamless export logistics.
               </p>
             </div>
 
