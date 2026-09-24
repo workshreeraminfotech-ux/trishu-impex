@@ -207,8 +207,7 @@ const STORE_KEYS = [
   { idbKey: 'blogs', memKey: 'blogs', lsKey: 'trishu_blogs' },
   { idbKey: 'certs', memKey: 'certs', lsKey: 'trishu_certs' },
   { idbKey: 'enquiries', memKey: 'enquiries', lsKey: 'trishu_enquiries' },
-  { idbKey: 'main_categories', memKey: 'mainCategories', lsKey: 'trishu_main_categories' },
-  { idbKey: 'custom_products', memKey: 'customProducts', lsKey: 'trishu_custom_products' }
+  { idbKey: 'main_categories', memKey: 'mainCategories', lsKey: 'trishu_main_categories' }
 ];
 
 async function initIndexedDBStore() {
@@ -227,6 +226,24 @@ async function initIndexedDBStore() {
   const categoriesFromIdb = await idbGet('categories');
   if (categoriesFromIdb !== null && categoriesFromIdb !== undefined && typeof categoriesFromIdb === 'object') {
     memoryCache.categories = categoriesFromIdb;
+    hasUpdates = true;
+  }
+
+  // Load custom products map from IndexedDB
+  const customFromIdb = await idbGet('custom_products');
+  if (customFromIdb !== null && customFromIdb !== undefined) {
+    if (Array.isArray(customFromIdb)) {
+      const customMap = {};
+      customFromIdb.forEach(item => {
+        if (item && (item.id || item.domain)) {
+          const key = item.id || item.domain;
+          customMap[key] = Array.isArray(item.products) ? item.products : (Array.isArray(item) ? item : []);
+        }
+      });
+      memoryCache.customProducts = customMap;
+    } else if (typeof customFromIdb === 'object') {
+      memoryCache.customProducts = customFromIdb;
+    }
     hasUpdates = true;
   }
 
@@ -257,9 +274,31 @@ async function initIndexedDBStore() {
             catMap[item.id] = item.categories;
           }
         });
-        memoryCache.categories = catMap;
-        await idbSet('categories', catMap);
-        try { localStorage.setItem('trishu_categories', JSON.stringify(catMap)); } catch (e) {}
+        memoryCache.categories = {
+          ...(memoryCache.categories || {}),
+          ...catMap
+        };
+        await idbSet('categories', memoryCache.categories);
+        try { localStorage.setItem('trishu_categories', JSON.stringify(memoryCache.categories)); } catch (e) {}
+        cloudUpdated = true;
+      }
+
+      // Cloud sync custom_products
+      const cloudCustom = await getCloudData('custom_products');
+      if (cloudCustom && Array.isArray(cloudCustom)) {
+        const customMap = {};
+        cloudCustom.forEach(item => {
+          if (item && (item.id || item.domain)) {
+            const key = item.id || item.domain;
+            customMap[key] = Array.isArray(item.products) ? item.products : [];
+          }
+        });
+        memoryCache.customProducts = {
+          ...(memoryCache.customProducts || {}),
+          ...customMap
+        };
+        await idbSet('custom_products', memoryCache.customProducts);
+        try { localStorage.setItem('trishu_custom_products', JSON.stringify(memoryCache.customProducts)); } catch (e) {}
         cloudUpdated = true;
       }
 
@@ -288,6 +327,14 @@ export async function syncAllToCloud() {
       categories: memoryCache.categories[k] || []
     }));
     await setCloudData('categories', cloudCats);
+
+    // Sync custom products
+    const cloudCustom = Object.keys(memoryCache.customProducts || {}).map(k => ({
+      id: k,
+      domain: k,
+      products: Array.isArray(memoryCache.customProducts[k]) ? memoryCache.customProducts[k] : []
+    }));
+    await setCloudData('custom_products', cloudCustom);
 
     return { success: true, message: 'All catalogue data successfully synchronized to Cloud!' };
   } catch (err) {
@@ -324,6 +371,21 @@ export async function syncAllFromCloud() {
       memoryCache.categories = catMap;
       await idbSet('categories', catMap);
       try { localStorage.setItem('trishu_categories', JSON.stringify(catMap)); } catch (e) {}
+      count++;
+    }
+
+    const cloudCustom = await getCloudData('custom_products');
+    if (cloudCustom && Array.isArray(cloudCustom)) {
+      const customMap = {};
+      cloudCustom.forEach(item => {
+        if (item && (item.id || item.domain)) {
+          const key = item.id || item.domain;
+          customMap[key] = Array.isArray(item.products) ? item.products : [];
+        }
+      });
+      memoryCache.customProducts = customMap;
+      await idbSet('custom_products', customMap);
+      try { localStorage.setItem('trishu_custom_products', JSON.stringify(customMap)); } catch (e) {}
       count++;
     }
 
@@ -1196,7 +1258,20 @@ export function getDomainProducts(domainId) {
   if (normKey === 'tiles') return getTilesProducts();
   if (normKey === 'hardware') return getHardwareProducts();
   if (normKey === 'pvcpipe') return getPvcPipeProducts();
-  return (memoryCache.customProducts && memoryCache.customProducts[normKey]) || [];
+
+  const custom = memoryCache.customProducts;
+  if (!custom) return [];
+  if (Array.isArray(custom)) {
+    const found = custom.find(item => item && (item.id === normKey || item.domain === normKey));
+    if (found && Array.isArray(found.products)) return sanitizeProductList(found.products);
+    return [];
+  }
+  if (typeof custom === 'object') {
+    const prods = custom[normKey];
+    if (Array.isArray(prods)) return sanitizeProductList(prods);
+    if (prods && Array.isArray(prods.products)) return sanitizeProductList(prods.products);
+  }
+  return [];
 }
 
 export function addDomainProduct(domainId, product) {
@@ -1213,13 +1288,15 @@ export function addDomainProduct(domainId, product) {
     ...product,
     id: product.id || `custom_${normKey}_${Date.now()}`
   };
-  const updated = [prodWithId, ...current];
-  const allCustom = {
-    ...(memoryCache.customProducts || {}),
-    [normKey]: updated
-  };
-  persistData('customProducts', 'custom_products', 'trishu_custom_products', allCustom);
-  setCloudSingleItem('custom_products', { id: normKey, products: updated }).catch(() => {});
+  const updated = [prodWithId, ...current.filter(p => String(p.id) !== String(prodWithId.id))];
+
+  const customMap = (memoryCache.customProducts && typeof memoryCache.customProducts === 'object' && !Array.isArray(memoryCache.customProducts))
+    ? { ...memoryCache.customProducts }
+    : {};
+  customMap[normKey] = updated;
+
+  persistData('customProducts', 'custom_products', 'trishu_custom_products', customMap);
+  setCloudSingleItem('custom_products', { id: normKey, domain: normKey, products: updated }).catch(() => {});
   return updated;
 }
 
@@ -1234,12 +1311,14 @@ export function updateDomainProduct(domainId, product) {
 
   const current = getDomainProducts(normKey);
   const updated = current.map(p => (String(p.id) === String(product.id) ? { ...p, ...product } : p));
-  const allCustom = {
-    ...(memoryCache.customProducts || {}),
-    [normKey]: updated
-  };
-  persistData('customProducts', 'custom_products', 'trishu_custom_products', allCustom);
-  setCloudSingleItem('custom_products', { id: normKey, products: updated }).catch(() => {});
+  
+  const customMap = (memoryCache.customProducts && typeof memoryCache.customProducts === 'object' && !Array.isArray(memoryCache.customProducts))
+    ? { ...memoryCache.customProducts }
+    : {};
+  customMap[normKey] = updated;
+
+  persistData('customProducts', 'custom_products', 'trishu_custom_products', customMap);
+  setCloudSingleItem('custom_products', { id: normKey, domain: normKey, products: updated }).catch(() => {});
   return updated;
 }
 
@@ -1254,12 +1333,14 @@ export function deleteDomainProduct(domainId, productId) {
 
   const current = getDomainProducts(normKey);
   const updated = current.filter(p => String(p.id) !== String(productId));
-  const allCustom = {
-    ...(memoryCache.customProducts || {}),
-    [normKey]: updated
-  };
-  persistData('customProducts', 'custom_products', 'trishu_custom_products', allCustom);
-  setCloudSingleItem('custom_products', { id: normKey, products: updated }).catch(() => {});
+  
+  const customMap = (memoryCache.customProducts && typeof memoryCache.customProducts === 'object' && !Array.isArray(memoryCache.customProducts))
+    ? { ...memoryCache.customProducts }
+    : {};
+  customMap[normKey] = updated;
+
+  persistData('customProducts', 'custom_products', 'trishu_custom_products', customMap);
+  setCloudSingleItem('custom_products', { id: normKey, domain: normKey, products: updated }).catch(() => {});
   return updated;
 }
 

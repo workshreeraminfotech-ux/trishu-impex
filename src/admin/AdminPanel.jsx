@@ -100,6 +100,7 @@ export default function AdminPanel() {
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
   const [emailConfig, setEmailConfig] = useState(() => getEnquiryEmailConfig());
   const [isSendingTest, setIsSendingTest] = useState(false);
+  const [storeVersion, setStoreVersion] = useState(0);
 
   // Search & Filter State for Catalog
   const [catalogSearch, setCatalogSearch] = useState('');
@@ -141,6 +142,7 @@ export default function AdminPanel() {
     setCertsState([...getCertificates()]);
     setEnquiriesState([...getEnquiries()]);
     setCategoriesMap({ ...getAllCategories() });
+    setStoreVersion(v => v + 1);
   };
 
   // Sync state on load and on IndexedDB bootstrap sync
@@ -308,6 +310,7 @@ export default function AdminPanel() {
     const catDomain = currentConfig.key || selectedCatalog;
     addCategory(catDomain, trimmed);
     syncStateFromStore();
+    setSelectedSubCat(trimmed);
     setNewCatInput('');
     showNotification(`Subcategory "${trimmed}" added to ${currentConfig.name}!`);
   };
@@ -325,6 +328,9 @@ export default function AdminPanel() {
     }
     updateCategory(catDomain, editingCatOldName, trimmed);
     syncStateFromStore();
+    if (selectedSubCat === editingCatOldName) {
+      setSelectedSubCat(trimmed);
+    }
     setEditingCatOldName(null);
     setEditingCatNewName('');
     showNotification(`Subcategory updated to "${trimmed}" and products updated!`);
@@ -346,9 +352,14 @@ export default function AdminPanel() {
   // --- CATALOG ITEM ACTIONS ---
   const openAddItem = () => {
     setEditingItem(null);
+    const validSubCats = currentConfig.categories.filter(c => c !== 'All');
+    const defaultSub = (selectedSubCat && selectedSubCat !== 'All' && validSubCats.includes(selectedSubCat))
+      ? selectedSubCat
+      : (validSubCats[0] || 'General');
+
     setItemForm({
       title: '',
-      category: currentConfig.defaultCategory,
+      category: defaultSub,
       origin: 'India',
       packaging: currentConfig.defaultPack,
       specs: '',
@@ -364,7 +375,7 @@ export default function AdminPanel() {
     setEditingItem(item);
     setItemForm({
       title: item.title || '',
-      category: item.category || item.cat || currentConfig.defaultCategory,
+      category: item.category || item.cat || currentConfig.defaultCategory || 'General',
       origin: item.origin || '',
       packaging: item.packaging || '',
       specs: item.specs || '',
@@ -380,11 +391,14 @@ export default function AdminPanel() {
     e.preventDefault();
     if (!itemForm.title.trim()) return alert('Please enter product title');
 
+    const chosenSubCat = itemForm.category || currentConfig.defaultCategory || 'General';
+
     if (editingItem) {
       const updated = currentConfig.updateFn({
         ...editingItem,
         ...itemForm,
-        cat: itemForm.category,
+        category: chosenSubCat,
+        cat: chosenSubCat,
         desc: itemForm.description
       });
       syncStateFromStore();
@@ -392,10 +406,14 @@ export default function AdminPanel() {
     } else {
       const updated = currentConfig.addFn({
         ...itemForm,
-        cat: itemForm.category,
+        category: chosenSubCat,
+        cat: chosenSubCat,
         desc: itemForm.description
       });
       syncStateFromStore();
+      if (selectedSubCat !== 'All' && selectedSubCat !== chosenSubCat) {
+        setSelectedSubCat('All');
+      }
       showNotification(`New item "${itemForm.title}" added to ${currentConfig.name}!`);
     }
     setShowItemModal(false);
@@ -1941,7 +1959,14 @@ export default function AdminPanel() {
                     onChange={(e) => setItemForm({ ...itemForm, category: e.target.value })}
                     style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', backgroundColor: '#FFFFFF', boxSizing: 'border-box' }}
                   >
-                    {currentConfig.categories.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
+                    {(() => {
+                      const subs = currentConfig.categories.filter(c => c !== 'All');
+                      const list = subs.length > 0 ? [...subs] : ['General'];
+                      if (itemForm.category && !list.includes(itemForm.category)) {
+                        list.unshift(itemForm.category);
+                      }
+                      return list.map(c => <option key={c} value={c}>{c}</option>);
+                    })()}
                   </select>
                 </div>
               </div>
