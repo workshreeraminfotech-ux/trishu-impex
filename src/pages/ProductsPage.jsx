@@ -6,13 +6,13 @@ import { getProducts, getCategories } from '../utils/adminStore';
 export default function ProductsPage({ onSelectProduct, onOpenQuote }) {
   const [activeTab, setActiveTab] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
-  const [categories, setCategories] = useState(getCategories('spices'));
-
-  const productsList = getProducts();
+  const [categories, setCategories] = useState(() => getCategories('spices'));
+  const [productsList, setProductsList] = useState(() => getProducts());
 
   useEffect(() => {
     const handleSync = () => {
-      setCategories(getCategories('spices'));
+      setCategories([...getCategories('spices')]);
+      setProductsList([...getProducts()]);
     };
     window.addEventListener('trishu_store_sync', handleSync);
     window.addEventListener('trishu_store_updated', handleSync);

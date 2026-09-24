@@ -1,8 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Facebook, Instagram, Linkedin, MessageCircle, ChevronRight, Mail, MapPin, Phone, ArrowUpRight } from 'lucide-react';
 import logoImg from '../assets/logo.webp';
+import { getMainCategories } from '../utils/adminStore';
 
 export default function FooterSection({ onNavigate }) {
+  const [mainCats, setMainCats] = useState(() => getMainCategories());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setMainCats([...getMainCategories()]);
+    };
+    window.addEventListener('trishu_store_sync', handleUpdate);
+    window.addEventListener('trishu_store_updated', handleUpdate);
+    return () => {
+      window.removeEventListener('trishu_store_sync', handleUpdate);
+      window.removeEventListener('trishu_store_updated', handleUpdate);
+    };
+  }, []);
+
   return (
     <footer className="footer-redesign-section">
       <div className="container">
@@ -16,7 +31,7 @@ export default function FooterSection({ onNavigate }) {
               <img src={logoImg} alt="Trishu Impex" />
             </div>
             <p className="footer-bio-text">
-              Trishu Impex is a trusted Indian merchant exporter of Spices, Agro Commodities, Sanitaryware, Tiles & Ceramics, Architectural Hardware, and PVC & CPVC Pipes. Delivering trust, exporting excellence globally.
+              Trishu Impex is a premier Indian merchant exporter delivering trust and exporting excellence worldwide with rigorous quality testing, export packing, and swift international delivery.
             </p>
             <div className="footer-social-row">
               <a href="https://www.facebook.com/61592710711493/mentions/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
@@ -45,16 +60,13 @@ export default function FooterSection({ onNavigate }) {
                   <ChevronRight size={14} className="link-arrow" /> About Us
                 </a>
               </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('products'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> Spices Catalog
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('agro'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> Agro Commodities
-                </a>
-              </li>
+              {mainCats.slice(0, 2).map((cat) => (
+                <li key={cat.id}>
+                  <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate(cat.id); }}>
+                    <ChevronRight size={14} className="link-arrow" /> {cat.name}
+                  </a>
+                </li>
+              ))}
               <li>
                 <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('contact'); }}>
                   <ChevronRight size={14} className="link-arrow" /> Contact Us
@@ -63,40 +75,23 @@ export default function FooterSection({ onNavigate }) {
             </ul>
           </div>
 
-          {/* Col 3: Product Categories */}
+          {/* Col 3: Product Categories (100% Dynamic from Admin Panel) */}
           <div className="footer-col">
             <h3>Product Categories</h3>
             <ul className="footer-links-list">
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('products'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> Spices & Seasonings
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('agro'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> Agro Commodities
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('sanitaryware'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> Sanitaryware
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('tiles'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> Tiles & Ceramics
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('hardware'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> Architectural Hardware
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('pvc-pipes'); }}>
-                  <ChevronRight size={14} className="link-arrow" /> PVC & CPVC Pipes
-                </a>
-              </li>
+              {mainCats.length > 0 ? (
+                mainCats.map((cat) => (
+                  <li key={cat.id}>
+                    <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate(cat.id); }}>
+                      <ChevronRight size={14} className="link-arrow" /> {cat.name}
+                    </a>
+                  </li>
+                ))
+              ) : (
+                <li style={{ color: '#94A3B8', fontSize: '13px' }}>
+                  Categories managed via Admin Panel
+                </li>
+              )}
             </ul>
           </div>
 
@@ -143,5 +138,3 @@ export default function FooterSection({ onNavigate }) {
     </footer>
   );
 }
-
-

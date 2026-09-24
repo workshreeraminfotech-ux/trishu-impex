@@ -1,16 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { BLOGS } from '../data/blogs';
+import { getBlogs } from '../utils/adminStore';
 
 export default function Blog({ onNavigate }) {
-  const posts = BLOGS.slice(0, 3);
+  const [posts, setPosts] = useState(() => getBlogs().slice(0, 3));
+
+  useEffect(() => {
+    const handleSync = () => {
+      setPosts(getBlogs().slice(0, 3));
+    };
+    window.addEventListener('trishu_store_sync', handleSync);
+    window.addEventListener('trishu_store_updated', handleSync);
+    return () => {
+      window.removeEventListener('trishu_store_sync', handleSync);
+      window.removeEventListener('trishu_store_updated', handleSync);
+    };
+  }, []);
+
+  if (posts.length === 0) return null;
 
   return (
     <section className="py-80 bg-light" id="blog">
       <div className="container">
         <div className="section-title text-center">
           <span className="eyebrow">Latest Insights & Market Reports</span>
-          <h2>Agro & Spice Export <span style={{ color: 'var(--gold)' }}>Blog</span></h2>
+          <h2>Export & Trade <span style={{ color: 'var(--gold)' }}>Blog</span></h2>
           <p className="section-desc">Stay updated with crop updates, quality benchmarks, and product sourcing guides from Trishu Impex experts.</p>
         </div>
 

@@ -16,7 +16,7 @@ export default function Navbar({ activePage, onNavigate }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(true);
-  const [mainCats, setMainCats] = useState(getMainCategories());
+  const [mainCats, setMainCats] = useState(() => getMainCategories());
   const dropdownTimeoutRef = useRef(null);
 
   useEffect(() => {
@@ -51,16 +51,13 @@ export default function Navbar({ activePage, onNavigate }) {
     }, 200);
   };
 
-  const dynamicIds = mainCats.map(c => c.id === 'spices' ? 'products' : (c.id === 'pvcpipe' ? 'pvc-pipes' : c.id));
-  const isProductsActive = [
-    'products', 'spices', 'agro', 'sanitaryware', 'tiles', 'hardware', 'pvc-pipes', ...dynamicIds
-  ].includes(activePage);
+  const dynamicIds = mainCats.map(c => c.id);
+  const isProductsActive = dynamicIds.includes(activePage) || ['products', 'spices', 'agro', 'sanitaryware', 'tiles', 'hardware', 'pvc-pipes'].includes(activePage);
 
   const categories = mainCats.map(cat => {
     const IconC = ICON_MAP[cat.icon] || Package;
-    const navId = cat.id === 'spices' ? 'products' : (cat.id === 'pvcpipe' ? 'pvc-pipes' : cat.id);
     return {
-      id: navId,
+      id: cat.id,
       title: cat.name,
       tag: cat.defaultHs || 'Certified Export',
       tagColor: cat.color || '#ED6C1B',
@@ -112,7 +109,7 @@ export default function Navbar({ activePage, onNavigate }) {
                 About Us
               </a>
 
-              {/* Product Categories Dropdown — Clean Vertical List */}
+              {/* Product Categories Dropdown */}
               <div 
                 style={{ position: 'relative' }}
                 onMouseEnter={handleMouseEnter}
@@ -150,7 +147,7 @@ export default function Navbar({ activePage, onNavigate }) {
                   />
                 </button>
 
-                {/* Clean Vertical Dropdown List */}
+                {/* Clean Dropdown List */}
                 {dropdownOpen && (
                   <div
                     style={{
@@ -175,70 +172,72 @@ export default function Navbar({ activePage, onNavigate }) {
                         gap: '4px'
                       }}
                     >
-                      {categories.map((cat) => {
-                        const IconComponent = cat.icon;
-                        const isActive = activePage === cat.id;
+                      {categories.length > 0 ? (
+                        categories.map((cat) => {
+                          const IconComponent = cat.icon;
+                          const isActive = activePage === cat.id;
 
-                        return (
-                          <a
-                            key={cat.id}
-                            href="#"
-                            onClick={(e) => { e.preventDefault(); handleNav(cat.id); }}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              gap: '12px',
-                              padding: '10px 14px',
-                              borderRadius: '12px',
-                              textDecoration: 'none',
-                              backgroundColor: isActive ? '#FFF7ED' : 'transparent',
-                              transition: 'all 0.2s ease',
-                              border: isActive ? '1px solid rgba(237, 108, 27, 0.3)' : '1px solid transparent'
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = '#FFF7ED';
-                              e.currentTarget.style.transform = 'translateX(4px)';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = isActive ? '#FFF7ED' : 'transparent';
-                              e.currentTarget.style.transform = 'translateX(0)';
-                            }}
-                          >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                              <div style={{
-                                width: '38px',
-                                height: '38px',
-                                borderRadius: '10px',
-                                backgroundColor: cat.iconBg,
+                          return (
+                            <a
+                              key={cat.id}
+                              href="#"
+                              onClick={(e) => { e.preventDefault(); handleNav(cat.id); }}
+                              style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                justifyContent: 'center',
-                                flexShrink: 0,
-                                border: '1px solid rgba(0,0,0,0.04)'
-                              }}>
-                                <IconComponent size={19} style={{ color: cat.iconColor }} />
+                                justifyContent: 'space-between',
+                                gap: '12px',
+                                padding: '10px 14px',
+                                borderRadius: '12px',
+                                textDecoration: 'none',
+                                backgroundColor: isActive ? '#FFF7ED' : 'transparent',
+                                transition: 'all 0.2s ease',
+                                border: isActive ? '1px solid rgba(237, 108, 27, 0.3)' : '1px solid transparent'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = '#FFF7ED';
+                              }}
+                              onMouseLeave={(e) => {
+                                if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div style={{
+                                  width: '38px',
+                                  height: '38px',
+                                  borderRadius: '10px',
+                                  backgroundColor: cat.iconBg,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  flexShrink: 0
+                                }}>
+                                  <IconComponent size={19} style={{ color: cat.iconColor }} />
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                  <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--navy)', lineHeight: 1.2 }}>
+                                    {cat.title}
+                                  </span>
+                                  <span style={{ fontSize: '12px', color: 'var(--gray)', fontWeight: 500, marginTop: '2px' }}>
+                                    {cat.desc}
+                                  </span>
+                                </div>
                               </div>
-                              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--navy)', lineHeight: 1.2 }}>
-                                  {cat.title}
-                                </span>
-                                <span style={{ fontSize: '12px', color: 'var(--gray)', fontWeight: 500, marginTop: '2px' }}>
-                                  {cat.desc}
-                                </span>
-                              </div>
-                            </div>
 
-                            <ChevronRight size={16} style={{ color: 'var(--gold)', flexShrink: 0, opacity: 0.8 }} />
-                          </a>
-                        );
-                      })}
+                              <ChevronRight size={16} style={{ color: 'var(--gold)', flexShrink: 0, opacity: 0.8 }} />
+                            </a>
+                          );
+                        })
+                      ) : (
+                        <div style={{ padding: '20px 16px', textAlign: 'center', color: '#64748B' }}>
+                          <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: 'var(--navy)' }}>No categories added yet</p>
+                          <span style={{ fontSize: '12px', color: '#94A3B8' }}>Add your product categories from the Admin Panel.</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
               </div>
-
-
 
               <a
                 href="#"
@@ -302,37 +301,42 @@ export default function Navbar({ activePage, onNavigate }) {
                 
                 {mobileCategoriesOpen && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', paddingLeft: '8px', marginTop: '8px' }}>
-                    {categories.map(cat => {
-                      const IconComp = cat.icon;
-                      const isActive = activePage === cat.id;
+                    {categories.length > 0 ? (
+                      categories.map(cat => {
+                        const IconComp = cat.icon;
+                        const isActive = activePage === cat.id;
 
-                      return (
-                        <a 
-                          key={cat.id}
-                          href="#" 
-                          onClick={(e) => { e.preventDefault(); handleNav(cat.id); }}
-                          style={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: '10px', 
-                            padding: '8px 10px', 
-                            borderRadius: '8px', 
-                            backgroundColor: isActive ? '#FFF7ED' : '#F8FAFC',
-                            color: isActive ? '#ED6C1B' : 'var(--navy)',
-                            textDecoration: 'none',
-                            fontSize: '14.5px',
-                            fontWeight: 700
-                          }}
-                        >
-                          <IconComp size={16} style={{ color: '#ED6C1B' }} />
-                          <span>{cat.title}</span>
-                        </a>
-                      );
-                    })}
+                        return (
+                          <a 
+                            key={cat.id}
+                            href="#" 
+                            onClick={(e) => { e.preventDefault(); handleNav(cat.id); }}
+                            style={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              gap: '10px', 
+                              padding: '8px 10px', 
+                              borderRadius: '8px', 
+                              backgroundColor: isActive ? '#FFF7ED' : '#F8FAFC',
+                              color: isActive ? '#ED6C1B' : 'var(--navy)',
+                              textDecoration: 'none',
+                              fontSize: '14.5px',
+                              fontWeight: 700
+                            }}
+                          >
+                            <IconComp size={16} style={{ color: '#ED6C1B' }} />
+                            <span>{cat.title}</span>
+                          </a>
+                        );
+                      })
+                    ) : (
+                      <div style={{ padding: '10px 4px', color: '#94A3B8', fontSize: '13px' }}>
+                        No categories added yet. Add from Admin Panel.
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-
 
               <a href="#" onClick={(e) => { e.preventDefault(); handleNav('contact'); }} style={{ fontWeight: 700, fontSize: '17px', color: activePage === 'contact' ? '#ED6C1B' : 'var(--navy)', textDecoration: 'none', padding: '4px 0' }}>Contact Us</a>
             </div>

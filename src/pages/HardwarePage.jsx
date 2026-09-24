@@ -6,13 +6,13 @@ import { getHardwareProducts, getCategories } from '../utils/adminStore';
 export default function HardwarePage({ onSelectProduct, onOpenQuote }) {
   const [activeTab, setActiveTab] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
-  const [categories, setCategories] = useState(getCategories('hardware'));
-
-  const productsList = getHardwareProducts();
+  const [categories, setCategories] = useState(() => getCategories('hardware'));
+  const [productsList, setProductsList] = useState(() => getHardwareProducts());
 
   useEffect(() => {
     const handleSync = () => {
-      setCategories(getCategories('hardware'));
+      setCategories([...getCategories('hardware')]);
+      setProductsList([...getHardwareProducts()]);
     };
     window.addEventListener('trishu_store_sync', handleSync);
     window.addEventListener('trishu_store_updated', handleSync);

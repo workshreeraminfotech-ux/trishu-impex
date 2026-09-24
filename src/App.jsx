@@ -1,35 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import HeaderTop from './components/HeaderTop';
 import Navbar from './components/Navbar';
 import FooterSection from './components/FooterSection';
-import QuickViewModal from './components/QuickViewModal';
 import QuoteModal from './components/QuoteModal';
 import WhatsAppFloat from './components/WhatsAppFloat';
 
 import AdminPanel from './admin/AdminPanel';
-
 import Preloader from './components/Preloader';
 
-// Pages
+// Core Pages
 import Home from './pages/Home';
 import AboutPage from './pages/AboutPage';
-import ProductsPage from './pages/ProductsPage';
-import AgroPage from './pages/AgroPage';
-import SanitarywarePage from './pages/SanitarywarePage';
-import TilesPage from './pages/TilesPage';
-import HardwarePage from './pages/HardwarePage';
-import PvcPipePage from './pages/PvcPipePage';
-
 import ContactPage from './pages/ContactPage';
+import DynamicCategoryPage from './pages/DynamicCategoryPage';
+
+import { getMainCategories } from './utils/adminStore';
 
 export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [activePage, setActivePage] = useState('home');
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [quoteProduct, setQuoteProduct] = useState('');
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
   const [isPreloading, setIsPreloading] = useState(true);
+  const [mainCategories, setMainCategories] = useState(() => getMainCategories());
+
+  const handlePreloaderFinish = useCallback(() => {
+    setIsPreloading(false);
+  }, []);
+
+  useEffect(() => {
+    const handleSync = () => {
+      setMainCategories([...getMainCategories()]);
+    };
+    window.addEventListener('trishu_store_sync', handleSync);
+    window.addEventListener('trishu_store_updated', handleSync);
+    return () => {
+      window.removeEventListener('trishu_store_sync', handleSync);
+      window.removeEventListener('trishu_store_updated', handleSync);
+    };
+  }, []);
 
   useEffect(() => {
     const checkAdminRoute = () => {
@@ -77,9 +87,17 @@ export default function App() {
     setIsQuoteOpen(true);
   };
 
+  // Find dynamic category matching activePage
+  const matchedCategory = mainCategories.find(c => 
+    c.id === activePage || 
+    (c.id === 'spices' && (activePage === 'products' || activePage === 'spices')) || 
+    (c.id === 'pvcpipe' && (activePage === 'pvc-pipes' || activePage === 'pvcpipe')) ||
+    (c.name && c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') === activePage)
+  );
+
   return (
     <div>
-      <Preloader onFinish={() => setIsPreloading(false)} />
+      <Preloader onFinish={handlePreloaderFinish} />
       <HeaderTop />
       <Navbar 
         activePage={activePage} 
@@ -90,51 +108,15 @@ export default function App() {
       <main>
         {(activePage === 'home' || activePage === 'faq') && (
           <Home 
-            onSelectProduct={setSelectedProduct} 
             onNavigate={handleNavigate} 
             onOpenQuote={(prod) => handleOpenQuote(prod)} 
           />
         )}
+
         {activePage === 'about' && (
           <AboutPage 
             onNavigate={handleNavigate} 
             onOpenQuote={() => handleOpenQuote()} 
-          />
-        )}
-        {(activePage === 'products' || activePage === 'spices') && (
-          <ProductsPage 
-            onSelectProduct={setSelectedProduct} 
-            onOpenQuote={(prod) => handleOpenQuote(prod)} 
-          />
-        )}
-        {activePage === 'agro' && (
-          <AgroPage 
-            onSelectProduct={setSelectedProduct} 
-            onOpenQuote={(prod) => handleOpenQuote(prod)} 
-          />
-        )}
-        {activePage === 'sanitaryware' && (
-          <SanitarywarePage 
-            onSelectProduct={setSelectedProduct} 
-            onOpenQuote={(prod) => handleOpenQuote(prod)} 
-          />
-        )}
-        {activePage === 'tiles' && (
-          <TilesPage 
-            onSelectProduct={setSelectedProduct} 
-            onOpenQuote={(prod) => handleOpenQuote(prod)} 
-          />
-        )}
-        {activePage === 'hardware' && (
-          <HardwarePage 
-            onSelectProduct={setSelectedProduct} 
-            onOpenQuote={(prod) => handleOpenQuote(prod)} 
-          />
-        )}
-        {activePage === 'pvc-pipes' && (
-          <PvcPipePage 
-            onSelectProduct={setSelectedProduct} 
-            onOpenQuote={(prod) => handleOpenQuote(prod)} 
           />
         )}
 
@@ -143,13 +125,17 @@ export default function App() {
             onOpenQuote={() => handleOpenQuote()} 
           />
         )}
+
+        {/* 100% Dynamic Category Page */}
+        {activePage !== 'home' && activePage !== 'faq' && activePage !== 'about' && activePage !== 'contact' && (
+          <DynamicCategoryPage 
+            category={matchedCategory || { id: activePage, name: activePage.charAt(0).toUpperCase() + activePage.slice(1), color: '#ED6C1B' }}
+            onOpenQuote={(prod) => handleOpenQuote(prod)} 
+          />
+        )}
       </main>
 
       <FooterSection onNavigate={handleNavigate} />
-
-      {selectedProduct && (
-        <QuickViewModal product={selectedProduct} onClose={() => setSelectedProduct(null)} onOpenQuote={(prod) => handleOpenQuote(prod)} />
-      )}
 
       <QuoteModal 
         isOpen={isQuoteOpen} 

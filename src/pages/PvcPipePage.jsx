@@ -6,13 +6,13 @@ import { getPvcPipeProducts, getCategories } from '../utils/adminStore';
 export default function PvcPipePage({ onSelectProduct, onOpenQuote }) {
   const [activeTab, setActiveTab] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
-  const [categories, setCategories] = useState(getCategories('pvcpipe'));
-
-  const productsList = getPvcPipeProducts();
+  const [categories, setCategories] = useState(() => getCategories('pvcpipe'));
+  const [productsList, setProductsList] = useState(() => getPvcPipeProducts());
 
   useEffect(() => {
     const handleSync = () => {
-      setCategories(getCategories('pvcpipe'));
+      setCategories([...getCategories('pvcpipe')]);
+      setProductsList([...getPvcPipeProducts()]);
     };
     window.addEventListener('trishu_store_sync', handleSync);
     window.addEventListener('trishu_store_updated', handleSync);

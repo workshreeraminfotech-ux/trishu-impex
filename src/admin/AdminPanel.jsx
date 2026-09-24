@@ -239,7 +239,7 @@ export default function AdminPanel() {
     setMainCatForm({
       name: '',
       color: '#ED6C1B',
-      icon: 'Sparkles',
+      icon: 'Package',
       defaultHs: 'HS Standard',
       defaultPack: 'Standard Export Packing'
     });
@@ -252,8 +252,8 @@ export default function AdminPanel() {
       name: cat.name || '',
       color: cat.color || '#ED6C1B',
       icon: cat.icon || 'Package',
-      defaultHs: cat.defaultHs || '',
-      defaultPack: cat.defaultPack || ''
+      defaultHs: cat.defaultHs || 'HS Standard',
+      defaultPack: cat.defaultPack || 'Standard Export Packing'
     });
     setShowMainCatModal(true);
   };
@@ -266,39 +266,35 @@ export default function AdminPanel() {
     if (editingMainCat) {
       updateMainCategory(editingMainCat.id, {
         name: trimmed,
-        color: mainCatForm.color,
-        icon: mainCatForm.icon,
-        defaultHs: mainCatForm.defaultHs,
-        defaultPack: mainCatForm.defaultPack
+        color: editingMainCat.color || '#ED6C1B',
+        icon: editingMainCat.icon || 'Package',
+        defaultHs: editingMainCat.defaultHs || 'HS Standard',
+        defaultPack: editingMainCat.defaultPack || 'Standard Export Packing'
       });
       syncStateFromStore();
-      showNotification(`Main Category "${trimmed}" updated!`);
+      showNotification(`Category "${trimmed}" updated!`);
     } else {
       const updated = addMainCategory({
         name: trimmed,
-        color: mainCatForm.color,
-        icon: mainCatForm.icon,
-        defaultHs: mainCatForm.defaultHs,
-        defaultPack: mainCatForm.defaultPack
+        color: '#ED6C1B',
+        icon: 'Package',
+        defaultHs: 'HS Standard',
+        defaultPack: 'Standard Export Packing'
       });
       syncStateFromStore();
       const newAdded = updated[updated.length - 1];
       if (newAdded) setSelectedCatalog(newAdded.id);
-      showNotification(`New Main Category "${trimmed}" created!`);
+      showNotification(`Category "${trimmed}" created!`);
     }
     setShowMainCatModal(false);
   };
 
   const handleDeleteMainCategory = (catId, catName) => {
-    if (mainCategoriesList.length <= 1) {
-      return alert('At least one Category must remain.');
-    }
-
-    if (window.confirm(`Are you sure you want to delete Category "${catName}"?\n\nThis will remove this category and its subcategories from the site.`)) {
+    if (window.confirm(`Are you sure you want to delete Category "${catName}"?\n\nThis will remove this category, its subcategories, and its products from the site.`)) {
       const updated = deleteMainCategory(catId);
       syncStateFromStore();
       if (selectedCatalog === catId) {
-        setSelectedCatalog(updated[0]?.id || 'spices');
+        setSelectedCatalog(updated[0]?.id || '');
       }
       showNotification(`Category "${catName}" deleted.`);
     }
@@ -556,11 +552,13 @@ export default function AdminPanel() {
     }
   };
 
-  const totalProductsCount = spicesList.length + agroList.length + sanitaryList.length + tilesList.length + hardwareList.length + pvcList.length;
+  const totalProductsCount = mainCategoriesList.reduce((acc, cat) => {
+    return acc + (getDomainProducts(cat.id)?.length || 0);
+  }, 0);
   const productQuotesCount = enquiries.filter(e => (e.source || '').toLowerCase().includes('product') || (e.source || '').toLowerCase().includes('quote')).length;
   const contactFormCount = enquiries.filter(e => (e.source || '').toLowerCase().includes('contact')).length;
-  const totalCategoriesCount = Object.keys(catalogConfigs).reduce((acc, k) => {
-    return acc + (catalogConfigs[k].categories.filter(c => c !== 'All').length);
+  const totalCategoriesCount = mainCategoriesList.reduce((acc, cat) => {
+    return acc + (getCategories(cat.id).filter(c => c !== 'All').length);
   }, 0);
 
   return (
@@ -1072,135 +1070,191 @@ export default function AdminPanel() {
 
           </div>
 
-        {/* TAB 1: PRODUCT CATALOG MANAGER WITH 6 CATEGORIES SWITCHER */}
+        {/* TAB 1: PRODUCT CATALOG MANAGER */}
         {mainTab === 'catalog' && (
           <div>
-            {/* Dynamic Category Sub-Navigation Buttons */}
-            <div style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '20px',
-              padding: '12px',
-              border: '1.5px solid #CBD5E1',
-              marginBottom: '24px',
-              display: 'flex',
-              gap: '8px',
-              flexWrap: 'wrap'
-            }}>
-              {mainCategoriesList.map((cat) => {
-                const cfg = catalogConfigs[cat.id] || { name: cat.name, color: cat.color || '#ED6C1B', list: [] };
-                const IconC = getCategoryIconComponent(cat.icon);
-                const isSelected = selectedCatalog === cat.id;
-
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => {
-                      setSelectedCatalog(cat.id);
-                      setSelectedSubCat('All');
-                      setCatalogSearch('');
-                    }}
-                    style={{
-                      padding: '10px 18px',
-                      borderRadius: '12px',
-                      backgroundColor: isSelected ? (cat.color || '#0B2240') : '#F8FAFC',
-                      color: isSelected ? '#FFFFFF' : '#0B2240',
-                      border: isSelected ? `1px solid ${cat.color || '#0B2240'}` : '1px solid #E2E8F0',
-                      fontWeight: 800,
-                      fontSize: '13.5px',
-                      cursor: 'pointer',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      transition: 'all 0.2s ease',
-                      flex: '1 1 auto',
-                      justifyContent: 'center',
-                      boxShadow: isSelected ? `0 4px 14px ${cat.color}40` : 'none'
-                    }}
-                  >
-                    <IconC size={16} style={{ color: isSelected ? '#FFFFFF' : (cat.color || '#ED6C1B') }} />
-                    <span>{cat.name} ({cfg.list.length})</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Catalog Controls: Search, Sub-category filter, Manage Subcategories, and Add Item button */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '14px' }}>
-              <div style={{ display: 'flex', gap: '12px', flex: '1 1 380px', maxWidth: '640px', flexWrap: 'wrap' }}>
-                <div style={{ position: 'relative', flex: '1 1 200px' }}>
-                  <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#8C96A0' }} />
-                  <input
-                    type="text"
-                    placeholder={`Search ${currentConfig.name}...`}
-                    value={catalogSearch}
-                    onChange={(e) => setCatalogSearch(e.target.value)}
-                    style={{ width: '100%', padding: '12px 16px 12px 44px', borderRadius: '100px', border: '1.5px solid #CBD5E1', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
-                  />
+            {mainCategoriesList.length === 0 ? (
+              <div style={{
+                backgroundColor: '#FFFFFF',
+                borderRadius: '24px',
+                border: '1.5px solid #CBD5E1',
+                padding: '60px 24px',
+                textAlign: 'center',
+                boxShadow: '0 4px 16px rgba(11, 34, 64, 0.04)',
+                maxWidth: '600px',
+                margin: '40px auto'
+              }}>
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '20px',
+                  backgroundColor: 'rgba(237, 108, 27, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 16px',
+                  color: '#ED6C1B'
+                }}>
+                  <Layers size={32} />
                 </div>
-                <select
-                  value={selectedSubCat}
-                  onChange={(e) => setSelectedSubCat(e.target.value)}
-                  style={{ padding: '12px 20px', borderRadius: '100px', border: '1.5px solid #CBD5E1', fontSize: '14px', fontWeight: 700, outline: 'none', backgroundColor: '#FFFFFF', cursor: 'pointer' }}
-                >
-                  {currentConfig.categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                </select>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: '0 0 10px' }}>
+                  No Product Categories Yet
+                </h3>
+                <p style={{ fontSize: '14px', color: '#64748B', lineHeight: 1.6, margin: '0 auto 24px', maxWidth: '440px' }}>
+                  Create your first product category (e.g. Spices, Agro, Tiles, Sanitaryware, etc.) to start adding subcategories and products.
+                </p>
                 <button
-                  onClick={openAddItem}
-                  style={{ backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(11, 34, 64, 0.15)' }}
+                  type="button"
+                  onClick={openAddMainCategory}
+                  style={{
+                    backgroundColor: '#ED6C1B',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '12px 28px',
+                    borderRadius: '100px',
+                    fontWeight: 800,
+                    fontSize: '15px',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 14px rgba(237, 108, 27, 0.35)'
+                  }}
                 >
                   <Plus size={18} />
-                  <span>Add in {currentConfig.name}</span>
+                  <span>Create First Category</span>
                 </button>
               </div>
-            </div>
+            ) : (
+              <>
+                {/* Dynamic Category Sub-Navigation Buttons */}
+                <div style={{
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '20px',
+                  padding: '12px',
+                  border: '1.5px solid #CBD5E1',
+                  marginBottom: '24px',
+                  display: 'flex',
+                  gap: '8px',
+                  flexWrap: 'wrap'
+                }}>
+                  {mainCategoriesList.map((cat) => {
+                    const cfg = catalogConfigs[cat.id] || { name: cat.name, color: cat.color || '#ED6C1B', list: [] };
+                    const IconC = getCategoryIconComponent(cat.icon);
+                    const isSelected = selectedCatalog === cat.id;
 
-            {/* Products Table */}
-            <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden', boxShadow: '0 8px 24px rgba(11, 34, 64, 0.04)' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
-                <thead>
-                  <tr style={{ backgroundColor: '#F1F5F9', borderBottom: '1.5px solid #CBD5E1', color: '#0B2240', fontWeight: 800 }}>
-                    <th style={{ padding: '16px 20px' }}>Product</th>
-                    <th style={{ padding: '16px 20px' }}>Subcategory</th>
-                    <th style={{ padding: '16px 20px', textAlign: 'right' }}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredCatalogItems.length === 0 ? (
-                    <tr>
-                      <td colSpan={3} style={{ padding: '40px 20px', textAlign: 'center', color: '#64748B', fontWeight: 600 }}>
-                        No items found in {currentConfig.name}. Click "Add in {currentConfig.name}" to add new products.
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredCatalogItems.map((p, idx) => (
-                      <tr key={p.id || idx} style={{ borderBottom: '1px solid #E2E8F0' }}>
-                        <td style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                          <img src={p.image} alt={p.title} style={{ width: '48px', height: '48px', objectFit: 'contain', borderRadius: '10px', backgroundColor: '#F8FAFC', padding: '4px', border: '1px solid #E2E8F0' }} />
-                          <div>
-                            <strong style={{ fontSize: '15px', color: '#0B2240', display: 'block' }}>{p.title}</strong>
-                            <span style={{ fontSize: '12px', color: '#475569' }}>{p.description ? p.description.substring(0, 70) + (p.description.length > 70 ? '...' : '') : (p.desc ? p.desc.substring(0, 70) + (p.desc.length > 70 ? '...' : '') : '')}</span>
-                          </div>
-                        </td>
-                        <td style={{ padding: '16px 20px', fontWeight: 600, color: '#0B2240' }}>{p.category || p.cat}</td>
-                        <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                          <div style={{ display: 'inline-flex', gap: '8px' }}>
-                            <button onClick={() => openEditItem(p)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '12.5px' }}>
-                              <Edit3 size={14} /> Edit
-                            </button>
-                            <button onClick={() => handleDeleteItem(p.id, p.title)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '12.5px' }}>
-                              <Trash2 size={14} /> Delete
-                            </button>
-                          </div>
-                        </td>
+                    return (
+                      <button
+                        key={cat.id}
+                        onClick={() => {
+                          setSelectedCatalog(cat.id);
+                          setSelectedSubCat('All');
+                          setCatalogSearch('');
+                        }}
+                        style={{
+                          padding: '10px 18px',
+                          borderRadius: '12px',
+                          backgroundColor: isSelected ? (cat.color || '#0B2240') : '#F8FAFC',
+                          color: isSelected ? '#FFFFFF' : '#0B2240',
+                          border: isSelected ? `1px solid ${cat.color || '#0B2240'}` : '1px solid #E2E8F0',
+                          fontWeight: 800,
+                          fontSize: '13.5px',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          transition: 'all 0.2s ease',
+                          flex: '1 1 auto',
+                          justifyContent: 'center',
+                          boxShadow: isSelected ? `0 4px 14px ${cat.color}40` : 'none'
+                        }}
+                      >
+                        <IconC size={16} style={{ color: isSelected ? '#FFFFFF' : (cat.color || '#ED6C1B') }} />
+                        <span>{cat.name} ({cfg.list.length})</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Catalog Controls: Search, Sub-category filter, Manage Subcategories, and Add Item button */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '14px' }}>
+                  <div style={{ display: 'flex', gap: '12px', flex: '1 1 380px', maxWidth: '640px', flexWrap: 'wrap' }}>
+                    <div style={{ position: 'relative', flex: '1 1 200px' }}>
+                      <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#8C96A0' }} />
+                      <input
+                        type="text"
+                        placeholder={`Search ${currentConfig.name}...`}
+                        value={catalogSearch}
+                        onChange={(e) => setCatalogSearch(e.target.value)}
+                        style={{ width: '100%', padding: '12px 16px 12px 44px', borderRadius: '100px', border: '1.5px solid #CBD5E1', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+                      />
+                    </div>
+                    <select
+                      value={selectedSubCat}
+                      onChange={(e) => setSelectedSubCat(e.target.value)}
+                      style={{ padding: '12px 20px', borderRadius: '100px', border: '1.5px solid #CBD5E1', fontSize: '14px', fontWeight: 700, outline: 'none', backgroundColor: '#FFFFFF', cursor: 'pointer' }}
+                    >
+                      {currentConfig.categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                    </select>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                    <button
+                      onClick={openAddItem}
+                      style={{ backgroundColor: '#0B2240', color: '#FFFFFF', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14.5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(11, 34, 64, 0.15)' }}
+                    >
+                      <Plus size={18} />
+                      <span>Add in {currentConfig.name}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Products Table */}
+                <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', border: '1.5px solid #CBD5E1', overflow: 'hidden', boxShadow: '0 8px 24px rgba(11, 34, 64, 0.04)' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+                    <thead>
+                      <tr style={{ backgroundColor: '#F1F5F9', borderBottom: '1.5px solid #CBD5E1', color: '#0B2240', fontWeight: 800 }}>
+                        <th style={{ padding: '16px 20px' }}>Product</th>
+                        <th style={{ padding: '16px 20px' }}>Subcategory</th>
+                        <th style={{ padding: '16px 20px', textAlign: 'right' }}>Actions</th>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                    </thead>
+                    <tbody>
+                      {filteredCatalogItems.length === 0 ? (
+                        <tr>
+                          <td colSpan={3} style={{ padding: '40px 20px', textAlign: 'center', color: '#64748B', fontWeight: 600 }}>
+                            No items found in {currentConfig.name}. Click "Add in {currentConfig.name}" to add new products.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredCatalogItems.map((p, idx) => (
+                          <tr key={p.id || idx} style={{ borderBottom: '1px solid #E2E8F0' }}>
+                            <td style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                              <img src={p.image} alt={p.title} style={{ width: '48px', height: '48px', objectFit: 'contain', borderRadius: '10px', backgroundColor: '#F8FAFC', padding: '4px', border: '1px solid #E2E8F0' }} />
+                              <div>
+                                <strong style={{ fontSize: '15px', color: '#0B2240', display: 'block' }}>{p.title}</strong>
+                                <span style={{ fontSize: '12px', color: '#475569' }}>{p.description ? p.description.substring(0, 70) + (p.description.length > 70 ? '...' : '') : (p.desc ? p.desc.substring(0, 70) + (p.desc.length > 70 ? '...' : '') : '')}</span>
+                              </div>
+                            </td>
+                            <td style={{ padding: '16px 20px', fontWeight: 600, color: '#0B2240' }}>{p.category || p.cat}</td>
+                            <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                              <div style={{ display: 'inline-flex', gap: '8px' }}>
+                                <button onClick={() => openEditItem(p)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '12.5px' }}>
+                                  <Edit3 size={14} /> Edit
+                                </button>
+                                <button onClick={() => handleDeleteItem(p.id, p.title)} style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '12.5px' }}>
+                                  <Trash2 size={14} /> Delete
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -1268,7 +1322,13 @@ export default function AdminPanel() {
                 gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
                 gap: '16px'
               }}>
-                {mainCategoriesList.map((cat) => {
+                {mainCategoriesList.length === 0 ? (
+                  <div style={{ padding: '36px 20px', textAlign: 'center', color: '#64748B', gridColumn: '1 / -1' }}>
+                    <p style={{ margin: '0 0 8px', fontSize: '15px', fontWeight: 700, color: '#0B2240' }}>No Main Categories created yet</p>
+                    <span>Click "Add New Category" above to create your first export category.</span>
+                  </div>
+                ) : (
+                  mainCategoriesList.map((cat) => {
                   const isSelected = selectedCatalog === cat.id;
                   const IconC = getCategoryIconComponent(cat.icon);
                   const subCount = getCategories(cat.id).filter(c => c !== 'All').length;
@@ -1409,7 +1469,7 @@ export default function AdminPanel() {
                       </div>
                     </div>
                   );
-                })}
+                }))}
               </div>
             </div>
 
@@ -1929,14 +1989,14 @@ export default function AdminPanel() {
       {/* --- MODAL: ADD / EDIT MAIN CATEGORY --- */}
       {showMainCatModal && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(7,23,44,0.75)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(4px)' }}>
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '28px', padding: '32px', width: '100%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto', border: '1.5px solid #CBD5E1', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '16px' }}>
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '480px', maxHeight: '90vh', overflowY: 'auto', border: '1.5px solid #CBD5E1', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '16px' }}>
               <div>
-                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0B2240', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
-                  {editingMainCat ? `Edit Category "${editingMainCat.name}"` : '➕ Add New Main Category'}
+                <h3 style={{ fontSize: '20px', fontWeight: 900, color: '#0B2240', margin: 0, fontFamily: 'var(--font-h, Outfit, sans-serif)' }}>
+                  {editingMainCat ? `Edit Category` : '➕ Add New Category'}
                 </h3>
                 <span style={{ fontSize: '13px', color: '#64748B' }}>
-                  Set category name, theme brand color, icon, and export defaults.
+                  Enter category name below.
                 </span>
               </div>
               <button onClick={() => setShowMainCatModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}>
@@ -1944,123 +2004,26 @@ export default function AdminPanel() {
               </button>
             </div>
 
-            <form onSubmit={handleSaveMainCategory} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+            <form onSubmit={handleSaveMainCategory} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '13.5px', fontWeight: 800, color: '#0B2240', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '13.5px', fontWeight: 800, color: '#0B2240', marginBottom: '8px' }}>
                   Category Name *
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Solar Energy Products, Organic Pulses, Packaging..."
+                  autoFocus
+                  placeholder="e.g. Spices, Agricultural Products, Tiles..."
                   value={mainCatForm.name}
                   onChange={(e) => setMainCatForm({ ...mainCatForm, name: e.target.value })}
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box', outline: 'none' }}
                 />
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '13.5px', fontWeight: 800, color: '#0B2240', marginBottom: '8px' }}>
-                  Category Theme Color
-                </label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                  {['#ED6C1B', '#166534', '#0369A1', '#854D0E', '#475569', '#0284C7', '#8B5CF6', '#DC2626', '#0D9488', '#D97706'].map((col) => (
-                    <button
-                      key={col}
-                      type="button"
-                      onClick={() => setMainCatForm({ ...mainCatForm, color: col })}
-                      style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '50%',
-                        backgroundColor: col,
-                        border: mainCatForm.color === col ? '3px solid #0B2240' : '2px solid #FFFFFF',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-                        cursor: 'pointer',
-                        outline: 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      {mainCatForm.color === col && <Check size={16} color="#FFFFFF" />}
-                    </button>
-                  ))}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginLeft: 'auto' }}>
-                    <input
-                      type="color"
-                      value={mainCatForm.color}
-                      onChange={(e) => setMainCatForm({ ...mainCatForm, color: e.target.value })}
-                      style={{ width: '36px', height: '36px', border: 'none', borderRadius: '8px', cursor: 'pointer', background: 'transparent' }}
-                    />
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748B' }}>Custom</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '13.5px', fontWeight: 800, color: '#0B2240', marginBottom: '8px' }}>
-                  Category Icon
-                </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '8px', maxHeight: '180px', overflowY: 'auto', padding: '8px', border: '1.5px solid #E2E8F0', borderRadius: '14px', backgroundColor: '#F8FAFC' }}>
-                  {ICON_OPTIONS.map((opt) => {
-                    const OptIcon = opt.icon;
-                    const isSelected = mainCatForm.icon === opt.name;
-                    return (
-                      <button
-                        key={opt.name}
-                        type="button"
-                        onClick={() => setMainCatForm({ ...mainCatForm, icon: opt.name })}
-                        style={{
-                          padding: '8px 10px',
-                          borderRadius: '10px',
-                          border: isSelected ? '2px solid #8B5CF6' : '1px solid #E2E8F0',
-                          backgroundColor: isSelected ? '#EDE9FE' : '#FFFFFF',
-                          color: isSelected ? '#6D28D9' : '#0B2240',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          cursor: 'pointer',
-                          fontSize: '12px',
-                          fontWeight: 700,
-                          textAlign: 'left'
-                        }}
-                      >
-                        <OptIcon size={16} style={{ color: isSelected ? '#6D28D9' : mainCatForm.color }} />
-                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{opt.name}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Default HS Code</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. HS 0910"
-                    value={mainCatForm.defaultHs}
-                    onChange={(e) => setMainCatForm({ ...mainCatForm, defaultHs: e.target.value })}
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0B2240', marginBottom: '6px' }}>Default Packaging</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 25kg PP Bags / Master Carton"
-                    value={mainCatForm.defaultPack}
-                    onChange={(e) => setMainCatForm({ ...mainCatForm, defaultPack: e.target.value })}
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
-                  />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px' }}>
                 <button type="button" onClick={() => setShowMainCatModal(false)} style={{ padding: '12px 24px', borderRadius: '100px', border: '1.5px solid #CBD5E1', backgroundColor: 'transparent', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '12px 32px', borderRadius: '100px', backgroundColor: '#8B5CF6', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 14px rgba(139, 92, 246, 0.35)' }}>
-                  {editingMainCat ? 'Save Changes' : 'Create Main Category'}
+                <button type="submit" style={{ padding: '12px 32px', borderRadius: '100px', backgroundColor: '#ED6C1B', color: '#FFFFFF', border: 'none', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 14px rgba(237, 108, 27, 0.35)' }}>
+                  {editingMainCat ? 'Save Changes' : 'Create Category'}
                 </button>
               </div>
             </form>

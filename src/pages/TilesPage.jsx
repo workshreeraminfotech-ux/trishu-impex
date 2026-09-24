@@ -6,13 +6,13 @@ import { getTilesProducts, getCategories } from '../utils/adminStore';
 export default function TilesPage({ onSelectProduct, onOpenQuote }) {
   const [activeTab, setActiveTab] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
-  const [categories, setCategories] = useState(getCategories('tiles'));
-
-  const productsList = getTilesProducts();
+  const [categories, setCategories] = useState(() => getCategories('tiles'));
+  const [productsList, setProductsList] = useState(() => getTilesProducts());
 
   useEffect(() => {
     const handleSync = () => {
-      setCategories(getCategories('tiles'));
+      setCategories([...getCategories('tiles')]);
+      setProductsList([...getTilesProducts()]);
     };
     window.addEventListener('trishu_store_sync', handleSync);
     window.addEventListener('trishu_store_updated', handleSync);

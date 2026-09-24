@@ -4,15 +4,22 @@ import logoImg from '../assets/logo.webp';
 
 export default function Preloader({ onFinish }) {
   const [loading, setLoading] = useState(true);
+  const onFinishRef = React.useRef(onFinish);
+
+  useEffect(() => {
+    onFinishRef.current = onFinish;
+  }, [onFinish]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-      if (onFinish) onFinish();
-    }, 1800);
+      if (onFinishRef.current) {
+        onFinishRef.current();
+      }
+    }, 1400);
 
     return () => clearTimeout(timer);
-  }, [onFinish]);
+  }, []);
 
   return (
     <AnimatePresence>

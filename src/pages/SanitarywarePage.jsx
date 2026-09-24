@@ -6,13 +6,13 @@ import { getSanitarywareProducts, getCategories } from '../utils/adminStore';
 export default function SanitarywarePage({ onSelectProduct, onOpenQuote }) {
   const [activeTab, setActiveTab] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
-  const [categories, setCategories] = useState(getCategories('sanitaryware'));
-
-  const productsList = getSanitarywareProducts();
+  const [categories, setCategories] = useState(() => getCategories('sanitaryware'));
+  const [productsList, setProductsList] = useState(() => getSanitarywareProducts());
 
   useEffect(() => {
     const handleSync = () => {
-      setCategories(getCategories('sanitaryware'));
+      setCategories([...getCategories('sanitaryware')]);
+      setProductsList([...getSanitarywareProducts()]);
     };
     window.addEventListener('trishu_store_sync', handleSync);
     window.addEventListener('trishu_store_updated', handleSync);

@@ -6,13 +6,13 @@ import { getAgroProducts, getCategories } from '../utils/adminStore';
 export default function AgroPage({ onSelectProduct, onOpenQuote }) {
   const [activeTab, setActiveTab] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
-  const [categories, setCategories] = useState(getCategories('agro'));
-
-  const productsList = getAgroProducts();
+  const [categories, setCategories] = useState(() => getCategories('agro'));
+  const [productsList, setProductsList] = useState(() => getAgroProducts());
 
   useEffect(() => {
     const handleSync = () => {
-      setCategories(getCategories('agro'));
+      setCategories([...getCategories('agro')]);
+      setProductsList([...getAgroProducts()]);
     };
     window.addEventListener('trishu_store_sync', handleSync);
     window.addEventListener('trishu_store_updated', handleSync);
