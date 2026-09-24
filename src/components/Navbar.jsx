@@ -35,16 +35,14 @@ export default function Navbar({ activePage, onNavigate }) {
     onNavigate(id);
     setMobileOpen(false);
     setDropdownOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (id === 'home') {
-      setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        const heroEl = document.getElementById('hero-section');
-        if (heroEl) {
-          heroEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 50);
-    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }, 50);
   };
 
   const handleMouseEnter = () => {
@@ -83,9 +81,9 @@ export default function Navbar({ activePage, onNavigate }) {
       <header className="jrp-header">
         <div className="container">
           <div className="jrp-header-inner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '104px' }}>
-            {/* Logo — Single click takes directly to Home Hero Section */}
+            {/* Logo — Single click takes directly to top of Home Page */}
             <a 
-              href="#hero-section" 
+              href="#" 
               onClick={(e) => { 
                 e.preventDefault(); 
                 handleNav('home'); 
