@@ -7,6 +7,7 @@ import heroPoster from '../assets/hero-poster.webp';
 export default function HeroBannerSlider({ onOpenQuote, onNavigate }) {
   return (
     <section 
+      id="hero-section"
       className="jrp-hero-section" 
       style={{ 
         position: 'relative', 

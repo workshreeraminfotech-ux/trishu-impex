@@ -36,6 +36,15 @@ export default function Navbar({ activePage, onNavigate }) {
     setMobileOpen(false);
     setDropdownOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (id === 'home') {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const heroEl = document.getElementById('hero-section');
+        if (heroEl) {
+          heroEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 50);
+    }
   };
 
   const handleMouseEnter = () => {
@@ -74,8 +83,16 @@ export default function Navbar({ activePage, onNavigate }) {
       <header className="jrp-header">
         <div className="container">
           <div className="jrp-header-inner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '104px' }}>
-            {/* Logo */}
-            <a href="#" onClick={(e) => { e.preventDefault(); handleNav('home'); }} style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+            {/* Logo — Single click takes directly to Home Hero Section */}
+            <a 
+              href="#hero-section" 
+              onClick={(e) => { 
+                e.preventDefault(); 
+                handleNav('home'); 
+              }} 
+              style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', cursor: 'pointer' }}
+              title="Trishu Impex — Home"
+            >
               <img 
                 src={logoImg} 
                 alt="Trishu Impex" 
@@ -86,7 +103,8 @@ export default function Navbar({ activePage, onNavigate }) {
                   objectFit: 'contain',
                   filter: 'drop-shadow(0 2px 8px rgba(11,34,64,0.08))',
                   display: 'block',
-                  transition: 'transform 0.2s ease'
+                  transition: 'transform 0.2s ease',
+                  cursor: 'pointer'
                 }} 
               />
             </a>
@@ -278,7 +296,9 @@ export default function Navbar({ activePage, onNavigate }) {
           <div className="jrp-offcanvas-overlay" onClick={() => setMobileOpen(false)} />
           <div className="jrp-offcanvas">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-              <img src={logoImg} alt="Trishu Impex" style={{ height: '64px', width: 'auto', objectFit: 'contain', filter: 'contrast(1.08)' }} />
+              <a href="#hero-section" onClick={(e) => { e.preventDefault(); handleNav('home'); }} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', textDecoration: 'none' }}>
+                <img src={logoImg} alt="Trishu Impex" style={{ height: '64px', width: 'auto', objectFit: 'contain', filter: 'contrast(1.08)' }} />
+              </a>
               <button onClick={() => setMobileOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--navy)' }}>
                 <X size={24} />
               </button>

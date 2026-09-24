@@ -26,7 +26,15 @@ export default function FooterSection({ onNavigate }) {
           <div className="footer-col-brand">
             <div 
               className="footer-logo-wrap" 
-              onClick={() => { if (onNavigate) onNavigate('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              onClick={() => { 
+                if (onNavigate) onNavigate('home'); 
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setTimeout(() => {
+                  const heroEl = document.getElementById('hero-section');
+                  if (heroEl) heroEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 50);
+              }}
+              style={{ cursor: 'pointer' }}
             >
               <img src={logoImg} alt="Trishu Impex" />
             </div>
