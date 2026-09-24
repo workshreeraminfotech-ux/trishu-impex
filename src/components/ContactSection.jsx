@@ -117,7 +117,7 @@ export default function ContactSection() {
               <div className="contact-info-item">
                 <div className="ci-icon"><MapPin size={18} /></div>
                 <div className="ci-text">
-                  <strong>Dayima Complex, Office No 1, Paliyad Road, Sayla - 363430, Gujarat, India</strong>
+                  <strong>Dayima Complex, Office No 4, Paliyad Road, Sayla - 363430, Gujarat, India</strong>
                   <span>Export Hub — Kandla & Mundra Port Access</span>
                 </div>
               </div>

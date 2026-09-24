@@ -365,7 +365,7 @@ export default function Navbar({ activePage, onNavigate }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13.5px', color: 'var(--gray)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <MapPin size={16} style={{ color: 'var(--gold)', flexShrink: 0 }} />
-                  <span>Dayima Complex, Office No 1, Paliyad Road, Sayla - 363430, Gujarat, India</span>
+                  <span>Dayima Complex, Office No 4, Paliyad Road, Sayla - 363430, Gujarat, India</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <Mail size={16} style={{ color: 'var(--gold)', flexShrink: 0 }} />

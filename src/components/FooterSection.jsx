@@ -109,7 +109,7 @@ export default function FooterSection({ onNavigate }) {
             <div className="footer-contact-list">
               <div className="footer-contact-item">
                 <MapPin size={18} className="contact-icon" />
-                <span>Dayima Complex, Office No 1, Paliyad Road, Sayla - 363430, Gujarat, India</span>
+                <span>Dayima Complex, Office No 4, Paliyad Road, Sayla - 363430, Gujarat, India</span>
               </div>
               <a href="tel:+919898522905" className="footer-contact-item item-link">
                 <Phone size={18} className="contact-icon" />

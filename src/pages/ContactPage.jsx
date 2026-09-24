@@ -22,7 +22,7 @@ const contactCards = [
   },
   {
     icon: MapPin, label: 'Our Location',
-    value: 'Dayima Complex, Office No 1, Paliyad Road, Sayla - 363430, Gujarat, India',
+    value: 'Dayima Complex, Office No 4, Paliyad Road, Sayla - 363430, Gujarat, India',
     sub: 'Export Hub — Near Mundra Port',
     href: '#map',
     color: '#ED6C1B'

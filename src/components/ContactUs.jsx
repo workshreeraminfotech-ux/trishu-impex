@@ -83,7 +83,7 @@ export default function ContactUs() {
                 </div>
                 <div>
                   <strong style={{ display: 'block', fontSize: 14, color: '#fff' }}>India Head Office:</strong>
-                  <p style={{ fontSize: 14, color: 'rgba(255, 255, 255, 0.85)' }}>Dayima Complex, Office No 1, Paliyad Road, Sayla - 363430, Gujarat, India</p>
+                  <p style={{ fontSize: 14, color: 'rgba(255, 255, 255, 0.85)' }}>Dayima Complex, Office No 4, Paliyad Road, Sayla - 363430, Gujarat, India</p>
                 </div>
               </div>
 

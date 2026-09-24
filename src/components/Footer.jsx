@@ -12,7 +12,7 @@ export default function Footer() {
               <img src={logoImg} alt="Trishu Impex Logo" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
             </div>
             <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.75)', margin: '16px 0 20px', lineHeight: 1.6 }}>
-              Trishu Impex is a trusted Indian merchant exporter of Spices, Agro Commodities, Tiles, Sanitaryware & Ceramics, Chemical Products, Architectural Hardware, and PVC & CPVC Pipes. Delivering trust, exporting excellence globally.
+              Trishu Impex is a trusted Indian merchant exporter of Spices, Agro Commodities, Ceramics, Sanitaryware & Tiles, Chemical Products, Architectural Hardware, and PVC & CPVC Pipes. Delivering trust, exporting excellence globally.
             </p>
             <div className="social-links">
               <a href="https://www.instagram.com/trishuimpex/" target="_blank" rel="noopener noreferrer" className="social-icon" title="Instagram">
