@@ -13,7 +13,7 @@ export default function Home({ onNavigate, onOpenQuote }) {
   return (
     <div className="home-page">
       <HeroBannerSlider onOpenQuote={() => onOpenQuote()} onNavigate={onNavigate} />
-      <AboutUs />
+      <AboutUs onNavigate={onNavigate} />
       <CounterSection />
       <MainSeedsShowcase onOpenQuote={(product) => onOpenQuote(product)} onNavigate={onNavigate} />
       <WorkProcess />

@@ -3,8 +3,21 @@ import { ArrowRight, Award, Globe2, Truck, CheckCircle2, Building2, ShieldCheck 
 import { motion } from 'framer-motion';
 import AnimatedCounter from './AnimatedCounter';
 import aboutUsImg from '../assets/about us.webp';
+import { getMainCategories } from '../utils/adminStore';
 
-export default function AboutUs() {
+export default function AboutUs({ onNavigate }) {
+  const handleExploreProducts = (e) => {
+    if (e) e.preventDefault();
+    const prodSection = document.getElementById('products-section');
+    if (prodSection) {
+      prodSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      const cats = getMainCategories();
+      const targetCat = cats[0]?.id || 'spices';
+      if (onNavigate) onNavigate(targetCat);
+    }
+  };
+
   return (
     <section className="about-section py-50" id="about" style={{ backgroundColor: '#FFFFFF', padding: '54px 0' }}>
       <div className="container">
@@ -112,7 +125,12 @@ export default function AboutUs() {
 
             {/* Action CTA */}
             <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
-              <a href="#products-section" className="btn btn-primary" style={{ padding: '13px 32px', fontSize: '14.5px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <a 
+                href="#products-section" 
+                onClick={handleExploreProducts}
+                className="btn btn-primary" 
+                style={{ padding: '13px 32px', fontSize: '14.5px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', textDecoration: 'none' }}
+              >
                 <span>Explore Products</span>
                 <ArrowRight size={16} />
               </a>

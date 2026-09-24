@@ -152,7 +152,15 @@ export default function HeroBannerSlider({ onOpenQuote, onNavigate }) {
 
             <button 
               className="btn-outline" 
-              onClick={() => onNavigate ? onNavigate('products') : null}
+              onClick={(e) => {
+                e.preventDefault();
+                const prodSection = document.getElementById('products-section');
+                if (prodSection) {
+                  prodSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (onNavigate) {
+                  onNavigate('spices');
+                }
+              }}
               style={{ 
                 color: '#ffffff', 
                 borderColor: 'rgba(255,255,255,0.35)', 
@@ -164,7 +172,8 @@ export default function HeroBannerSlider({ onOpenQuote, onNavigate }) {
                 borderRadius: '8px',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px'
+                gap: '8px',
+                cursor: 'pointer'
               }}
             >
               <FileText size={16} color="var(--gold)" />

@@ -60,6 +60,7 @@ export default function MainSeedsShowcase({ onOpenQuote, onNavigate }) {
 
   return (
     <section 
+      id="products-section"
       className="main-seeds-showcase-section" 
       style={{ 
         background: 'var(--cream)', 

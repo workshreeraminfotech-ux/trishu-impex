@@ -18,7 +18,7 @@ export default function AnnouncementBar() {
 
         <div className="announcement-center-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(237, 108, 27, 0.15)', border: '1px solid rgba(237, 108, 27, 0.4)', padding: '3px 12px', borderRadius: '100px', fontSize: '12px', color: 'var(--gold-light)', fontWeight: 600 }}>
           <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', animation: 'pulse 1.5s infinite' }}></span>
-          <span>🚢 <strong>Live Milestone:</strong> 100% Full Container Cargo Exported & Dispatched to Malaysia! 🇲🇾</span>
+          <span>🚢 <strong>Global Export:</strong> Premium Container Shipments Dispatched Worldwide • FOB / CIF Available</span>
         </div>
 
         <div className="announcement-right">

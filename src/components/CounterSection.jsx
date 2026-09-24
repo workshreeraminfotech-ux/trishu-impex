@@ -6,11 +6,11 @@ import AnimatedCounter from './AnimatedCounter';
 export default function CounterSection() {
   const stats = [
     {
-      end: 100,
-      suffix: '%',
-      title: 'Container Shipment Dispatched',
+      end: 1000,
+      suffix: '+ MT',
+      title: 'Global Cargo Export Volume',
       icon: Ship,
-      desc: 'Recently Shipped Container to Malaysia 🇲🇾'
+      desc: 'Worldwide FCL & LCL container dispatches'
     },
     {
       end: 100,
