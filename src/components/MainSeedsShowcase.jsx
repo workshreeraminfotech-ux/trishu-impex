@@ -20,9 +20,8 @@ export default function MainSeedsShowcase({ onOpenQuote, onNavigate }) {
     };
   }, []);
 
-  const showcaseProducts = allProducts.filter(p => p.isFeatured).length > 0
-    ? allProducts.filter(p => p.isFeatured)
-    : allProducts;
+  const featuredProducts = allProducts.filter(p => Boolean(p.isFeatured || p.showOnHome));
+  const showcaseProducts = featuredProducts.length > 0 ? featuredProducts : allProducts;
 
   const handleScroll = (direction) => {
     if (scrollContainerRef.current) {

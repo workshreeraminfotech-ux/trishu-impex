@@ -382,9 +382,20 @@ export default function AdminPanel() {
       description: item.description || item.desc || '',
       image: item.image || '',
       hsCode: item.hsCode || '',
-      isFeatured: item.isFeatured || false
+      isFeatured: Boolean(item.isFeatured || item.showOnHome)
     });
     setShowItemModal(true);
+  };
+
+  const handleToggleFeatured = (item) => {
+    const newStatus = !(item.isFeatured || item.showOnHome);
+    currentConfig.updateFn({
+      ...item,
+      isFeatured: newStatus,
+      showOnHome: newStatus
+    });
+    syncStateFromStore();
+    showNotification(newStatus ? `"${item.title}" will be shown on Home Page!` : `"${item.title}" removed from Home Page.`);
   };
 
   const handleSaveItem = (e) => {
@@ -392,6 +403,7 @@ export default function AdminPanel() {
     if (!itemForm.title.trim()) return alert('Please enter product title');
 
     const chosenSubCat = itemForm.category || currentConfig.defaultCategory || 'General';
+    const isFeaturedFlag = Boolean(itemForm.isFeatured);
 
     if (editingItem) {
       const updated = currentConfig.updateFn({
@@ -399,7 +411,9 @@ export default function AdminPanel() {
         ...itemForm,
         category: chosenSubCat,
         cat: chosenSubCat,
-        desc: itemForm.description
+        desc: itemForm.description,
+        isFeatured: isFeaturedFlag,
+        showOnHome: isFeaturedFlag
       });
       syncStateFromStore();
       showNotification(`"${itemForm.title}" updated in ${currentConfig.name}!`);
@@ -408,7 +422,9 @@ export default function AdminPanel() {
         ...itemForm,
         category: chosenSubCat,
         cat: chosenSubCat,
-        desc: itemForm.description
+        desc: itemForm.description,
+        isFeatured: isFeaturedFlag,
+        showOnHome: isFeaturedFlag
       });
       syncStateFromStore();
       if (selectedSubCat !== 'All' && selectedSubCat !== chosenSubCat) {
@@ -1250,13 +1266,42 @@ export default function AdminPanel() {
                             <td style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
                               <img src={p.image} alt={p.title} style={{ width: '48px', height: '48px', objectFit: 'contain', borderRadius: '10px', backgroundColor: '#F8FAFC', padding: '4px', border: '1px solid #E2E8F0' }} />
                               <div>
-                                <strong style={{ fontSize: '15px', color: '#0B2240', display: 'block' }}>{p.title}</strong>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                  <strong style={{ fontSize: '15px', color: '#0B2240' }}>{p.title}</strong>
+                                  {(p.isFeatured || p.showOnHome) && (
+                                    <span style={{ backgroundColor: '#FFF7ED', color: '#EA580C', border: '1px solid #FDBA74', fontSize: '11px', fontWeight: 800, padding: '2px 8px', borderRadius: '100px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                      <Sparkles size={11} color="#EA580C" /> Home Page
+                                    </span>
+                                  )}
+                                </div>
                                 <span style={{ fontSize: '12px', color: '#475569' }}>{p.description ? p.description.substring(0, 70) + (p.description.length > 70 ? '...' : '') : (p.desc ? p.desc.substring(0, 70) + (p.desc.length > 70 ? '...' : '') : '')}</span>
                               </div>
                             </td>
                             <td style={{ padding: '16px 20px', fontWeight: 600, color: '#0B2240' }}>{p.category || p.cat}</td>
                             <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                              <div style={{ display: 'inline-flex', gap: '8px' }}>
+                              <div style={{ display: 'inline-flex', gap: '8px', alignItems: 'center' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleFeatured(p)}
+                                  title={(p.isFeatured || p.showOnHome) ? "Remove from Home Page" : "Show on Home Page"}
+                                  style={{
+                                    backgroundColor: (p.isFeatured || p.showOnHome) ? '#FFF7ED' : '#F8FAFC',
+                                    border: (p.isFeatured || p.showOnHome) ? '1.5px solid #FDBA74' : '1px solid #CBD5E1',
+                                    color: (p.isFeatured || p.showOnHome) ? '#EA580C' : '#64748B',
+                                    padding: '8px 12px',
+                                    borderRadius: '10px',
+                                    cursor: 'pointer',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    fontWeight: 700,
+                                    fontSize: '12px',
+                                    transition: 'all 0.15s ease'
+                                  }}
+                                >
+                                  <Sparkles size={13} style={{ color: (p.isFeatured || p.showOnHome) ? '#EA580C' : '#94A3B8' }} />
+                                  <span>{(p.isFeatured || p.showOnHome) ? 'On Home' : 'Show on Home'}</span>
+                                </button>
                                 <button onClick={() => openEditItem(p)} style={{ backgroundColor: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0B2240', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '12.5px' }}>
                                   <Edit3 size={14} /> Edit
                                 </button>
@@ -2000,6 +2045,68 @@ export default function AdminPanel() {
                   onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })}
                   style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
                 />
+              </div>
+
+              {/* Show on Home Page Toggle Option */}
+              <div 
+                onClick={() => setItemForm(prev => ({ ...prev, isFeatured: !prev.isFeatured }))}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '14px 18px',
+                  borderRadius: '14px',
+                  backgroundColor: itemForm.isFeatured ? '#FFF7ED' : '#F8FAFC',
+                  border: itemForm.isFeatured ? '1.5px solid #FDBA74' : '1.5px solid #E2E8F0',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  userSelect: 'none'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '10px',
+                    backgroundColor: itemForm.isFeatured ? '#ED6C1B' : '#E2E8F0',
+                    color: itemForm.isFeatured ? '#FFFFFF' : '#64748B',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s ease'
+                  }}>
+                    <Sparkles size={18} />
+                  </div>
+                  <div>
+                    <strong style={{ fontSize: '14px', color: '#0B2240', display: 'block' }}>
+                      Show on Home Page
+                    </strong>
+                    <span style={{ fontSize: '12px', color: '#64748B' }}>
+                      Display this product in the Home Page Featured Live Catalogue slider.
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{
+                  width: '44px',
+                  height: '24px',
+                  borderRadius: '100px',
+                  backgroundColor: itemForm.isFeatured ? '#ED6C1B' : '#CBD5E1',
+                  position: 'relative',
+                  transition: 'background-color 0.2s ease'
+                }}>
+                  <div style={{
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '50%',
+                    backgroundColor: '#FFFFFF',
+                    position: 'absolute',
+                    top: '3px',
+                    left: itemForm.isFeatured ? '23px' : '3px',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }} />
+                </div>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
